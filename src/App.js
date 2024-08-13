@@ -11,6 +11,7 @@ function App() {
   const [windowCurrent, setWindowCurrent] = useState([])
   const [showCloseTab, setShowCloseTab] = useState(false)
   const hoverTimeoutRef = useRef(null);
+  const [check, setCheck] = useState(0)
 
   useEffect(() => {
     chrome.windows.getAll({populate: true}, function(windows) {
