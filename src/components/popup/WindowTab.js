@@ -3,46 +3,40 @@
 import React, { useState, useEffect, useRef } from "react";
 import { IoIosArrowForward } from "react-icons/io";
 import { IoIosArrowDown } from "react-icons/io";
-import { CiSquarePlus } from "react-icons/ci";
-import { PiTrashLight } from "react-icons/pi";
 import Tab from "./Tab";
 import TaskBar from "./TaskBar";
 /* global chrome */
 
 function WindowTab({ window }) {
-   const [windowCurrent, setWindowCurrent] = useState(window.windowCurrent);
+   const [checkStateWindow, setCheckStateWindow] = useState(true);
+   const typeTabBlock = process.env.REACT_APP_TYPE_TAB_BLOCK;
+   const typeTabHori = process.env.REACT_APP_TYPE_TAB_HORIZONTAL;
 
-   const statusListWindowTab = (windowId, status) => {
-      if (status === "open") {
-         setWindowCurrent((prevWindowCurrent) => [
-            ...prevWindowCurrent,
-            windowId,
-         ]);
-      } else {
-         setWindowCurrent((prevWindowCurrent) =>
-            prevWindowCurrent.filter((winId) => winId !== windowId)
-         );
-      }
-   };
-
-   const checkWindowOpenOrClose = (winId) => {
-      return windowCurrent.includes(winId);
+   const switchToWindow = (windowId) => {
+      chrome.windows.update(windowId, { focused: true }, () => {
+         console.log(`Switched to window with ID: ${windowId}`);
+      });
    };
 
    return (
-      <div className='p-2 shadow-custom rounded-md z-10 space-y-3'>
+      <div
+         onClick={(e) => {
+            switchToWindow(window.windowTab.id);
+         }}
+         className='transition-shadow duration-300 hover:shadow-custom-hover p-2 cursor-pointer shadow-custom rounded-md z-10 space-y-3'>
          <div className='flex justify-between items-center'>
             <span className='text-custom-color-title text-xs font-semibold'>
                Window : {window.index + 1}
             </span>
             <div
-               onClick={() => {
-                  checkWindowOpenOrClose(window.windowTab.id)
-                     ? statusListWindowTab(window.windowTab.id, "close")
-                     : statusListWindowTab(window.windowTab.id, "open");
+               onClick={(e) => {
+                  e.stopPropagation();
+                  checkStateWindow
+                     ? setCheckStateWindow(false)
+                     : setCheckStateWindow(true);
                }}
                className='flex items-center justify-center p-1 bg-gray-300 rounded-full cursor-pointer hover:bg-custom-pink transition duration-300 ease-in-out'>
-               {checkWindowOpenOrClose(window.windowTab.id) ? (
+               {checkStateWindow ? (
                   <IoIosArrowDown className='text-xs text-white transition-transform duration-300 ease-in-out transform rotate-0' />
                ) : (
                   <IoIosArrowForward className='text-xs text-white transition-transform duration-300 ease-in-out transform rotate-0' />
@@ -54,14 +48,23 @@ function WindowTab({ window }) {
          </span>
 
          <div
-            className={`transition-all duration-300 ease-in-out ${
-               checkWindowOpenOrClose(window.windowTab.id)
-                  ? "max-h-[1000px] opacity-100 transform translate-y-0 overflow-visible"
-                  : "max-h-0 opacity-0 transform -translate-y-4 overflow-hidden"
+            className={`transition-all duration-400 ease-in-out ${
+               checkStateWindow
+                  ? "max-h-[1000px] transform translate-y-0 overflow-visible"
+                  : "max-h-[1000px] transform -translate-y-1 overflow-visible"
             }`}>
-            {window.windowTab.tabs.map((tab) => (
-               <Tab tab={tab} window={window} />
-            ))}
+            <div class={`${checkStateWindow ? "space-y-1" : "flex relative"}`}>
+               {window.windowTab.tabs.map((tab) => (
+                  <Tab
+                     className={`${
+                        checkStateWindow ? "first:mt-0 last:mb-0" : ""
+                     }`}
+                     tab={tab}
+                     window={window}
+                     type={checkStateWindow ? typeTabBlock : typeTabHori}
+                  />
+               ))}
+            </div>
          </div>
 
          <TaskBar window={window} />

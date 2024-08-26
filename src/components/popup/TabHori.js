@@ -1,18 +1,17 @@
 /** @format */
+/** @format */
 import React, { useState, useEffect, useRef } from "react";
 import { IoIosClose } from "react-icons/io";
 import { IoEarthOutline } from "react-icons/io5";
 
 /* global chrome */
 
-function Tab({ tab, window, type }) {
+function Tab({ tab, window }) {
    const [showTooltip, setShowTooltip] = useState(false);
    const [tabHoverId, setTabHoverId] = useState();
    const [showCloseTab, setShowCloseTab] = useState(false);
    const [activeTab, setActiveTab] = useState(true);
    const hoverTimeoutRef = useRef(null);
-   const typeTabBlock = process.env.REACT_APP_TYPE_TAB_BLOCK;
-   const typeTabHori = process.env.REACT_APP_TYPE_TAB_HORIZONTAL;
 
    const closeTab = (tabId, windowId) => {
       chrome.tabs.query({ windowId: windowId }, (tabs) => {
@@ -50,7 +49,7 @@ function Tab({ tab, window, type }) {
    };
 
    return (
-      <div className={`${type === typeTabBlock ? "relative" : ""}`}>
+      <div className='relative'>
          <div
             onClick={() => switchToTab(tab.id)}
             onMouseEnter={() => {
@@ -63,11 +62,7 @@ function Tab({ tab, window, type }) {
                handleMouseLeave();
                checkActveTab(tab.active, false);
             }}
-            className={`hover:bg-custom-color-tooltip relative ${
-               type === typeTabHori
-                  ? "p-2"
-                  : "p-1 h-10 hover:p-3 transition-all duration-400 ease-in-out"
-            } border-1 border-opacity-5 z-10 flex space-x-1 items-center cursor-pointer hover:shadow-md justify-between border-solid rounded`}>
+            className='hover:bg-custom-color-tooltip border-1 transition-all z-10 duration-400 ease-in-out flex space-x-1 h-10 items-center cursor-pointer hover:shadow-md hover:p-3 justify-between p-1 border-solid rounded'>
             <div className='w-5'>
                {tab.favIconUrl != "" ? (
                   <img className='w-100% rounded-sm' src={tab.favIconUrl} />
@@ -77,41 +72,35 @@ function Tab({ tab, window, type }) {
                   </div>
                )}
             </div>
-            {type === typeTabBlock ? (
-               <p className='truncate flex-1 mr-2'>{tab.title}</p>
-            ) : null}
-            {tab.active && activeTab ? (
-               type === typeTabBlock ? (
-                  <span className='ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-green-500 text-white'>
-                     active
-                  </span>
-               ) : (
-                  <span className='absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full'></span>
-               )
-            ) : null}
-            {showCloseTab ? (
-               type === typeTabBlock ? (
-                  <IoIosClose
-                     onClick={(e) => {
-                        e.stopPropagation();
-                        closeTab(tab.id, window.windowTab.id);
-                     }}
-                     className=' hover:bg-custom-pink cursor-pointer text-white bg-gray-200 rounded-full text-base transition duration-300 ease-in-out'
-                  />
-               ) : (
-                  <IoIosClose
-                     onClick={(e) => {
-                        e.stopPropagation();
-                        closeTab(tab.id, window.windowTab.id);
-                     }}
-                     className='absolute hover:bg-custom-pink top-0 right-0 cursor-pointer text-white bg-gray-200 rounded-full text-base transition duration-300 ease-in-out'
-                  />
-               )
-            ) : null}
+            <p className='truncate flex-1 mr-2'>{tab.title}</p>
+            {activeTab && tab.active ? (
+               <div>
+                  {tab.active ? (
+                     <span className='ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-green-500 text-white'>
+                        active
+                     </span>
+                  ) : (
+                     <span></span>
+                  )}
+               </div>
+            ) : (
+               <div></div>
+            )}
+            {showCloseTab && tabHoverId == tab.id ? (
+               <IoIosClose
+                  onClick={(e) => {
+                     e.stopPropagation();
+                     closeTab(tab.id, window.windowTab.id);
+                  }}
+                  className=' hover:bg-custom-pink cursor-pointer text-white bg-gray-200 rounded-full text-base transition duration-300 ease-in-out'
+               />
+            ) : (
+               <div></div>
+            )}
          </div>
 
          <div>
-            {showTooltip ? (
+            {showTooltip && tabHoverId == tab.id ? (
                <div
                   className='absolute w-full z-[999] px-2 text-xs py-2 font-normal text-black bg-custom-hover-gray transition-all duration-200 ease-[cubic-bezier(0.25, 0.1, 0.25, 1)] rounded-lg shadow-sm tooltip dark:bg-gray-700'
                   style={{

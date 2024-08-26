@@ -27,7 +27,8 @@ module.exports = {
             "custom-color-title": "rgb(246, 80, 119)",
          },
          boxShadow: {
-            custom: "1px 2px 4px rgba(112, 112, 140, 0.15)", // Thêm giá trị box-shadow tùy chỉnh
+            custom: "1px 2px 4px rgba(112, 112, 140, 0.15)",
+            "custom-hover": "2px 4px 8px rgba(112, 112, 140, 0.4)",
          },
          filter: {
             "custom-drop-shadow":
