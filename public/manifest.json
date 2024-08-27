@@ -1,20 +1,16 @@
 {
-  "manifest_version": 3,
-  "name": "My Extension",
-  "version": "1.0",
-  "description": "A description of your extension",
-  "permissions": [
-    "storage",
-    "tabs",
-    "activeTab"
-  ],
-  "background": {
-    "service_worker": "background.js"
-  },
-  "action": {
-    "default_popup": "index.html"
-  },
-  "icons": {
-    "16": "logo192.png"
-  }
+   "manifest_version": 3,
+   "name": "My Extension",
+   "version": "1.0",
+   "description": "A description of your extension",
+   "permissions": ["storage", "windows", "tabs", "activeTab"],
+   "background": {
+      "service_worker": "background.js"
+   },
+   "action": {
+      "default_popup": "index.html"
+   },
+   "icons": {
+      "16": "logo192.png"
+   }
 }

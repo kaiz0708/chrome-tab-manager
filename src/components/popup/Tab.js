@@ -2,10 +2,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { IoIosClose } from "react-icons/io";
 import { IoEarthOutline } from "react-icons/io5";
+import { useSelector, useDispatch } from "react-redux";
+import { deleteTab } from "../../store/features/windowSlices";
 
 /* global chrome */
 
 function Tab({ tab, window, type }) {
+   const dispatch = useDispatch();
    const [showTooltip, setShowTooltip] = useState(false);
    const [tabHoverId, setTabHoverId] = useState();
    const [showCloseTab, setShowCloseTab] = useState(false);
@@ -69,12 +72,12 @@ function Tab({ tab, window, type }) {
                   : "p-1 h-10 hover:p-3 transition-all duration-400 ease-in-out"
             } border-1 border-opacity-5 z-10 flex space-x-1 items-center cursor-pointer hover:shadow-md justify-between border-solid rounded`}>
             <div className='w-5'>
-               {tab.favIconUrl != "" ? (
-                  <img className='w-100% rounded-sm' src={tab.favIconUrl} />
-               ) : (
+               {tab.favIconUrl === "" || tab.favIconUrl === undefined ? (
                   <div className='h-5 bg-gray-100 rounded-sm flex justify-center items-center'>
                      <IoEarthOutline className='text-xs' />
                   </div>
+               ) : (
+                  <img className='w-100% rounded-sm' src={tab.favIconUrl} />
                )}
             </div>
             {type === typeTabBlock ? (
@@ -94,6 +97,7 @@ function Tab({ tab, window, type }) {
                   <IoIosClose
                      onClick={(e) => {
                         e.stopPropagation();
+                        dispatch(deleteTab(tab));
                         closeTab(tab.id, window.windowTab.id);
                      }}
                      className=' hover:bg-custom-pink cursor-pointer text-white bg-gray-200 rounded-full text-base transition duration-300 ease-in-out'
@@ -102,6 +106,7 @@ function Tab({ tab, window, type }) {
                   <IoIosClose
                      onClick={(e) => {
                         e.stopPropagation();
+                        dispatch(deleteTab(tab.id));
                         closeTab(tab.id, window.windowTab.id);
                      }}
                      className='absolute hover:bg-custom-pink top-0 right-0 cursor-pointer text-white bg-gray-200 rounded-full text-base transition duration-300 ease-in-out'

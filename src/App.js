@@ -11,6 +11,7 @@ function App() {
 
    useEffect(() => {
       chrome.windows.getAll({ populate: true }, function (windows) {
+         console.log(windows);
          dispatch(setValue(windows));
       });
    }, []);
