@@ -10,9 +10,19 @@ function App() {
    const dispatch = useDispatch();
 
    useEffect(() => {
-      chrome.windows.getAll({ populate: true }, function (windows) {
-         console.log(windows);
-         dispatch(setValue(windows));
+      chrome.windows.getCurrent({ populate: true }, (currentWindow) => {
+         // Lấy tất cả cửa sổ
+         chrome.windows.getAll({ populate: true }, (windows) => {
+            // Sắp xếp cửa sổ, đưa cửa sổ hiện tại lên đầu
+            const sortedWindows = windows.sort((a, b) => {
+               if (a.id === currentWindow.id) return -1;
+               if (b.id === currentWindow.id) return 1;
+               return 0;
+            });
+
+            // Cập nhật danh sách cửa sổ vào Redux
+            dispatch(setValue(sortedWindows));
+         });
       });
    }, []);
 

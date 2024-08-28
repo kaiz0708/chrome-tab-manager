@@ -8,6 +8,7 @@ import {
    addEmptyTab,
 } from "../../store/features/windowSlices";
 import { useSelector, useDispatch } from "react-redux";
+import { useState } from "react";
 
 /* global chrome */
 
@@ -48,35 +49,32 @@ function TaskBar({ window }) {
    };
 
    return (
-      <div className='z-10 flex justify-end'>
-         <div className='cursor-pointer'>
-            <CiSquarePlus
-               onClick={(e) => {
-                  e.stopPropagation();
-                  addNewEmptyTab(window.windowTab.id);
-               }}
-               className='size-6'
-            />
+      <div className='z-10 flex justify-end gap-1.5'>
+         <div
+            onClick={(e) => {
+               e.stopPropagation();
+               addNewEmptyTab(window.windowTab.id);
+            }}
+            className='cursor-pointer border-1 border-opacity-5 p-1 rounded hover:text-white hover:bg-custom-color-tooltip text-base transition duration-300 ease-in-out'>
+            <CiSquarePlus className='text-xl' />
          </div>
 
-         <div>
-            <PiTrashLight
-               onClick={(e) => {
-                  e.stopPropagation();
-                  closeAllTabWindows(window.windowTab.id);
-               }}
-               className='size-6'
-            />
+         <div
+            onClick={(e) => {
+               e.stopPropagation();
+               closeAllTabWindows(window.windowTab.id);
+            }}
+            className='cursor-pointer border-1 border-opacity-5 p-1 rounded hover:text-white hover:bg-custom-color-tooltip text-base transition duration-300 ease-in-out'>
+            <PiTrashLight className='text-xl' />
          </div>
 
-         <div>
-            <CiSaveDown1
-               onClick={(e) => {
-                  e.stopPropagation();
-                  minimizeWindow(window.windowTab.id);
-               }}
-               className='size-6'
-            />
+         <div
+            onClick={(e) => {
+               e.stopPropagation();
+               minimizeWindow(window.windowTab.id);
+            }}
+            className='cursor-pointer border-1 border-opacity-5 p-1 rounded hover:text-white hover:bg-custom-color-tooltip text-base transition duration-300 ease-in-out'>
+            <CiSaveDown1 className='text-xl' />
          </div>
       </div>
    );

@@ -7,7 +7,7 @@ const solveDelele = (window, tab) => {
          return window.filter((e) => e.id !== window[i].id);
       } else {
          const index = window[i].tabs.findIndex((item) => item.id === tab.id);
-         if (index !== -1) {
+         if (index !== -1 && window[i].tabs[index].active) {
             let index_last = window[i].tabs.length - 1;
             if (index == 0) {
                window[i].tabs[index_last].active = true;
@@ -16,8 +16,8 @@ const solveDelele = (window, tab) => {
                   ? (window[i].tabs[index + 1].active = true)
                   : (window[i].tabs[index - 1].active = true);
             }
-            window[i].tabs = window[i].tabs.filter((e) => e.id !== tab.id);
          }
+         window[i].tabs = window[i].tabs.filter((e) => e.id !== tab.id);
       }
    }
    return window;

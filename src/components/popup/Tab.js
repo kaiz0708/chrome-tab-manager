@@ -67,10 +67,8 @@ function Tab({ tab, window, type }) {
                checkActveTab(tab.active, false);
             }}
             className={`hover:bg-custom-color-tooltip relative ${
-               type === typeTabHori
-                  ? "p-2"
-                  : "p-1 h-10 hover:p-3 transition-all duration-400 ease-in-out"
-            } border-1 border-opacity-5 z-10 flex space-x-1 items-center cursor-pointer hover:shadow-md justify-between border-solid rounded`}>
+               type === typeTabHori ? "p-2" : "p-1 h-10 hover:p-3"
+            } transition-all duration-400 ease-in-out border-1 border-opacity-5 z-10 flex space-x-1 items-center cursor-pointer hover:shadow-md justify-between border-solid rounded`}>
             <div className='w-5'>
                {tab.favIconUrl === "" || tab.favIconUrl === undefined ? (
                   <div className='h-5 bg-gray-100 rounded-sm flex justify-center items-center'>
@@ -89,7 +87,7 @@ function Tab({ tab, window, type }) {
                      active
                   </span>
                ) : (
-                  <span className='absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full'></span>
+                  <span className='absolute z-20 -top-1.5 -right-1.5 w-4 h-4 bg-green-500 rounded-full'></span>
                )
             ) : null}
             {showCloseTab ? (
@@ -109,7 +107,7 @@ function Tab({ tab, window, type }) {
                         dispatch(deleteTab(tab.id));
                         closeTab(tab.id, window.windowTab.id);
                      }}
-                     className='absolute hover:bg-custom-pink top-0 right-0 cursor-pointer text-white bg-gray-200 rounded-full text-base transition duration-300 ease-in-out'
+                     className='absolute z-20 hover:bg-custom-pink -top-1.5 -right-1.5 cursor-pointer text-white bg-gray-200 rounded-full text-base transition duration-300 ease-in-out'
                   />
                )
             ) : null}

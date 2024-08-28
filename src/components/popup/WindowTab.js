@@ -8,7 +8,7 @@ import TaskBar from "./TaskBar";
 /* global chrome */
 
 function WindowTab({ window }) {
-   const [checkStateWindow, setCheckStateWindow] = useState(true);
+   const [checkStateWindow, setCheckStateWindow] = useState(false);
    const typeTabBlock = process.env.REACT_APP_TYPE_TAB_BLOCK;
    const typeTabHori = process.env.REACT_APP_TYPE_TAB_HORIZONTAL;
 
@@ -53,7 +53,10 @@ function WindowTab({ window }) {
                   ? "max-h-[1000px] transform translate-y-0 overflow-visible"
                   : "max-h-[1000px] transform -translate-y-1 overflow-visible"
             }`}>
-            <div class={`${checkStateWindow ? "space-y-1" : "flex relative"}`}>
+            <div
+               class={`${
+                  checkStateWindow ? "space-y-1" : "flex relative gap-2.5"
+               }`}>
                {window.windowTab.tabs.map((tab) => (
                   <Tab
                      className={`${
