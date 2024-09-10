@@ -5,12 +5,14 @@ import { IoEarthOutline } from "react-icons/io5";
 import servicesChrome from "../services/ServiceChrome";
 import { Tooltip, Zoom } from "@mui/material";
 import { useDrag, useDrop } from "react-dnd";
+import { useSelector } from "react-redux";
 
 /* global chrome */
 
 function Tab({ tab, index, type }) {
    const [showCloseTab, setShowCloseTab] = useState(false);
    const [activeTab, setActiveTab] = useState(true);
+   const typeDisplay = useSelector((state) => state.current.displayState);
    const typeTabBlock = process.env.REACT_APP_TYPE_TAB_BLOCK;
    const typeTabHori = process.env.REACT_APP_TYPE_TAB_HORIZONTAL;
 
@@ -42,7 +44,7 @@ function Tab({ tab, index, type }) {
       <div ref={drag} className={`${type === typeTabBlock ? "relative" : ""} `}>
          <Tooltip
             TransitionComponent={Zoom}
-            TransitionProps={{ timeout: 300 }}
+            TransitionProps={{ timeout: 200 }}
             onClick={() => switchToTab(tab.id)}
             disableInteractive
             title={tab.title}>
@@ -56,27 +58,25 @@ function Tab({ tab, index, type }) {
                   checkActveTab(tab.active, false);
                }}
                className={` relative ${
-                  type === typeTabHori
-                     ? "p-1.5 hover:animate-hoverEffect aspect-square"
-                     : "p-1 h-10 hover:animate-hoverEffectBlock"
-               } border-1 border-opacity-5 z-10 flex space-x-1 items-center cursor-pointer hover:shadow-md justify-between border-solid rounded`}>
-               <div className='w-full h-full flex justify-center items-center'>
+                  typeDisplay === process.env.REACT_APP_TYPE_TAB_HORIZONTAL
+                     ? "p-1.5 aspect-square"
+                     : "p-2 h-10"
+               } w-full flex justify-center items-center hover:bg-custom-color-tooltip transition-all duration-300 ease-in-out border-1 border-opacity-5 z-10 space-x-1 cursor-pointer border-solid rounded`}>
+               <div className='h-5 w-5'>
                   {tab.favIconUrl === "" || tab.favIconUrl === undefined ? (
-                     <div className='h-full w-full bg-gray-100 rounded-sm flex justify-center items-center'>
-                        <IoEarthOutline className='text-xs' />
-                     </div>
+                     <IoEarthOutline className='w-full h-full' />
                   ) : (
                      <img
-                        className='w-full h-full rounded-sm object-contain'
+                        className='rounded-sm object-contain w-full h-full'
                         src={tab.favIconUrl}
                      />
                   )}
                </div>
-               {type === typeTabBlock ? (
+               {typeDisplay === typeTabBlock ? (
                   <p className='truncate flex-1 mr-2'>{tab.title}</p>
                ) : null}
                {tab.active && activeTab ? (
-                  type === typeTabBlock ? (
+                  typeDisplay === typeTabBlock ? (
                      <span className='ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-green-500 text-white'>
                         active
                      </span>
@@ -85,7 +85,7 @@ function Tab({ tab, index, type }) {
                   )
                ) : null}
                {showCloseTab ? (
-                  type === typeTabBlock ? (
+                  typeDisplay === typeTabBlock ? (
                      <IoIosClose
                         onClick={(e) => {
                            e.stopPropagation();

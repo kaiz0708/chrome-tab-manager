@@ -24,12 +24,16 @@ function App() {
    const typeCloseWindowChrome =
       process.env.REACT_APP_TYPE_MESSAGE_CLOSE_WINDOW_CHROME;
    const typeOpenWindow = process.env.REACT_APP_TYPE_MESSAGE_OPEN_WINDOW_CHROME;
+   const typeDisplay = useSelector((state) => state.current.displayState);
+   const typeBlock = process.env.REACT_APP_TYPE_TAB_BLOCK;
+   const typeTabHori = process.env.REACT_APP_TYPE_TAB_HORIZONTAL;
    const dispatch = useDispatch();
 
    useEffect(() => {
       chrome.windows.getCurrent({ populate: true }, (currentWindow) => {
          dispatch(updateWindowCurrent(currentWindow.id));
          chrome.windows.getAll({ populate: true }, (windows) => {
+            console.log(windows);
             const sortedWindows = windows.sort((a, b) => {
                if (a.id === currentWindow.id) return -1;
                if (b.id === currentWindow.id) return 1;
@@ -67,16 +71,23 @@ function App() {
    }, []);
 
    return (
-      <div className='w-full space-y-3 font-sans text-xs font-normal text-custom-black'>
+      <div className='w-full font-sans text-xs font-normal text-custom-black'>
          <div>
-            <h1 className='text-2xl p-2 font-normal mb-4 text-custom-color-title text-center'>
+            <h1 className='text-2xl p-2 font-normal text-custom-color-title text-center'>
                Chrome Tab Manager
             </h1>
          </div>
 
          <div className='p-2 h-custom bg-gray-100 '>
             <DndProvider backend={HTML5Backend}>
-               <Grid2 columns={{ xs: 3, sm: 3, md: 3 }} container spacing={1}>
+               <Grid2
+                  columns={
+                     typeDisplay === typeTabHori
+                        ? { xs: 3, sm: 3, md: 3 }
+                        : { xs: 2, sm: 2, md: 2 }
+                  }
+                  container
+                  spacing={1}>
                   {windowTabs.map((windowTab, index) => (
                      <Grid2 size={{ xs: 1, sm: 1, md: 1 }} key={index}>
                         <WindowTab window={{ windowTab, index }} />
@@ -85,7 +96,8 @@ function App() {
                </Grid2>
             </DndProvider>
          </div>
-         <div>
+
+         <div className='p-2'>
             <TaskBarPopup />
          </div>
       </div>

@@ -54,29 +54,22 @@ export const windowSlice = createSlice({
             });
          } else {
             let valueTabDrag = null;
-            let valueTabHover = null;
-            state.value.forEach((window) => {
-               switch (window.id) {
-                  case tabDrag.windowId:
-                     valueTabDrag = window.tabs[tabDrag.index];
-                     break;
-                  case tabHover.windowId:
-                     valueTabHover = window.tabs[tabHover.index];
-                     break;
-                  default:
-                     break;
-               }
-            });
             state.value.forEach((window) => {
                if (window.id === tabDrag.windowId) {
-                  window.tabs[tabDrag.index] = valueTabHover;
-                  window.tabs[tabDrag.index].active = false;
-                  window.tabs[tabDrag.index].windowId = tabDrag.windowId;
+                  valueTabDrag = window.tabs[tabDrag.index];
+                  state.value = solveDelele(state.value, valueTabDrag.id);
+                  valueTabDrag.active = false;
+                  valueTabDrag.windowId = tabHover.windowId;
                }
+            });
+
+            state.value.forEach((window) => {
                if (window.id === tabHover.windowId) {
-                  window.tabs[tabHover.index] = valueTabDrag;
-                  window.tabs[tabHover.index].active = false;
-                  window.tabs[tabHover.index].windowId = tabHover.windowId;
+                  if (tabHover.index !== -1) {
+                     window.tabs.splice(tabHover.index, 0, valueTabDrag);
+                  } else {
+                     window.tabs.push(valueTabDrag);
+                  }
                }
             });
          }

@@ -7,14 +7,11 @@ import services from "../services/ServiceChrome";
 import ListTab from "./ListTab";
 import { IoCloseOutline } from "react-icons/io5";
 import serviceChrome from "../services/ServiceChrome";
-import { Tooltip } from "@mui/material";
+import { Tooltip, Zoom } from "@mui/material";
 /* global chrome */
 
 function WindowTab({ window }) {
-   const [checkStateWindow, setCheckStateWindow] = useState(false);
    const currentWindow = useSelector((state) => state.current.value);
-   const typeTabBlock = process.env.REACT_APP_TYPE_TAB_BLOCK;
-   const typeTabHori = process.env.REACT_APP_TYPE_TAB_HORIZONTAL;
 
    const closeAllTabWindows = (windowCurrentId) => {
       serviceChrome.closeWindow(windowCurrentId);
@@ -27,12 +24,16 @@ function WindowTab({ window }) {
                services.switchToWindow(currentWindow);
                services.switchToWindow(window.windowTab.id);
             }}
-            className='transition duration-300 ease-in-out hover:-translate-y-0.5 bg-white p-2 hover:shadow-custom-hover cursor-pointer shadow-custom rounded-md z-10 space-y-3'>
+            className='transition duration-200 ease-in space-y-2 hover:-translate-y-0.5 bg-white p-2 hover:shadow-custom-hover cursor-pointer shadow-custom rounded-md z-10'>
             <div className='flex justify-between items-center'>
                <span className='text-custom-color-title text-xs font-semibold'>
                   #{window.index + 1}
                </span>
-               <Tooltip disableInteractive title={"Close window"}>
+               <Tooltip
+                  disableInteractive
+                  TransitionComponent={Zoom}
+                  TransitionProps={{ timeout: 200 }}
+                  title={"Close window"}>
                   <div
                      onClick={(e) => {
                         e.stopPropagation();
@@ -47,10 +48,7 @@ function WindowTab({ window }) {
                ${window.windowTab.tabs.length}
             </span>
 
-            <ListTab
-               window={window}
-               valueType={{ checkStateWindow, typeTabBlock, typeTabHori }}
-            />
+            <ListTab window={window} />
             <TaskBar window={window} />
          </div>
       </div>

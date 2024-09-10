@@ -9,19 +9,22 @@ import { HiOutlinePlus } from "react-icons/hi2";
 import { Tooltip, Zoom } from "@mui/material";
 import { Grid2 } from "@mui/material";
 
-function ListTab({ window, valueType }) {
+function ListTab({ window }) {
    const dropRef = useRef(null);
    const dispatch = useDispatch();
+   const typeDisplay = useSelector((state) => state.current.displayState);
+   const typeTabHori = process.env.REACT_APP_TYPE_TAB_HORIZONTAL;
+   const typeTabBlock = process.env.REACT_APP_TYPE_TAB_BLOCK;
    const [{ isOver }, drop] = useDrop({
       accept: "ITEM",
       drop: (item, monitor) => {
-         console.log("item : ", item);
          const clientOffset = monitor.getClientOffset();
-         const hoverIndex = calculateHoverIndexHori(
+         const hoverIndex = calculateHoverIndex(
             clientOffset,
             dropRef,
             window.windowTab.tabs,
-            5
+            process.env.REACT_APP_TYPE_AMOUNT_COLUMNS_TAB,
+            typeDisplay
          );
          const payload = {
             tabDrag: {
@@ -40,41 +43,58 @@ function ListTab({ window, valueType }) {
       }),
    });
 
-   const calculateHoverIndex = (clientOffset, dropRef, tabs) => {
+   const calculateHoverIndex = (
+      clientOffset,
+      dropRef,
+      tabs,
+      columns,
+      typeDisplay
+   ) => {
       const containerRect = dropRef.current.getBoundingClientRect();
-      const { top: containerTop, height: containerHeight } = containerRect;
 
-      const relativeY = clientOffset.y - containerTop;
+      if (typeDisplay === process.env.REACT_APP_TYPE_TAB_BLOCK) {
+         const { top: containerTop, height: containerHeight } = containerRect;
+         const relativeY = clientOffset.y - containerTop;
+         const averageTabHeight = containerHeight / tabs.length;
+         let hoverIndex = Math.round(relativeY / averageTabHeight);
+         if (hoverIndex < 0 || hoverIndex >= tabs.length) {
+            return -1;
+         }
+         hoverIndex = Math.max(0, Math.min(hoverIndex, tabs.length - 1));
+         return hoverIndex;
+      }
 
-      const averageTabHeight = containerHeight / tabs.length;
+      if (typeDisplay === process.env.REACT_APP_TYPE_TAB_HORIZONTAL) {
+         const {
+            left: containerLeft,
+            top: containerTop,
+            width: containerWidth,
+            height: containerHeight,
+         } = containerRect;
+         const relativeX = clientOffset.x - containerLeft;
+         const relativeY = clientOffset.y - containerTop;
+         const averageTabWidth = containerWidth / columns;
+         const averageTabHeight =
+            containerHeight / Math.ceil(tabs.length / columns);
 
-      let hoverIndex = Math.round(relativeY / averageTabHeight);
+         const columnIndex = Math.floor(relativeX / averageTabWidth);
+         const rowIndex = Math.floor(relativeY / averageTabHeight);
+         let hoverIndex = rowIndex * columns + columnIndex;
+         if (
+            columnIndex < 0 ||
+            columnIndex >= columns ||
+            rowIndex < 0 ||
+            hoverIndex >= tabs.length
+         ) {
+            return -1;
+         }
+         hoverIndex = Math.max(0, Math.min(hoverIndex, tabs.length - 1));
+         if (hoverIndex >= tabs.length) {
+            return -1; // Trả về -1 nếu hoverIndex ngoài phạm vi của tabs
+         }
 
-      hoverIndex = Math.max(0, Math.min(hoverIndex, tabs.length - 1));
-
-      return hoverIndex;
-   };
-
-   const calculateHoverIndexHori = (clientOffset, dropRef, tabs, columns) => {
-      const containerRect = dropRef.current.getBoundingClientRect();
-      const { left: containerLeft, width: containerWidth } = containerRect;
-
-      const relativeX = clientOffset.x - containerLeft;
-
-      const averageTabWidth = containerWidth / columns;
-
-      let hoverIndex = Math.round(relativeX / averageTabWidth);
-
-      // Adjust the hoverIndex based on the number of rows (i.e., index within the grid)
-      const rowIndex = Math.floor(hoverIndex / columns);
-      const columnIndex = hoverIndex % columns;
-
-      hoverIndex = rowIndex * columns + columnIndex;
-
-      // Ensure hoverIndex is within bounds
-      hoverIndex = Math.max(0, Math.min(hoverIndex, tabs.length - 1));
-
-      return hoverIndex;
+         return hoverIndex;
+      }
    };
 
    const combinedRef = (el) => {
@@ -88,34 +108,41 @@ function ListTab({ window, valueType }) {
 
    return (
       <div ref={combinedRef}>
-         <Grid2 columns={{ xs: 4, sm: 4, md: 4 }} container spacing={1}>
+         <Grid2
+            columns={
+               typeDisplay === typeTabHori
+                  ? { xs: 4, sm: 4, md: 4 }
+                  : { xs: 1, sm: 1, md: 1 }
+            }
+            container
+            spacing={1}>
             {window.windowTab.tabs.map((tab, index) => (
                <Grid2 size={{ xs: 1, sm: 1, md: 1 }} key={index}>
-                  <Tab
-                     tab={tab}
-                     index={index}
-                     type={
-                        valueType.checkStateWindow
-                           ? valueType.typeTabBlock
-                           : valueType.typeTabHori
-                     }
-                     key={index}
-                  />
+                  <Tab tab={tab} index={index} key={index} />
                </Grid2>
             ))}
             <Grid2 size={{ xs: 1, sm: 1, md: 1 }}>
                <Tooltip
                   disableInteractive
-                  title={"Open New Tab"}
+                  title={"Open new tab"}
                   TransitionComponent={Zoom}
-                  TransitionProps={{ timeout: 300 }}>
+                  TransitionProps={{ timeout: 200 }}>
                   <div
                      onClick={(e) => {
                         e.stopPropagation();
                         addNewEmptyTab(window.windowTab.id);
                      }}
+                     style={
+                        typeDisplay === typeTabBlock
+                           ? { height: "40px", padding: "8px" }
+                           : {}
+                     }
                      className='cursor-pointer border-1 flex justify-center items-center p-1.5 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
-                     <HiOutlinePlus className='w-full h-full' />
+                     <HiOutlinePlus
+                        className={`${
+                           typeDisplay === typeTabHori ? "w-full h-full" : ""
+                        }`}
+                     />
                   </div>
                </Tooltip>
             </Grid2>
