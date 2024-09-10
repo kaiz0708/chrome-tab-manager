@@ -8,6 +8,9 @@ import serviceChrome from "../services/ServiceChrome";
 import { HiOutlinePlus } from "react-icons/hi2";
 import { Tooltip, Zoom } from "@mui/material";
 import { Grid2 } from "@mui/material";
+import serviceChrome from "../services/ServiceChrome";
+
+/* global chrome */
 
 function ListTab({ window }) {
    const dropRef = useRef(null);
@@ -18,6 +21,7 @@ function ListTab({ window }) {
    const [{ isOver }, drop] = useDrop({
       accept: "ITEM",
       drop: (item, monitor) => {
+         const tabId = item.tabId;
          const clientOffset = monitor.getClientOffset();
          const hoverIndex = calculateHoverIndex(
             clientOffset,
@@ -37,6 +41,11 @@ function ListTab({ window }) {
             },
          };
          dispatch(moveTab(payload));
+         serviceChrome.moveTab(
+            tabId,
+            payload.tabHover.index,
+            payload.tabHover.windowId
+         );
       },
       collect: (monitor) => ({
          isOver: !!monitor.isOver(),

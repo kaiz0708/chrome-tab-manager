@@ -14,6 +14,33 @@ export default {
       });
    },
 
+   moveTab: (tabId, indexHover, windowIdHover) => {
+      chrome.tabs.move(tabId, { windowId: windowIdHover, index: -1 }, (tab) => {
+         if (chrome.runtime.lastError) {
+            console.error(
+               `Lỗi khi di chuyển tab: ${chrome.runtime.lastError.message}`
+            );
+         } else {
+            console.log(
+               `Tab ${tabId} đã được di chuyển đến cửa sổ ${windowIdHover}.`
+            );
+
+            // Cập nhật vị trí của tab trong cửa sổ mục tiêu
+            chrome.tabs.move(tabId, { index: indexHover }, (movedTab) => {
+               if (chrome.runtime.lastError) {
+                  console.error(
+                     `Lỗi khi thay đổi vị trí của tab: ${chrome.runtime.lastError.message}`
+                  );
+               } else {
+                  console.log(
+                     `Tab ${tabId} đã được di chuyển đến vị trí ${indexHover} trong cửa sổ ${windowIdHover}.`
+                  );
+               }
+            });
+         }
+      });
+   },
+
    openNewTabEmpty: (windowId) => {
       chrome.tabs.create(
          {

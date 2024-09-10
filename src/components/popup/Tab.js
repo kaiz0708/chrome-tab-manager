@@ -18,7 +18,7 @@ function Tab({ tab, index, type }) {
 
    const [{ isDragging }, drag] = useDrag({
       type: "ITEM",
-      item: { index, windowId: tab.windowId },
+      item: { index, tabId: tab.id, windowId: tab.windowId },
       collect: (monitor) => ({
          isDragging: !!monitor.isDragging(),
       }),

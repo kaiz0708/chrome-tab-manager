@@ -39,3 +39,25 @@ chrome.windows.onCreated.addListener(function (window) {
       });
    });
 });
+
+// Ví dụ sử dụng hàm getTabInfo với callback
+
+// Lắng nghe sự kiện khi tab được di chuyển trong cùng một cửa sổ
+chrome.tabs.onMoved.addListener((tabId, moveInfo) => {
+   console.log("moveInfo : ", moveInfo);
+   console.log("Thông tin di chuyển:", moveInfo);
+});
+
+// Lắng nghe khi tab được di chuyển từ cửa sổ này sang cửa sổ khác
+chrome.tabs.onDetached.addListener((tabId, detachInfo) => {
+   console.log("detachInfor : ", detachInfo);
+   console.log(
+      `Tab ${tabId} đã được tách ra khỏi cửa sổ ${detachInfo.oldWindowId}.`
+   );
+   chrome.tabs.onAttached.addListener((tabId, attachInfo) => {
+      console.log("attachInfor : ", attachInfo);
+      console.log(
+         `Tab ${tabId} đã được gắn vào cửa sổ ${attachInfo.newWindowId}.`
+      );
+   });
+});
