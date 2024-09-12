@@ -14,7 +14,10 @@ import {
    deleteWindow,
    setValue,
    addWindow,
-   moveTab,
+   moveTabAroundWindow,
+   moveTabWithoutWindow,
+   activeTab,
+   navigateTab,
 } from "./store/features/windowSlices";
 /* global chrome */
 function App() {
@@ -30,6 +33,8 @@ function App() {
    const typeMoveTabWithOutWindow =
       process.env.REACT_APP_TYPE_MESSAGE_MOVE_TAB_WITHOUT_WINDOW_CHROME;
    const typeDisplay = useSelector((state) => state.current.displayState);
+   const typeActiveTab = process.env.REACT_APP_TYPE_MESSAGE_ACTIVE_TAB;
+   const typeNavigateTab = process.env.REACT_APP_TYPE_MESSAGE_NEVIGATE_URL;
    const typeBlock = process.env.REACT_APP_TYPE_TAB_BLOCK;
    const typeTabHori = process.env.REACT_APP_TYPE_TAB_HORIZONTAL;
    const dispatch = useDispatch();
@@ -64,11 +69,19 @@ function App() {
                break;
             case typeOpenWindow:
                dispatch(addWindow(msg.data.window));
+               break;
             case typeMoveTabAroundWindow:
-               dispatch(moveTab(msg.data));
+               dispatch(moveTabAroundWindow(msg.data));
                break;
             case typeMoveTabWithOutWindow:
-               dispatch(moveTab(msg.data));
+               dispatch(moveTabWithoutWindow(msg.data));
+               break;
+            case typeActiveTab:
+               dispatch(activeTab(msg.data));
+               break;
+            case typeNavigateTab:
+               dispatch(navigateTab(msg.data));
+               break;
          }
       };
 
@@ -92,7 +105,7 @@ function App() {
                   columns={
                      typeDisplay === typeTabHori
                         ? { xs: 3, sm: 3, md: 3 }
-                        : { xs: 2, sm: 2, md: 2 }
+                        : { xs: 3, sm: 3, md: 3 }
                   }
                   container
                   spacing={1}>

@@ -28,7 +28,7 @@ module.exports = {
          },
          boxShadow: {
             custom: "1px 2px 4px rgba(112, 112, 140, 0.15)",
-            "custom-hover": "2px 4px 8px rgba(112, 112, 140, 0.4)",
+            "custom-hover": "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
          },
          filter: {
             "custom-drop-shadow":

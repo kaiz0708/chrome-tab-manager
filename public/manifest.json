@@ -3,7 +3,7 @@
    "name": "My Extension",
    "version": "1.0",
    "description": "A description of your extension",
-   "permissions": ["storage", "windows", "tabs", "activeTab"],
+   "permissions": ["windows", "tabs", "activeTab", "webNavigation"],
    "background": {
       "service_worker": "background.js"
    },

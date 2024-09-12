@@ -29,24 +29,7 @@ function ListTab({ window }) {
             process.env.REACT_APP_TYPE_AMOUNT_COLUMNS_TAB,
             typeDisplay
          );
-         const payload = {
-            tabDrag: {
-               tabId: item.tabId,
-               index: item.index,
-               windowId: item.windowId,
-            },
-
-            tabHover: {
-               tabId: item.tabId,
-               index: hoverIndex,
-               windowId: window.windowTab.id,
-            },
-         };
-         serviceChrome.moveTab(
-            tabId,
-            payload.tabHover.index,
-            payload.tabHover.windowId
-         );
+         serviceChrome.moveTab(tabId, hoverIndex, window.windowTab.id);
       },
       collect: (monitor) => ({
          isOver: !!monitor.isOver(),

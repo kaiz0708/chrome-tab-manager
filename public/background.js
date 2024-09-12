@@ -40,58 +40,47 @@ chrome.windows.onCreated.addListener(function (window) {
    });
 });
 
-const createPayload = (indexDrag, indexHover, windowIdDrag, windowIdHover) => {
-   return {
-      tabDrag: {
-         index: indexDrag,
-         windowId: windowIdDrag,
-      },
-
-      tabHover: {
-         index: indexHover,
-         windowId: windowIdHover,
-      },
-   };
-};
-
-// Lắng nghe sự kiện khi tab được di chuyển trong cùng một cửa sổ
 chrome.tabs.onMoved.addListener((tabId, moveInfo) => {
-   console.log("moveInfo : ", moveInfo);
-   console.log("Thông tin di chuyển:", moveInfo);
-   const payload = createPayload(
-      moveInfo.fromIndex,
-      moveInfo.toIndex,
-      moveInfo.windowId,
-      moveInfo.windowId
-   );
-
    chrome.runtime.sendMessage({
       type: "MOVE_TAB_AROUND_WINDOW_CHROME",
       data: {
-         ...payload,
+         fromIndex: moveInfo.fromIndex,
+         toIndex: moveInfo.toIndex,
+         windowId: moveInfo.windowId,
       },
    });
 });
 
-// Lắng nghe khi tab được di chuyển từ cửa sổ này sang cửa sổ khác
-chrome.tabs.onDetached.addListener((tabId, detachInfo) => {
-   console.log("detachInfor : ", detachInfo);
-   console.log("detach : ", tabId);
+chrome.tabs.onAttached.addListener((tabId, attachInfo) => {
+   chrome.runtime.sendMessage({
+      type: "MOVE_TAB_WITHOUT_WINDOW_CHROME",
+      data: {
+         tabId: tabId,
+         newPosition: attachInfo.newPosition,
+         newWindowId: attachInfo.newWindowId,
+      },
+   });
+});
 
-   chrome.tabs.onAttached.addListener((tabId, attachInfo) => {
-      console.log("attach : ", tabId);
-      console.log("attachInfor : ", attachInfo);
-      const payload = createPayload(
-         detachInfo.oldPosition,
-         attachInfo.newPosition,
-         detachInfo.oldWindowId,
-         attachInfo.newWindowId
-      );
-
+chrome.tabs.onActivated.addListener((activeInfo) => {
+   chrome.tabs.get(activeInfo.tabId, (tab) => {
       chrome.runtime.sendMessage({
-         type: "MOVE_TAB_WITHOUT_WINDOW_CHROME",
+         type: "ACTIVE_TAB",
          data: {
-            ...payload,
+            tabId: tab.id,
+            windowId: tab.windowId,
+         },
+      });
+   });
+});
+
+chrome.webNavigation.onCompleted.addListener(function (details) {
+   chrome.tabs.get(details.tabId, function (tab) {
+      console.log(tab.url);
+      chrome.runtime.sendMessage({
+         type: "NEVIGATE_URL",
+         data: {
+            tabNavigate: tab,
          },
       });
    });

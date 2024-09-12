@@ -41,46 +41,70 @@ export const windowSlice = createSlice({
       deleteTab: (state, action) => {
          state.value = solveDelele(state.value, action.payload);
       },
-      moveTab: (state, action) => {
-         const { tabDrag, tabHover } = action.payload;
-         console.log(action.payload);
-         if (tabDrag.windowId === tabHover.windowId) {
-            state.value.forEach((window) => {
-               if (window.id === tabDrag.windowId) {
-                  const value = window.tabs[tabDrag.index];
-                  window.tabs[tabDrag.index] = window.tabs[tabHover.index];
-                  window.tabs[tabHover.index] = value;
-               }
-            });
-         } else {
-            let valueTabDrag = null;
-            state.value.forEach((window) => {
-               if (window.id === tabDrag.windowId) {
-                  valueTabDrag = window.tabs[tabDrag.index];
-                  state.value = solveDelele(state.value, valueTabDrag.id);
-                  valueTabDrag.active = false;
-                  valueTabDrag.windowId = tabHover.windowId;
-               }
-            });
-
-            let check = state.value.find(
-               (window) =>
-                  window.id === tabHover.windowId &&
-                  window.tabs.some((tab) => tab.id === tabHover.tabId)
-            );
-
-            if (check === undefined) {
-               state.value.forEach((window) => {
-                  if (window.id === tabHover.windowId) {
-                     if (tabHover.index !== -1) {
-                        window.tabs.splice(tabHover.index, 0, valueTabDrag);
-                     } else {
-                        window.tabs.push(valueTabDrag);
-                     }
+      moveTabAroundWindow: (state, action) => {
+         const { fromIndex, toIndex, windowId } = action.payload;
+         state.value.forEach((window) => {
+            if (window.id === windowId) {
+               const [element] = window.tabs.splice(fromIndex, 1);
+               window.tabs.splice(toIndex, 0, element);
+            }
+         });
+      },
+      navigateTab: (state, action) => {
+         const { tabNavigate } = action.payload;
+         state.value = state.value.map((window) => {
+            if (window.id === tabNavigate.windowId) {
+               window.tabs = window.tabs.map((tab) => {
+                  if (tab.id === tabNavigate.id) {
+                     return tabNavigate;
                   }
+                  return tab;
                });
             }
+            return window;
+         });
+      },
+      moveTabWithoutWindow: (state, action) => {
+         const { tabId, newPosition, newWindowId } = action.payload;
+         var tabDrag = null;
+         state.value.forEach((window) => {
+            window.tabs.forEach((tab) => {
+               if (tab.id === tabId) {
+                  tabDrag = tab;
+                  state.value = solveDelele(state.value, tabId);
+                  tabDrag.active = false;
+                  tabDrag.windowId = newWindowId;
+               }
+            });
+         });
+
+         let check = state.value.find(
+            (window) =>
+               window.id === newWindowId &&
+               window.tabs.some((tab) => tab.id === tabId)
+         );
+
+         if (check === undefined) {
+            state.value.forEach((window) => {
+               if (window.id === newWindowId) {
+                  if (newPosition !== -1) {
+                     window.tabs.splice(newPosition, 0, tabDrag);
+                  } else {
+                     window.tabs.push(tabDrag);
+                  }
+               }
+            });
          }
+      },
+      activeTab: (state, action) => {
+         const { tabId, windowId } = action.payload;
+         state.value.forEach((window) => {
+            if (window.id === windowId) {
+               window.tabs.forEach((tab) =>
+                  tab.id === tabId ? (tab.active = true) : (tab.active = false)
+               );
+            }
+         });
       },
       addEmptyTab: (state, action) => {
          state.value = state.value.map((window) => {
@@ -114,7 +138,10 @@ export const {
    deleteTab,
    addEmptyTab,
    addWindow,
-   moveTab,
+   moveTabAroundWindow,
+   moveTabWithoutWindow,
+   activeTab,
+   navigateTab,
 } = windowSlice.actions;
 
 export default windowSlice.reducer;
