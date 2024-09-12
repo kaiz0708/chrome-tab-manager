@@ -1,73 +1,56 @@
 /** @format */
 
-import React, { useState, useEffect, useRef } from "react";
-import { IoIosArrowForward } from "react-icons/io";
-import { IoIosArrowDown } from "react-icons/io";
-import Tab from "./Tab";
+import React, { useState } from "react";
 import TaskBar from "./TaskBar";
+import { useSelector, useDispatch } from "react-redux";
+import services from "../services/ServiceChrome";
+import ListTab from "./ListTab";
+import { IoCloseOutline } from "react-icons/io5";
+import serviceChrome from "../services/ServiceChrome";
+import { Tooltip, Zoom } from "@mui/material";
 /* global chrome */
 
 function WindowTab({ window }) {
-   const [checkStateWindow, setCheckStateWindow] = useState(true);
-   const typeTabBlock = process.env.REACT_APP_TYPE_TAB_BLOCK;
-   const typeTabHori = process.env.REACT_APP_TYPE_TAB_HORIZONTAL;
+   const currentWindow = useSelector((state) => state.current.value);
 
-   const switchToWindow = (windowId) => {
-      chrome.windows.update(windowId, { focused: true }, () => {
-         console.log(`Switched to window with ID: ${windowId}`);
-      });
+   const closeAllTabWindows = (windowCurrentId) => {
+      serviceChrome.closeWindow(windowCurrentId);
    };
 
    return (
-      <div
-         onClick={(e) => {
-            switchToWindow(window.windowTab.id);
-         }}
-         className='transition-shadow duration-300 hover:shadow-custom-hover p-2 cursor-pointer shadow-custom rounded-md z-10 space-y-3'>
-         <div className='flex justify-between items-center'>
-            <span className='text-custom-color-title text-xs font-semibold'>
-               Window : {window.index + 1}
-            </span>
-            <div
-               onClick={(e) => {
-                  e.stopPropagation();
-                  checkStateWindow
-                     ? setCheckStateWindow(false)
-                     : setCheckStateWindow(true);
-               }}
-               className='flex items-center justify-center p-1 bg-gray-300 rounded-full cursor-pointer hover:bg-custom-pink transition duration-300 ease-in-out'>
-               {checkStateWindow ? (
-                  <IoIosArrowDown className='text-xs text-white transition-transform duration-300 ease-in-out transform rotate-0' />
-               ) : (
-                  <IoIosArrowForward className='text-xs text-white transition-transform duration-300 ease-in-out transform rotate-0' />
-               )}
-            </div>
-         </div>
-         <span className='text-xs font-medium text-center'>
-            Total : {window.windowTab.tabs.length}
-         </span>
-
+      <div className='w-full'>
          <div
-            className={`transition-all duration-400 ease-in-out ${
-               checkStateWindow
-                  ? "max-h-[1000px] transform translate-y-0 overflow-visible"
-                  : "max-h-[1000px] transform -translate-y-1 overflow-visible"
-            }`}>
-            <div class={`${checkStateWindow ? "space-y-1" : "flex relative"}`}>
-               {window.windowTab.tabs.map((tab) => (
-                  <Tab
-                     className={`${
-                        checkStateWindow ? "first:mt-0 last:mb-0" : ""
-                     }`}
-                     tab={tab}
-                     window={window}
-                     type={checkStateWindow ? typeTabBlock : typeTabHori}
-                  />
-               ))}
+            onClick={(e) => {
+               services.switchToWindow(currentWindow);
+               services.switchToWindow(window.windowTab.id);
+            }}
+            className='transition duration-200 ease-in space-y-2 hover:-translate-y-0.5 bg-white p-2 hover:shadow-custom-hover cursor-pointer shadow-custom rounded-md z-10'>
+            <div className='flex justify-between items-center'>
+               <span className='text-custom-color-title text-xs font-semibold'>
+                  #{window.index + 1}
+               </span>
+               <Tooltip
+                  disableInteractive
+                  TransitionComponent={Zoom}
+                  TransitionProps={{ timeout: 200 }}
+                  title={"Close window"}>
+                  <div
+                     onClick={(e) => {
+                        e.stopPropagation();
+                        closeAllTabWindows(window.windowTab.id);
+                     }}
+                     className='flex items-center justify-center p-1 bg-gray-300 rounded-full cursor-pointer hover:bg-custom-pink transition duration-300 ease-in-out'>
+                     <IoCloseOutline className='text-xs text-white transition-transform duration-300 ease-in-out transform rotate-0' />
+                  </div>
+               </Tooltip>
             </div>
-         </div>
+            <span className='text-xs font-medium text-center'>
+               ${window.windowTab.tabs.length}
+            </span>
 
-         <TaskBar window={window} />
+            <ListTab window={window} />
+            <TaskBar window={window} />
+         </div>
       </div>
    );
 }

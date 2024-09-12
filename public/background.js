@@ -1,32 +1,63 @@
 /** @format */
 
-let windowTabMapping = {}; // Để lưu trữ mapping giữa windowId và tabId
-
-// Khi cửa sổ mới được tạo
-chrome.windows.onCreated.addListener((window) => {
-   // Lưu trữ thông tin về cửa sổ mới
-   windowTabMapping[window.id] = [];
+chrome.tabs.onCreated.addListener(function (tab) {
+   chrome.runtime.sendMessage({
+      type: "ADD_TAB_CHROME",
+      data: {
+         newTab: tab,
+         windowId: tab.windowId,
+      },
+   });
 });
 
-// Khi tab mới được tạo
-chrome.tabs.onCreated.addListener((tab) => {
-   const windowId = tab.windowId;
-   if (windowTabMapping[windowId]) {
-      windowTabMapping[windowId].push(tab.id);
-   }
+chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
+   chrome.runtime.sendMessage({
+      type: "DELETE_TAB_CHROME",
+      data: {
+         tabId: tabId,
+      },
+   });
 });
 
-// Khi tab bị đóng
-chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
-   const windowId = removeInfo.windowId;
-   if (windowTabMapping[windowId]) {
-      windowTabMapping[windowId] = windowTabMapping[windowId].filter(
-         (id) => id !== tabId
+chrome.windows.onRemoved.addListener(function (windowId) {
+   chrome.runtime.sendMessage({
+      type: "CLOSE_WINDOW_CHROME",
+      data: {
+         windowId,
+      },
+   });
+});
+
+chrome.windows.onCreated.addListener(function (window) {
+   chrome.tabs.query({ windowId: window.id }, function (tabs) {
+      window.tabs = tabs;
+      chrome.runtime.sendMessage({
+         type: "OPEN_WINDOW_CHROME",
+         data: {
+            window,
+         },
+      });
+   });
+});
+
+// Ví dụ sử dụng hàm getTabInfo với callback
+
+// Lắng nghe sự kiện khi tab được di chuyển trong cùng một cửa sổ
+chrome.tabs.onMoved.addListener((tabId, moveInfo) => {
+   console.log("moveInfo : ", moveInfo);
+   console.log("Thông tin di chuyển:", moveInfo);
+});
+
+// Lắng nghe khi tab được di chuyển từ cửa sổ này sang cửa sổ khác
+chrome.tabs.onDetached.addListener((tabId, detachInfo) => {
+   console.log("detachInfor : ", detachInfo);
+   console.log(
+      `Tab ${tabId} đã được tách ra khỏi cửa sổ ${detachInfo.oldWindowId}.`
+   );
+   chrome.tabs.onAttached.addListener((tabId, attachInfo) => {
+      console.log("attachInfor : ", attachInfo);
+      console.log(
+         `Tab ${tabId} đã được gắn vào cửa sổ ${attachInfo.newWindowId}.`
       );
-   }
-});
-
-// Khi cửa sổ bị đóng
-chrome.windows.onRemoved.addListener((windowId) => {
-   delete windowTabMapping[windowId];
+   });
 });

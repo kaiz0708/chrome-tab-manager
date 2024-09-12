@@ -38,8 +38,41 @@ module.exports = {
             custom: "rgb(240, 240, 247);",
             "custom-hover": "rgb(183, 183, 206)",
          },
+         borderRadius: {
+            custom: "6px 6px -30px 0px", // Tạo giá trị border-radius tùy chỉnh
+         },
          borderWidth: {
             1: "1px",
+         },
+         width: {
+            custom: "189px",
+         },
+         height: {
+            custom: "470px",
+         },
+         keyframes: {
+            hoverEffect: {
+               "0%": {
+                  backgroundColor: "rgb(255, 255, 255)",
+               },
+               "100%": {
+                  backgroundColor: "rgb(255, 240, 241)",
+               },
+            },
+            hoverEffectBlock: {
+               "0%": {
+                  backgroundColor: "rgb(255, 255, 255)",
+                  padding: "0.25rem",
+               },
+               "100%": {
+                  backgroundColor: "rgb(255, 240, 241)",
+                  padding: "0.25rem",
+               },
+            },
+         },
+         animation: {
+            hoverEffect: "hoverEffect 0.1s ease-in-out forwards",
+            hoverEffectBlock: "hoverEffectBlock 0.1s ease-in-out forwards",
          },
       },
    },
