@@ -40,24 +40,59 @@ chrome.windows.onCreated.addListener(function (window) {
    });
 });
 
-// Ví dụ sử dụng hàm getTabInfo với callback
+const createPayload = (indexDrag, indexHover, windowIdDrag, windowIdHover) => {
+   return {
+      tabDrag: {
+         index: indexDrag,
+         windowId: windowIdDrag,
+      },
+
+      tabHover: {
+         index: indexHover,
+         windowId: windowIdHover,
+      },
+   };
+};
 
 // Lắng nghe sự kiện khi tab được di chuyển trong cùng một cửa sổ
 chrome.tabs.onMoved.addListener((tabId, moveInfo) => {
    console.log("moveInfo : ", moveInfo);
    console.log("Thông tin di chuyển:", moveInfo);
+   const payload = createPayload(
+      moveInfo.fromIndex,
+      moveInfo.toIndex,
+      moveInfo.windowId,
+      moveInfo.windowId
+   );
+
+   chrome.runtime.sendMessage({
+      type: "MOVE_TAB_AROUND_WINDOW_CHROME",
+      data: {
+         ...payload,
+      },
+   });
 });
 
 // Lắng nghe khi tab được di chuyển từ cửa sổ này sang cửa sổ khác
 chrome.tabs.onDetached.addListener((tabId, detachInfo) => {
    console.log("detachInfor : ", detachInfo);
-   console.log(
-      `Tab ${tabId} đã được tách ra khỏi cửa sổ ${detachInfo.oldWindowId}.`
-   );
+   console.log("detach : ", tabId);
+
    chrome.tabs.onAttached.addListener((tabId, attachInfo) => {
+      console.log("attach : ", tabId);
       console.log("attachInfor : ", attachInfo);
-      console.log(
-         `Tab ${tabId} đã được gắn vào cửa sổ ${attachInfo.newWindowId}.`
+      const payload = createPayload(
+         detachInfo.oldPosition,
+         attachInfo.newPosition,
+         detachInfo.oldWindowId,
+         attachInfo.newWindowId
       );
+
+      chrome.runtime.sendMessage({
+         type: "MOVE_TAB_WITHOUT_WINDOW_CHROME",
+         data: {
+            ...payload,
+         },
+      });
    });
 });

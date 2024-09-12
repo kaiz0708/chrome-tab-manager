@@ -63,15 +63,23 @@ export const windowSlice = createSlice({
                }
             });
 
-            state.value.forEach((window) => {
-               if (window.id === tabHover.windowId) {
-                  if (tabHover.index !== -1) {
-                     window.tabs.splice(tabHover.index, 0, valueTabDrag);
-                  } else {
-                     window.tabs.push(valueTabDrag);
+            let check = state.value.find(
+               (window) =>
+                  window.id === tabHover.windowId &&
+                  window.tabs.some((tab) => tab.id === tabHover.tabId)
+            );
+
+            if (check === undefined) {
+               state.value.forEach((window) => {
+                  if (window.id === tabHover.windowId) {
+                     if (tabHover.index !== -1) {
+                        window.tabs.splice(tabHover.index, 0, valueTabDrag);
+                     } else {
+                        window.tabs.push(valueTabDrag);
+                     }
                   }
-               }
-            });
+               });
+            }
          }
       },
       addEmptyTab: (state, action) => {

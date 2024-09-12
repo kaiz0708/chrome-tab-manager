@@ -14,6 +14,7 @@ import {
    deleteWindow,
    setValue,
    addWindow,
+   moveTab,
 } from "./store/features/windowSlices";
 /* global chrome */
 function App() {
@@ -24,6 +25,10 @@ function App() {
    const typeCloseWindowChrome =
       process.env.REACT_APP_TYPE_MESSAGE_CLOSE_WINDOW_CHROME;
    const typeOpenWindow = process.env.REACT_APP_TYPE_MESSAGE_OPEN_WINDOW_CHROME;
+   const typeMoveTabAroundWindow =
+      process.env.REACT_APP_TYPE_MESSAGE_MOVE_TAB_AROUND_WINDOW_CHROME;
+   const typeMoveTabWithOutWindow =
+      process.env.REACT_APP_TYPE_MESSAGE_MOVE_TAB_WITHOUT_WINDOW_CHROME;
    const typeDisplay = useSelector((state) => state.current.displayState);
    const typeBlock = process.env.REACT_APP_TYPE_TAB_BLOCK;
    const typeTabHori = process.env.REACT_APP_TYPE_TAB_HORIZONTAL;
@@ -58,9 +63,12 @@ function App() {
                dispatch(deleteWindow(msg.data.windowId));
                break;
             case typeOpenWindow:
-               console.log(msg.data.window);
                dispatch(addWindow(msg.data.window));
+            case typeMoveTabAroundWindow:
+               dispatch(moveTab(msg.data));
                break;
+            case typeMoveTabWithOutWindow:
+               dispatch(moveTab(msg.data));
          }
       };
 

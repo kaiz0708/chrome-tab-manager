@@ -8,7 +8,6 @@ import serviceChrome from "../services/ServiceChrome";
 import { HiOutlinePlus } from "react-icons/hi2";
 import { Tooltip, Zoom } from "@mui/material";
 import { Grid2 } from "@mui/material";
-import serviceChrome from "../services/ServiceChrome";
 
 /* global chrome */
 
@@ -32,15 +31,17 @@ function ListTab({ window }) {
          );
          const payload = {
             tabDrag: {
-               ...item,
+               tabId: item.tabId,
+               index: item.index,
+               windowId: item.windowId,
             },
 
             tabHover: {
+               tabId: item.tabId,
                index: hoverIndex,
                windowId: window.windowTab.id,
             },
          };
-         dispatch(moveTab(payload));
          serviceChrome.moveTab(
             tabId,
             payload.tabHover.index,
