@@ -50,6 +50,26 @@ export const windowSlice = createSlice({
             }
          });
       },
+      pinTab: (state, action) => {
+         const { tab, pinned } = action.payload;
+         if (pinned) {
+            let fromIndex = null;
+            let toIndex = tab.index;
+            state.value.forEach((window) => {
+               if (window.id === tab.id) {
+                  window.tabs.forEach((item, index) => {
+                     item.id === tab.id ? (fromIndex = index) : (fromIndex = 0);
+                  });
+               }
+            });
+            const payload = {
+               fromIndex: fromIndex,
+               toIndex: toIndex,
+               windowId: tab.windowId,
+            };
+            moveTabAroundWindow(state.value, payload);
+         }
+      },
       navigateTab: (state, action) => {
          const { tabNavigate } = action.payload;
          state.value = state.value.map((window) => {
@@ -142,6 +162,7 @@ export const {
    moveTabWithoutWindow,
    activeTab,
    navigateTab,
+   pinTab,
 } = windowSlice.actions;
 
 export default windowSlice.reducer;

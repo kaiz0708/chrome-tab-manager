@@ -85,3 +85,15 @@ chrome.webNavigation.onCompleted.addListener(function (details) {
       });
    });
 });
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+   if (changeInfo.pinned !== undefined) {
+      chrome.runtime.sendMessage({
+         type: "PIN_STATUS_CHANGED",
+         data: {
+            tab: tab,
+            pinned: changeInfo.pinned,
+         },
+      });
+   }
+});

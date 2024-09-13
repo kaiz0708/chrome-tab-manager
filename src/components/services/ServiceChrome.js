@@ -65,6 +65,14 @@ export default {
       });
    },
 
+   pinTab: () => {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+         let currentTab = tabs[0];
+         let pinnedStatus = !currentTab.pinned;
+         chrome.tabs.update(currentTab.id, { pinned: pinnedStatus });
+      });
+   },
+
    openWindow: () => {
       chrome.windows.create(
          {

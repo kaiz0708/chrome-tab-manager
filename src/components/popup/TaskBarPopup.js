@@ -9,6 +9,7 @@ import { Grid2, Tooltip, Zoom } from "@mui/material";
 import { CiGrid2H } from "react-icons/ci";
 import { CiGrid41 } from "react-icons/ci";
 import { updateStateDisplay } from "../../store/features/popupSlices";
+import { GoPin } from "react-icons/go";
 
 /* global chrome */
 
@@ -23,6 +24,10 @@ function TaskBarPopup() {
 
    const switchToWindow = (windowCurrent) => {
       servicesChrome.switchToWindow(windowCurrent);
+   };
+
+   const pinTabWindowCurrent = () => {
+      servicesChrome.pinTab();
    };
 
    const openNewWindowEmpty = () => {
@@ -58,52 +63,47 @@ function TaskBarPopup() {
             <Grid2 columns={{ xs: 5, sm: 5, md: 5 }} container spacing={0.5}>
                <Grid2 size={{ xs: 1, sm: 1, md: 1 }}>
                   <Tooltip
+                     onClick={(e) => {
+                        e.stopPropagation();
+                        openNewWindowEmpty();
+                     }}
                      title={"Open new tab"}
                      TransitionComponent={Zoom}
                      TransitionProps={{ timeout: 200 }}
                      disableInteractive>
                      <div className='h-full aspect-square cursor-pointer border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
-                        <LuFilePlus2
-                           onClick={(e) => {
-                              e.stopPropagation();
-                              openNewWindowEmpty();
-                           }}
-                           className='text-xl'
-                        />
+                        <LuFilePlus2 className='text-xl' />
                      </div>
                   </Tooltip>
                </Grid2>
 
                <Grid2 size={{ xs: 1, sm: 1, md: 1 }}>
                   <Tooltip
+                     onClick={(e) => {
+                        e.stopPropagation();
+                        switchToWindow(windowCurrent);
+                     }}
                      title={"Close this popup"}
                      TransitionComponent={Zoom}
                      TransitionProps={{ timeout: 200 }}
                      disableInteractive>
                      <div className='h-full aspect-square cursor-pointer border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
-                        <SlClose
-                           onClick={(e) => {
-                              e.stopPropagation();
-                              switchToWindow(windowCurrent);
-                           }}
-                           className='text-xl'
-                        />
+                        <SlClose className='text-xl' />
                      </div>
                   </Tooltip>
                </Grid2>
 
                <Grid2 size={{ xs: 1, sm: 1, md: 1 }}>
                   <Tooltip
+                     onClick={(e) => {
+                        e.stopPropagation();
+                        minimizeWindow(windowCurrent);
+                     }}
                      title={"Minimize this window"}
                      TransitionComponent={Zoom}
                      TransitionProps={{ timeout: 200 }}
                      disableInteractive>
-                     <div
-                        onClick={(e) => {
-                           e.stopPropagation();
-                           minimizeWindow(windowCurrent);
-                        }}
-                        className='h-full aspect-square cursor-pointer border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
+                     <div className='h-full aspect-square cursor-pointer border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
                         <CiSaveDown1 className='text-xl' />
                      </div>
                   </Tooltip>
@@ -111,22 +111,37 @@ function TaskBarPopup() {
 
                <Grid2 size={{ xs: 1, sm: 1, md: 1 }}>
                   <Tooltip
+                     onClick={(e) => {
+                        e.stopPropagation();
+                        changeState();
+                     }}
                      title={"Change block view"}
                      TransitionComponent={Zoom}
                      TransitionProps={{ timeout: 200 }}
                      disableInteractive>
-                     <div
-                        onClick={(e) => {
-                           e.stopPropagation();
-                           changeState();
-                        }}
-                        className='h-full aspect-square cursor-pointer border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
+                     <div className='h-full aspect-square cursor-pointer border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
                         {typeDisplay ===
                         process.env.REACT_APP_TYPE_TAB_HORIZONTAL ? (
                            <CiGrid41 className='text-xl' />
                         ) : (
                            <CiGrid2H className='text-xl' />
                         )}
+                     </div>
+                  </Tooltip>
+               </Grid2>
+
+               <Grid2 size={{ xs: 1, sm: 1, md: 1 }}>
+                  <Tooltip
+                     onClick={(e) => {
+                        e.stopPropagation();
+                        pinTabWindowCurrent();
+                     }}
+                     title={"Pin current tab this window"}
+                     TransitionComponent={Zoom}
+                     TransitionProps={{ timeout: 200 }}
+                     disableInteractive>
+                     <div className='h-full aspect-square cursor-pointer border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
+                        <GoPin className='text-xl' />
                      </div>
                   </Tooltip>
                </Grid2>
