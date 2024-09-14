@@ -60,7 +60,7 @@ function Tab({ tab, index, type }) {
                className={` relative ${
                   typeDisplay === process.env.REACT_APP_TYPE_TAB_HORIZONTAL
                      ? "p-1.5 aspect-square"
-                     : "p-2 h-10"
+                     : "p-1.5 h-10"
                } w-full flex justify-center items-center hover:bg-gray-100 transition-all duration-300 ease-in-out border-1 border-opacity-5 z-10 space-x-1 cursor-pointer border-solid rounded`}>
                <div className='h-5 w-5'>
                   {tab.favIconUrl === "" || tab.favIconUrl === undefined ? (

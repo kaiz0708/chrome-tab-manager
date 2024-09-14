@@ -10,7 +10,10 @@
    "action": {
       "default_popup": "index.html"
    },
-   "icons": {
-      "16": "logo192.png"
-   }
+   "web_accessible_resources": [
+      {
+         "resources": ["main-page.html", "main-page.bundle.js"],
+         "matches": ["<all_urls>"]
+      }
+   ]
 }

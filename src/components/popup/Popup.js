@@ -8,7 +8,6 @@ import TaskBarPopup from "./TaskBarPopup";
 import { Grid2 } from "@mui/material";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { useNavigate } from "react-router-dom";
 import {
    deleteTab,
    addEmptyTab,
@@ -41,7 +40,6 @@ function Popup() {
    const typeBlock = process.env.REACT_APP_TYPE_TAB_BLOCK;
    const typeTabHori = process.env.REACT_APP_TYPE_TAB_HORIZONTAL;
    const dispatch = useDispatch();
-   const navigate = useNavigate();
 
    useEffect(() => {
       chrome.windows.getCurrent({ populate: true }, (currentWindow) => {
@@ -98,8 +96,9 @@ function Popup() {
       };
    }, []);
 
-   const handleClick = () => {
-      chrome.tabs.create({ url: chrome.runtime.getURL("/main-page") });
+   const moveMainPageExtension = () => {
+      const url = chrome.runtime.getURL("main-page.html");
+      window.open(url);
    };
 
    return (
@@ -109,7 +108,12 @@ function Popup() {
                Chrome Tab Manager
             </h1>
 
-            <button onClick={handleClick}>Go to Another Page</button>
+            <button
+               onClick={(e) => {
+                  moveMainPageExtension();
+               }}>
+               Go to Another Page
+            </button>
          </div>
 
          <div className='p-2 h-custom bg-gray-100 '>
