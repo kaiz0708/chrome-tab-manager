@@ -5,14 +5,12 @@ import { IoEarthOutline } from "react-icons/io5";
 import servicesChrome from "../services/ServiceChrome";
 import { Tooltip, Zoom } from "@mui/material";
 import { useDrag, useDrop } from "react-dnd";
-import { useSelector } from "react-redux";
 
 /* global chrome */
 
-function Tab({ tab, index, type }) {
+function Tab({ tab, index, typeDisplay }) {
    const [showCloseTab, setShowCloseTab] = useState(false);
    const [activeTab, setActiveTab] = useState(true);
-   const typeDisplay = useSelector((state) => state.current.displayState);
    const typeTabBlock = process.env.REACT_APP_TYPE_TAB_BLOCK;
    const typeTabHori = process.env.REACT_APP_TYPE_TAB_HORIZONTAL;
 
@@ -41,7 +39,9 @@ function Tab({ tab, index, type }) {
    };
 
    return (
-      <div ref={drag} className={`${type === typeTabBlock ? "relative" : ""} `}>
+      <div
+         ref={drag}
+         className={`${typeDisplay === typeTabBlock ? "relative" : ""} `}>
          <Tooltip
             TransitionComponent={Zoom}
             TransitionProps={{ timeout: 200 }}

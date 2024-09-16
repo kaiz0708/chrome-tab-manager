@@ -1,12 +1,16 @@
 /** @format */
 const path = require("path");
 const Dotenv = require("dotenv-webpack");
+const autoprefixer = require("autoprefixer");
+const plugin = autoprefixer({ grid: true });
 
 module.exports = {
-   entry: "./src/main-page.js", // Đầu vào tệp React
+   entry: {
+      mainPage: "./src/main-page.js",
+   },
    output: {
       path: path.resolve(__dirname, "public"), // Đầu ra thư mục
-      filename: "main-page.bundle.js", // Tên tệp biên dịch
+      filename: "[name].bundle.js", // Tên tệp biên dịch
    },
    module: {
       rules: [
@@ -23,16 +27,30 @@ module.exports = {
          {
             test: /\.css$/,
             use: [
-               "style-loader", // Nhúng CSS vào DOM
-               "css-loader", // Xử lý các import CSS
-               "postcss-loader", // Chạy CSS qua PostCSS (bao gồm Tailwind CSS)
+               "style-loader",
+               "css-loader",
+               {
+                  loader: "postcss-loader",
+                  options: {
+                     postcssOptions: {
+                        plugins: [
+                           require("tailwindcss"),
+                           require("autoprefixer")({ grid: true }),
+                        ],
+                     },
+                  },
+               },
             ],
+         },
+         {
+            test: /\.m?js$/,
+            resolve: {
+               fullySpecified: false, // disable the behaviour
+            },
          },
       ],
    },
-   plugins: [
-      new Dotenv(), // Thêm plugin để đọc biến môi trường từ .env
-   ],
+   plugins: [new Dotenv()],
    mode: "production",
    resolve: {
       extensions: [".js", ".jsx"],

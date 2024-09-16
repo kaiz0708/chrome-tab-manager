@@ -2,8 +2,6 @@
 import Tab from "./Tab";
 import { useDrag, useDrop } from "react-dnd";
 import React, { useRef } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { moveTab } from "../../store/features/windowSlices";
 import serviceChrome from "../services/ServiceChrome";
 import { HiOutlinePlus } from "react-icons/hi2";
 import { Tooltip, Zoom } from "@mui/material";
@@ -13,8 +11,6 @@ import { Grid2 } from "@mui/material";
 
 function ListTab({ window }) {
    const dropRef = useRef(null);
-   const dispatch = useDispatch();
-   const typeDisplay = useSelector((state) => state.current.displayState);
    const typeTabHori = process.env.REACT_APP_TYPE_TAB_HORIZONTAL;
    const typeTabBlock = process.env.REACT_APP_TYPE_TAB_BLOCK;
    const [{ isOver }, drop] = useDrop({
@@ -27,7 +23,7 @@ function ListTab({ window }) {
             dropRef,
             window.windowTab.tabs,
             process.env.REACT_APP_TYPE_AMOUNT_COLUMNS_TAB,
-            typeDisplay
+            window.typeDisplay
          );
          serviceChrome.moveTab(tabId, hoverIndex, window.windowTab.id);
       },
@@ -103,7 +99,7 @@ function ListTab({ window }) {
       <div ref={combinedRef}>
          <Grid2
             columns={
-               typeDisplay === typeTabHori
+               window.typeDisplay === typeTabHori
                   ? { xs: 4, sm: 4, md: 4 }
                   : { xs: 1, sm: 1, md: 1 }
             }
@@ -111,7 +107,12 @@ function ListTab({ window }) {
             spacing={1}>
             {window.windowTab.tabs.map((tab, index) => (
                <Grid2 size={{ xs: 1, sm: 1, md: 1 }} key={index}>
-                  <Tab tab={tab} index={index} key={index} />
+                  <Tab
+                     tab={tab}
+                     index={index}
+                     typeDisplay={window.typeDisplay}
+                     key={index}
+                  />
                </Grid2>
             ))}
             <Grid2 size={{ xs: 1, sm: 1, md: 1 }}>
@@ -126,14 +127,16 @@ function ListTab({ window }) {
                         addNewEmptyTab(window.windowTab.id);
                      }}
                      style={
-                        typeDisplay === typeTabBlock
+                        window.typeDisplay === typeTabBlock
                            ? { height: "40px", padding: "8px" }
                            : {}
                      }
                      className='cursor-pointer border-1 flex justify-center items-center p-1.5 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
                      <HiOutlinePlus
                         className={`${
-                           typeDisplay === typeTabHori ? "w-full h-full" : ""
+                           window.typeDisplay === typeTabHori
+                              ? "w-full h-full"
+                              : ""
                         }`}
                      />
                   </div>

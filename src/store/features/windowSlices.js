@@ -1,5 +1,6 @@
 /** @format */
 import { createSlice } from "@reduxjs/toolkit";
+import React from "react";
 
 const solveDelele = (window, tabId) => {
    for (let i = 0; i < window.length; i++) {
@@ -23,7 +24,7 @@ const solveDelele = (window, tabId) => {
    return window;
 };
 
-export const windowSlice = createSlice({
+const windowSlice = createSlice({
    name: "window",
    initialState: {
       value: [],
@@ -151,6 +152,8 @@ export const windowSlice = createSlice({
       },
    },
 });
+
+// Lưu trạng thái Redux vào chrome.storage mỗi khi store thay đổi
 
 export const {
    deleteWindow,

@@ -45,7 +45,6 @@ function Popup() {
       chrome.windows.getCurrent({ populate: true }, (currentWindow) => {
          dispatch(updateWindowCurrent(currentWindow.id));
          chrome.windows.getAll({ populate: true }, (windows) => {
-            console.log(windows);
             const sortedWindows = windows.sort((a, b) => {
                if (a.id === currentWindow.id) return -1;
                if (b.id === currentWindow.id) return 1;
@@ -122,13 +121,13 @@ function Popup() {
                   columns={
                      typeDisplay === typeTabHori
                         ? { xs: 3, sm: 3, md: 3 }
-                        : { xs: 3, sm: 3, md: 3 }
+                        : { xs: 2, sm: 2, md: 2 }
                   }
                   container
                   spacing={1}>
                   {windowTabs.map((windowTab, index) => (
                      <Grid2 size={{ xs: 1, sm: 1, md: 1 }} key={index}>
-                        <WindowTab window={{ windowTab, index }} />
+                        <WindowTab window={{ windowTab, index, typeDisplay }} />
                      </Grid2>
                   ))}
                </Grid2>

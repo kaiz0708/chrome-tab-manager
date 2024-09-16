@@ -1,6 +1,7 @@
 /** @format */
 
-import Popup from "./components/popup/popup";
+import MainPage from "./components/page/MainPage";
+import Popup from "./components/popup/Popup";
 /* global chrome */
 function App() {
    return (
