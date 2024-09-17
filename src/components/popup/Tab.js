@@ -5,14 +5,13 @@ import { IoEarthOutline } from "react-icons/io5";
 import servicesChrome from "../services/ServiceChrome";
 import { Tooltip, Zoom } from "@mui/material";
 import { useDrag, useDrop } from "react-dnd";
+import { ActionTab } from "../../enums/ActionTab";
 
 /* global chrome */
 
 function Tab({ tab, index, typeDisplay }) {
    const [showCloseTab, setShowCloseTab] = useState(false);
    const [activeTab, setActiveTab] = useState(true);
-   const typeTabBlock = process.env.REACT_APP_TYPE_TAB_BLOCK;
-   const typeTabHori = process.env.REACT_APP_TYPE_TAB_HORIZONTAL;
 
    const [{ isDragging }, drag] = useDrag({
       type: "ITEM",
@@ -41,7 +40,9 @@ function Tab({ tab, index, typeDisplay }) {
    return (
       <div
          ref={drag}
-         className={`${typeDisplay === typeTabBlock ? "relative" : ""} `}>
+         className={`${
+            typeDisplay === ActionTab.typeBlock ? "relative" : ""
+         } `}>
          <Tooltip
             TransitionComponent={Zoom}
             TransitionProps={{ timeout: 200 }}
@@ -72,11 +73,11 @@ function Tab({ tab, index, typeDisplay }) {
                      />
                   )}
                </div>
-               {typeDisplay === typeTabBlock ? (
+               {typeDisplay === ActionTab.typeBlock ? (
                   <p className='truncate flex-1 mr-2'>{tab.title}</p>
                ) : null}
                {tab.active && activeTab ? (
-                  typeDisplay === typeTabBlock ? (
+                  typeDisplay === ActionTab.typeBlock ? (
                      <span className='ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-green-500 text-white'>
                         active
                      </span>
@@ -85,7 +86,7 @@ function Tab({ tab, index, typeDisplay }) {
                   )
                ) : null}
                {showCloseTab ? (
-                  typeDisplay === typeTabBlock ? (
+                  typeDisplay === ActionTab.typeBlock ? (
                      <IoIosClose
                         onClick={(e) => {
                            e.stopPropagation();

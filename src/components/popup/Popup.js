@@ -8,6 +8,7 @@ import TaskBarPopup from "./TaskBarPopup";
 import { Grid2 } from "@mui/material";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { ActionTab } from "../../enums/ActionTab";
 import {
    deleteTab,
    addEmptyTab,
@@ -23,22 +24,7 @@ import {
 /* global chrome */
 function Popup() {
    const windowTabs = useSelector((state) => state.window.value);
-   const typeAddTabChrome = process.env.REACT_APP_TYPE_MESSAGE_ADD_TAB_CHROME;
-   const typeDeleteTabChrome =
-      process.env.REACT_APP_TYPE_MESSAGE_DELETE_TAB_CHROME;
-   const typeCloseWindowChrome =
-      process.env.REACT_APP_TYPE_MESSAGE_CLOSE_WINDOW_CHROME;
-   const typeOpenWindow = process.env.REACT_APP_TYPE_MESSAGE_OPEN_WINDOW_CHROME;
-   const typeMoveTabAroundWindow =
-      process.env.REACT_APP_TYPE_MESSAGE_MOVE_TAB_AROUND_WINDOW_CHROME;
-   const typeMoveTabWithOutWindow =
-      process.env.REACT_APP_TYPE_MESSAGE_MOVE_TAB_WITHOUT_WINDOW_CHROME;
    const typeDisplay = useSelector((state) => state.current.displayState);
-   const typeActiveTab = process.env.REACT_APP_TYPE_MESSAGE_ACTIVE_TAB;
-   const typeNavigateTab = process.env.REACT_APP_TYPE_MESSAGE_NEVIGATE_URL;
-   const typePinTab = process.env.REACT_APP_TYPE_MESSAGE_PIN_STATUS_CHANGED;
-   const typeBlock = process.env.REACT_APP_TYPE_TAB_BLOCK;
-   const typeTabHori = process.env.REACT_APP_TYPE_TAB_HORIZONTAL;
    const dispatch = useDispatch();
 
    useEffect(() => {
@@ -59,31 +45,34 @@ function Popup() {
    useEffect(() => {
       const handleMessage = (msg) => {
          switch (msg.type) {
-            case typeDeleteTabChrome:
+            case ActionTab.typeDeleteTabChrome:
                dispatch(deleteTab(msg.data.tabId));
                break;
-            case typeAddTabChrome:
+            case ActionTab.typeAddTabChrome:
                dispatch(addEmptyTab(msg.data));
                break;
-            case typeCloseWindowChrome:
+            case ActionTab.typeCloseWindowChrome:
                dispatch(deleteWindow(msg.data.windowId));
                break;
-            case typeOpenWindow:
+            case ActionTab.typeOpenWindow:
                dispatch(addWindow(msg.data.window));
                break;
-            case typeMoveTabAroundWindow:
+            case ActionTab.typeMoveTabAroundWindow:
+               console.log("move around");
+               console.log(msg.data);
                dispatch(moveTabAroundWindow(msg.data));
                break;
-            case typeMoveTabWithOutWindow:
+            case ActionTab.typeMoveTabWithOutWindow:
+               console.log("move without");
                dispatch(moveTabWithoutWindow(msg.data));
                break;
-            case typeActiveTab:
+            case ActionTab.typeActiveTab:
                dispatch(activeTab(msg.data));
                break;
-            case typeNavigateTab:
+            case ActionTab.typeNavigateTab:
                dispatch(navigateTab(msg.data));
                break;
-            case typePinTab:
+            case ActionTab.typePinTab:
                dispatch(pinTab(msg.data));
                break;
          }
@@ -119,7 +108,7 @@ function Popup() {
             <DndProvider backend={HTML5Backend}>
                <Grid2
                   columns={
-                     typeDisplay === typeTabHori
+                     typeDisplay === ActionTab.typeTabHori
                         ? { xs: 3, sm: 3, md: 3 }
                         : { xs: 2, sm: 2, md: 2 }
                   }
@@ -127,7 +116,13 @@ function Popup() {
                   spacing={1}>
                   {windowTabs.map((windowTab, index) => (
                      <Grid2 size={{ xs: 1, sm: 1, md: 1 }} key={index}>
-                        <WindowTab window={{ windowTab, index, typeDisplay }} />
+                        <WindowTab
+                           window={{
+                              windowTab,
+                              index,
+                              typeDisplay: typeDisplay,
+                           }}
+                        />
                      </Grid2>
                   ))}
                </Grid2>

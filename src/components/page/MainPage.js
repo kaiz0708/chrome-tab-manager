@@ -6,6 +6,7 @@ import ListTabMainPage from "./ListTabMainPage";
 import { updateWindowCurrent } from "../../store/features/popupSlices";
 import { useSelector, useDispatch } from "react-redux";
 import { Grid2 } from "@mui/material";
+import { ActionTab } from "../../enums/ActionTab";
 import {
    deleteTab,
    addEmptyTab,
@@ -17,26 +18,67 @@ import {
    activeTab,
    navigateTab,
    pinTab,
-} from "../../store/features/windowSlices";
+} from "../../store/features/windowCopy";
 
 /* global chrome */
 
 function MainPage() {
-   const windowTabs = useSelector((state) => state.window.value);
-   const typeDisplay = process.env.REACT_APP_TYPE_TAB_BLOCK;
+   const typeDisplay = ActionTab.typeBlock;
+   const windowTabs = useSelector((state) => state.main.value);
    const dispatch = useDispatch();
-   useEffect(() => {
-      chrome.storage.local.get("reduxState", (result) => {
-         if (result.reduxState) {
-            dispatch(setValue(result.reduxState));
-         }
-      });
 
-      chrome.storage.local.get("windowCurrent", (result) => {
-         if (result.windowCurrent) {
-            dispatch(updateWindowCurrent(result.windowCurrent));
-         }
+   useEffect(() => {
+      chrome.windows.getCurrent({ populate: true }, (currentWindow) => {
+         dispatch(updateWindowCurrent(currentWindow.id));
+         chrome.windows.getAll({ populate: true }, (windows) => {
+            const sortedWindows = windows.sort((a, b) => {
+               if (a.id === currentWindow.id) return -1;
+               if (b.id === currentWindow.id) return 1;
+               return 0;
+            });
+
+            dispatch(setValue(sortedWindows));
+         });
       });
+   }, []);
+
+   useEffect(() => {
+      const handleMessage = (msg) => {
+         switch (msg.type) {
+            case ActionTab.typeDeleteTabChrome:
+               dispatch(deleteTab(msg.data.tabId));
+               break;
+            case ActionTab.typeAddTabChrome:
+               dispatch(addEmptyTab(msg.data));
+               break;
+            case ActionTab.typeCloseWindowChrome:
+               dispatch(deleteWindow(msg.data.windowId));
+               break;
+            case ActionTab.typeOpenWindow:
+               dispatch(addWindow(msg.data.window));
+               break;
+            case ActionTab.typeMoveTabAroundWindow:
+               dispatch(moveTabAroundWindow(msg.data));
+               break;
+            case ActionTab.typeMoveTabWithOutWindow:
+               dispatch(moveTabWithoutWindow(msg.data));
+               break;
+            case ActionTab.typeActiveTab:
+               dispatch(activeTab(msg.data));
+               break;
+            case ActionTab.typeNavigateTab:
+               dispatch(navigateTab(msg.data));
+               break;
+            case ActionTab.typePinTab:
+               dispatch(pinTab(msg.data));
+               break;
+         }
+      };
+
+      chrome.runtime.onMessage.addListener(handleMessage);
+      return () => {
+         chrome.runtime.onMessage.removeListener(handleMessage);
+      };
    }, []);
 
    return (
@@ -49,11 +91,11 @@ function MainPage() {
                <NavBar />
             </Grid2>
 
-            <Grid2 size={{ xs: 6, sm: 6, md: 6, lg: 6, xl: 6 }}>
+            <Grid2 size={{ xs: 7, sm: 7, md: 7, lg: 7, xl: 7 }}>
                <Collections />
             </Grid2>
 
-            <Grid2 size={{ xs: 3, sm: 3, md: 3, lg: 3, xl: 3 }}>
+            <Grid2 size={{ xs: 2, sm: 2, md: 2, lg: 2, xl: 2 }}>
                <ListTabMainPage window={{ windowTabs, typeDisplay }} />
             </Grid2>
          </Grid2>

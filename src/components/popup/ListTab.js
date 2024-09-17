@@ -6,13 +6,12 @@ import serviceChrome from "../services/ServiceChrome";
 import { HiOutlinePlus } from "react-icons/hi2";
 import { Tooltip, Zoom } from "@mui/material";
 import { Grid2 } from "@mui/material";
+import { ActionTab } from "../../enums/ActionTab";
 
 /* global chrome */
 
 function ListTab({ window }) {
    const dropRef = useRef(null);
-   const typeTabHori = process.env.REACT_APP_TYPE_TAB_HORIZONTAL;
-   const typeTabBlock = process.env.REACT_APP_TYPE_TAB_BLOCK;
    const [{ isOver }, drop] = useDrop({
       accept: "ITEM",
       drop: (item, monitor) => {
@@ -41,7 +40,7 @@ function ListTab({ window }) {
    ) => {
       const containerRect = dropRef.current.getBoundingClientRect();
 
-      if (typeDisplay === process.env.REACT_APP_TYPE_TAB_BLOCK) {
+      if (typeDisplay === ActionTab.typeBlock) {
          const { top: containerTop, height: containerHeight } = containerRect;
          const relativeY = clientOffset.y - containerTop;
          const averageTabHeight = containerHeight / tabs.length;
@@ -53,7 +52,7 @@ function ListTab({ window }) {
          return hoverIndex;
       }
 
-      if (typeDisplay === process.env.REACT_APP_TYPE_TAB_HORIZONTAL) {
+      if (typeDisplay === ActionTab.typeTabHori) {
          const {
             left: containerLeft,
             top: containerTop,
@@ -99,7 +98,7 @@ function ListTab({ window }) {
       <div ref={combinedRef}>
          <Grid2
             columns={
-               window.typeDisplay === typeTabHori
+               window.typeDisplay === ActionTab.typeTabHori
                   ? { xs: 4, sm: 4, md: 4 }
                   : { xs: 1, sm: 1, md: 1 }
             }
@@ -127,14 +126,14 @@ function ListTab({ window }) {
                         addNewEmptyTab(window.windowTab.id);
                      }}
                      style={
-                        window.typeDisplay === typeTabBlock
+                        window.typeDisplay === ActionTab.typeBlock
                            ? { height: "40px", padding: "8px" }
                            : {}
                      }
                      className='cursor-pointer border-1 flex justify-center items-center p-1.5 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
                      <HiOutlinePlus
                         className={`${
-                           window.typeDisplay === typeTabHori
+                           window.typeDisplay === ActionTab.typeTabHori
                               ? "w-full h-full"
                               : ""
                         }`}

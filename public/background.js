@@ -1,5 +1,4 @@
 /** @format */
-
 chrome.tabs.onCreated.addListener(function (tab) {
    chrome.runtime.sendMessage({
       type: "ADD_TAB_CHROME",
