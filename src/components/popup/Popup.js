@@ -90,7 +90,7 @@ function Popup() {
    };
 
    return (
-      <div className='w-full font-sans text-xs font-normal text-custom-black'>
+      <div className='w-full scrollbar-thumb-rounded font-sans text-xs font-normal text-custom-black'>
          <div>
             <h1 className='text-2xl p-2 font-normal text-custom-color-title text-center'>
                Chrome Tab Manager
@@ -104,9 +104,10 @@ function Popup() {
             </button>
          </div>
 
-         <div className='p-2 h-custom bg-gray-100 '>
+         <div className='p-2 h-custom bg-gray-100 overflow-y-auto scrollbar-thumb-rounded'>
             <DndProvider backend={HTML5Backend}>
                <Grid2
+                  gridAutoFlow={"row"}
                   columns={
                      typeDisplay === ActionTab.typeTabHori
                         ? { xs: 3, sm: 3, md: 3 }

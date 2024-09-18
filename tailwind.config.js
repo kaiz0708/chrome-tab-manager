@@ -39,7 +39,7 @@ module.exports = {
             "custom-hover": "rgb(183, 183, 206)",
          },
          borderRadius: {
-            custom: "6px 6px -30px 0px", // Tạo giá trị border-radius tùy chỉnh
+            scrollbar: "5px", // Bo tròn cho scrollbar
          },
          borderWidth: {
             1: "1px",
@@ -76,7 +76,31 @@ module.exports = {
          },
       },
    },
-   plugins: [require("tailwindcss-filters")],
+   plugins: [
+      require("tailwindcss-filters"),
+      function ({ addUtilities }) {
+         addUtilities({
+            ".scrollbar-thin": {
+               "scrollbar-width": "thin" /* Firefox */,
+            },
+            ".scrollbar-thumb-rounded": {
+               "&::-webkit-scrollbar": {
+                  width: "8px" /* Độ rộng của thanh cuộn */,
+                  height: "8px" /* Độ cao cho thanh cuộn ngang */,
+               },
+               "&::-webkit-scrollbar-thumb": {
+                  "background-color":
+                     "rgba(156, 163, 175, 0.3)" /* Màu của thanh kéo */,
+                  "border-radius": "8px" /* Bo tròn thanh kéo */,
+               },
+               "&::-webkit-scrollbar-track": {
+                  background:
+                     "rgba(229, 231, 235, 0.3)" /* Màu nền của track */,
+               },
+            },
+         });
+      },
+   ],
    variants: {
       extend: {
          backgroundColor: ["hover"], // Đảm bảo variant hover được hỗ trợ
