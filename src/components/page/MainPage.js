@@ -82,8 +82,9 @@ function MainPage() {
    }, []);
 
    return (
-      <div>
+      <div className='h-screen'>
          <Grid2
+            height={"100%"}
             columns={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
             container
             spacing={1}>

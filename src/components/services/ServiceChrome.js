@@ -73,15 +73,28 @@ export default {
       });
    },
 
-   openWindow: () => {
+   openWindow: (tabUrl) => {
+      console.log(tabUrl);
       chrome.windows.create(
          {
-            url: "chrome://newtab",
+            url: tabUrl[0],
             type: "normal",
             focused: true,
          },
          (window) => {
-            console.log(window);
+            if (tabUrl.length > 1) {
+               tabUrl.slice(1).forEach(
+                  (url) => {
+                     chrome.tabs.create({
+                        windowId: window.id,
+                        url: url,
+                     });
+                  },
+                  (tab) => {
+                     console.log(tab);
+                  }
+               );
+            }
          }
       );
    },

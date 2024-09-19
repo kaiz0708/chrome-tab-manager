@@ -1,14 +1,15 @@
 /** @format */
 
-import React, { useEffect, useRef } from "react";
-import WindowTab from "./WindowTab";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { updateWindowCurrent } from "../../store/features/popupSlices";
-import TaskBarPopup from "./TaskBarPopup";
-import { Grid2 } from "@mui/material";
+import TaskBarPopup from "./footer/TaskBarPopup";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { ActionTab } from "../../enums/ActionTab";
+import Header from "./header/Header";
+import MainPopup from "./main/MainPopup";
+import serviceChrome from "../services/ServiceChrome";
 import {
    deleteTab,
    addEmptyTab,
@@ -24,8 +25,15 @@ import {
 /* global chrome */
 function Popup() {
    const windowTabs = useSelector((state) => state.window.value);
+   const [windowList, setWindowList] = useState([]);
+   const [tabGroup, setTabGroup] = useState([]);
+   console.log(tabGroup);
    const typeDisplay = useSelector((state) => state.current.displayState);
    const dispatch = useDispatch();
+
+   useEffect(() => {
+      setWindowList(windowTabs);
+   }, [windowTabs]);
 
    useEffect(() => {
       chrome.windows.getCurrent({ populate: true }, (currentWindow) => {
@@ -84,55 +92,44 @@ function Popup() {
       };
    }, []);
 
-   const moveMainPageExtension = () => {
-      const url = chrome.runtime.getURL("main-page.html");
-      window.open(url);
+   const filterGroupTab = (value) => {
+      let tab = [];
+      if (value === "") {
+         setWindowList(windowTabs);
+         setTabGroup([]);
+      } else {
+         const windowGroup = windowTabs.map((window) => {
+            const filteredTabs = window.tabs.filter((e) =>
+               e.title.toLowerCase().includes(value.toLowerCase())
+            );
+            tab.push([...filteredTabs]);
+            return { ...window, tabs: filteredTabs };
+         });
+         setWindowList(windowGroup);
+         setTabGroup(tab);
+      }
+   };
+
+   const groupTab = () => {
+      const url = tabGroup.map((tab) => tab.url);
+      serviceChrome.openWindow(url);
+
+      windowList.forEach((window) => {
+         window.tabs.forEach((tab) => {
+            serviceChrome.closeTab(tab.id, tab.windowId);
+         });
+      });
+
+      setTabGroup([]);
    };
 
    return (
       <div className='w-full scrollbar-thumb-rounded font-sans text-xs font-normal text-custom-black'>
-         <div>
-            <h1 className='text-2xl p-2 font-normal text-custom-color-title text-center'>
-               Chrome Tab Manager
-            </h1>
-
-            <button
-               onClick={(e) => {
-                  moveMainPageExtension();
-               }}>
-               Go to Another Page
-            </button>
-         </div>
-
-         <div className='p-2 h-custom bg-gray-100 overflow-y-auto scrollbar-thumb-rounded'>
-            <DndProvider backend={HTML5Backend}>
-               <Grid2
-                  gridAutoFlow={"row"}
-                  columns={
-                     typeDisplay === ActionTab.typeTabHori
-                        ? { xs: 3, sm: 3, md: 3 }
-                        : { xs: 2, sm: 2, md: 2 }
-                  }
-                  container
-                  spacing={1}>
-                  {windowTabs.map((windowTab, index) => (
-                     <Grid2 size={{ xs: 1, sm: 1, md: 1 }} key={index}>
-                        <WindowTab
-                           window={{
-                              windowTab,
-                              index,
-                              typeDisplay: typeDisplay,
-                           }}
-                        />
-                     </Grid2>
-                  ))}
-               </Grid2>
-            </DndProvider>
-         </div>
-
-         <div className='p-2'>
-            <TaskBarPopup />
-         </div>
+         <Header />
+         <DndProvider backend={HTML5Backend}>
+            <MainPopup windowTabs={windowList} typeDisplay={typeDisplay} />
+         </DndProvider>
+         <TaskBarPopup filterGroupTab={filterGroupTab} groupTab={groupTab} />
       </div>
    );
 }

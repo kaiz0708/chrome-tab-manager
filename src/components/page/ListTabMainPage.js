@@ -1,6 +1,6 @@
 /** @format */
 
-import WindowTab from "../popup/WindowTab";
+import WindowTab from "../popup/main/WindowTab";
 import { useSelector, useDispatch } from "react-redux";
 import { Grid2 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
@@ -9,7 +9,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 function ListTabMainPage({ window }) {
    return (
-      <div>
+      <div className='scrollbar-thumb-rounded overflow-y-auto'>
          <div>OPEN TABS</div>
          <Grid2 columns={{ xs: 1, sm: 1, md: 1 }} container spacing={1}>
             {window.windowTabs.map((windowTab, index) => (

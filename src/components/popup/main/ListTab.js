@@ -2,11 +2,11 @@
 import Tab from "./Tab";
 import { useDrag, useDrop } from "react-dnd";
 import React, { useRef } from "react";
-import serviceChrome from "../services/ServiceChrome";
+import serviceChrome from "../../services/ServiceChrome";
 import { HiOutlinePlus } from "react-icons/hi2";
 import { Tooltip, Zoom } from "@mui/material";
 import { Grid2 } from "@mui/material";
-import { ActionTab } from "../../enums/ActionTab";
+import { ActionTab } from "../../../enums/ActionTab";
 
 /* global chrome */
 

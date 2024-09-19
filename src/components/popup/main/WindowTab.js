@@ -1,12 +1,11 @@
 /** @format */
 
 import React, { useState } from "react";
-import TaskBar from "./TaskBar";
 import { useSelector, useDispatch } from "react-redux";
-import services from "../services/ServiceChrome";
+import services from "../../services/ServiceChrome";
 import ListTab from "./ListTab";
 import { IoCloseOutline } from "react-icons/io5";
-import serviceChrome from "../services/ServiceChrome";
+import serviceChrome from "../../services/ServiceChrome";
 import { Tooltip, Zoom } from "@mui/material";
 /* global chrome */
 
@@ -49,7 +48,6 @@ function WindowTab({ window }) {
          </span>
 
          <ListTab window={window} />
-         <TaskBar window={window} />
       </div>
    );
 }

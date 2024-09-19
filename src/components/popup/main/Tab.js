@@ -2,10 +2,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { IoIosClose } from "react-icons/io";
 import { IoEarthOutline } from "react-icons/io5";
-import servicesChrome from "../services/ServiceChrome";
+import servicesChrome from "../../services/ServiceChrome";
 import { Tooltip, Zoom } from "@mui/material";
 import { useDrag, useDrop } from "react-dnd";
-import { ActionTab } from "../../enums/ActionTab";
+import { ActionTab } from "../../../enums/ActionTab";
 
 /* global chrome */
 
@@ -15,7 +15,7 @@ function Tab({ tab, index, typeDisplay }) {
 
    const [{ isDragging }, drag] = useDrag({
       type: "ITEM",
-      item: { index, tabId: tab.id, windowId: tab.windowId },
+      item: { index, tabId: tab.id, url: tab.url, windowId: tab.windowId },
       collect: (monitor) => ({
          isDragging: !!monitor.isDragging(),
       }),
