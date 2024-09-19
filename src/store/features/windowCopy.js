@@ -1,4 +1,5 @@
 /** @format */
+
 import { createSlice } from "@reduxjs/toolkit";
 import React from "react";
 
@@ -25,7 +26,7 @@ const solveDelele = (window, tabId) => {
 };
 
 const windowSlice = createSlice({
-   name: "window",
+   name: "main",
    initialState: {
       value: [],
    },

@@ -3,14 +3,17 @@
    "name": "My Extension",
    "version": "1.0",
    "description": "A description of your extension",
-   "permissions": ["storage", "windows", "tabs", "activeTab"],
+   "permissions": ["windows", "tabs", "activeTab", "webNavigation", "storage"],
    "background": {
       "service_worker": "background.js"
    },
    "action": {
       "default_popup": "index.html"
    },
-   "icons": {
-      "16": "logo192.png"
-   }
+   "web_accessible_resources": [
+      {
+         "resources": ["main-page.html", "main-page.bundle.js"],
+         "matches": ["<all_urls>"]
+      }
+   ]
 }

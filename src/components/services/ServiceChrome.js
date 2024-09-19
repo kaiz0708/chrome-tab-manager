@@ -65,15 +65,36 @@ export default {
       });
    },
 
-   openWindow: () => {
+   pinTab: () => {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+         let currentTab = tabs[0];
+         let pinnedStatus = !currentTab.pinned;
+         chrome.tabs.update(currentTab.id, { pinned: pinnedStatus });
+      });
+   },
+
+   openWindow: (tabUrl) => {
+      console.log(tabUrl);
       chrome.windows.create(
          {
-            url: "chrome://newtab",
+            url: tabUrl[0],
             type: "normal",
             focused: true,
          },
          (window) => {
-            console.log(window);
+            if (tabUrl.length > 1) {
+               tabUrl.slice(1).forEach(
+                  (url) => {
+                     chrome.tabs.create({
+                        windowId: window.id,
+                        url: url,
+                     });
+                  },
+                  (tab) => {
+                     console.log(tab);
+                  }
+               );
+            }
          }
       );
    },

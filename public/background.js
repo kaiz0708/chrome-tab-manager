@@ -1,5 +1,4 @@
 /** @format */
-
 chrome.tabs.onCreated.addListener(function (tab) {
    chrome.runtime.sendMessage({
       type: "ADD_TAB_CHROME",
@@ -40,24 +39,60 @@ chrome.windows.onCreated.addListener(function (window) {
    });
 });
 
-// Ví dụ sử dụng hàm getTabInfo với callback
-
-// Lắng nghe sự kiện khi tab được di chuyển trong cùng một cửa sổ
 chrome.tabs.onMoved.addListener((tabId, moveInfo) => {
-   console.log("moveInfo : ", moveInfo);
-   console.log("Thông tin di chuyển:", moveInfo);
+   chrome.runtime.sendMessage({
+      type: "MOVE_TAB_AROUND_WINDOW_CHROME",
+      data: {
+         fromIndex: moveInfo.fromIndex,
+         toIndex: moveInfo.toIndex,
+         windowId: moveInfo.windowId,
+      },
+   });
 });
 
-// Lắng nghe khi tab được di chuyển từ cửa sổ này sang cửa sổ khác
-chrome.tabs.onDetached.addListener((tabId, detachInfo) => {
-   console.log("detachInfor : ", detachInfo);
-   console.log(
-      `Tab ${tabId} đã được tách ra khỏi cửa sổ ${detachInfo.oldWindowId}.`
-   );
-   chrome.tabs.onAttached.addListener((tabId, attachInfo) => {
-      console.log("attachInfor : ", attachInfo);
-      console.log(
-         `Tab ${tabId} đã được gắn vào cửa sổ ${attachInfo.newWindowId}.`
-      );
+chrome.tabs.onAttached.addListener((tabId, attachInfo) => {
+   chrome.runtime.sendMessage({
+      type: "MOVE_TAB_WITHOUT_WINDOW_CHROME",
+      data: {
+         tabId: tabId,
+         newPosition: attachInfo.newPosition,
+         newWindowId: attachInfo.newWindowId,
+      },
    });
+});
+
+chrome.tabs.onActivated.addListener((activeInfo) => {
+   chrome.tabs.get(activeInfo.tabId, (tab) => {
+      chrome.runtime.sendMessage({
+         type: "ACTIVE_TAB",
+         data: {
+            tabId: tab.id,
+            windowId: tab.windowId,
+         },
+      });
+   });
+});
+
+chrome.webNavigation.onCompleted.addListener(function (details) {
+   chrome.tabs.get(details.tabId, function (tab) {
+      console.log(tab.url);
+      chrome.runtime.sendMessage({
+         type: "NEVIGATE_URL",
+         data: {
+            tabNavigate: tab,
+         },
+      });
+   });
+});
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+   if (changeInfo.pinned !== undefined) {
+      chrome.runtime.sendMessage({
+         type: "PIN_STATUS_CHANGED",
+         data: {
+            tab: tab,
+            pinned: changeInfo.pinned,
+         },
+      });
+   }
 });

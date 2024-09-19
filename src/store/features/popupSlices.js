@@ -1,9 +1,10 @@
 /** @format */
 
 import { createSlice } from "@reduxjs/toolkit";
+import React from "react";
 /* global chrome */
 
-export const popupSlice = createSlice({
+const popupSlice = createSlice({
    name: "current",
    initialState: {
       value: null,
