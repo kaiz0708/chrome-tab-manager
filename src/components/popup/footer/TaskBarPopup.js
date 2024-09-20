@@ -33,7 +33,7 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
    };
 
    const openNewWindowEmpty = () => {
-      servicesChrome.openWindow(["chrome://newtab"]);
+      servicesChrome.openWindow("chrome://newtab");
    };
 
    const changeState = () => {
@@ -54,7 +54,7 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
    return (
       <div className='p-2'>
          <Grid2 columns={{ xs: 6, sm: 6, md: 6 }} container spacing={0.5}>
-            <Grid2 size={{ xs: 4, sm: 4, md: 4 }}>
+            <Grid2 size={{ xs: 3, sm: 3, md: 3 }}>
                <div className='h-full'>
                   <input
                      onChange={(e) => {
@@ -65,13 +65,13 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                            groupTab();
                         }
                      }}
-                     className='w-full h-full focus:outline-none border border-gray-200 rounded p-1.5 text-sm placeholder:text-sm'
-                     placeholder='Starting searching tabs....'
+                     className='w-full h-full focus:outline-none border border-gray-200 rounded p-2 text-sm placeholder:text-sm'
+                     placeholder='Start typing to search tabs....'
                   />
                </div>
             </Grid2>
 
-            <Grid2 size={{ xs: 2, sm: 2, md: 2 }}>
+            <Grid2 size={{ xs: 3, sm: 3, md: 3 }}>
                <Grid2 columns={{ xs: 5, sm: 5, md: 5 }} container spacing={0.5}>
                   <Grid2 size={{ xs: 1, sm: 1, md: 1 }}>
                      <Tooltip
@@ -84,7 +84,7 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         TransitionProps={{ timeout: 200 }}
                         disableInteractive>
                         <div className='h-full aspect-square cursor-pointer border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
-                           <LuFilePlus2 className='text-xl' />
+                           <LuFilePlus2 className='w-full h-full' />
                         </div>
                      </Tooltip>
                   </Grid2>
@@ -100,7 +100,7 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         TransitionProps={{ timeout: 200 }}
                         disableInteractive>
                         <div className='h-full aspect-square cursor-pointer border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
-                           <SlClose className='text-xl' />
+                           <SlClose className='w-full h-full' />
                         </div>
                      </Tooltip>
                   </Grid2>
@@ -116,7 +116,7 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         TransitionProps={{ timeout: 200 }}
                         disableInteractive>
                         <div className='h-full aspect-square cursor-pointer border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
-                           <CiSaveDown1 className='text-xl' />
+                           <CiSaveDown1 className='w-full h-full' />
                         </div>
                      </Tooltip>
                   </Grid2>
@@ -134,9 +134,9 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         <div className='h-full aspect-square cursor-pointer border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
                            {typeDisplay ===
                            process.env.REACT_APP_TYPE_TAB_HORIZONTAL ? (
-                              <CiGrid41 className='text-xl' />
+                              <CiGrid41 className='w-full h-full' />
                            ) : (
-                              <CiGrid2H className='text-xl' />
+                              <CiGrid2H className='w-full h-full' />
                            )}
                         </div>
                      </Tooltip>
@@ -153,7 +153,7 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         TransitionProps={{ timeout: 200 }}
                         disableInteractive>
                         <div className='h-full aspect-square cursor-pointer border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
-                           <GoPin className='text-xl' />
+                           <GoPin className='w-full h-full' />
                         </div>
                      </Tooltip>
                   </Grid2>

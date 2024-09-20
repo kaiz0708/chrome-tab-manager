@@ -1,7 +1,7 @@
 /** @format */
 /* global chrome */
 
-export default {
+const serviceChrome = {
    switchToWindow: (windowCurrent) => {
       chrome.windows.update(windowCurrent, { focused: true }, () => {
          console.log(`Switched to window with ID: ${windowCurrent}`);
@@ -74,27 +74,38 @@ export default {
    },
 
    openWindow: (tabUrl) => {
-      console.log(tabUrl);
+      chrome.windows.create({
+         url: tabUrl,
+         type: "normal",
+         focused: true,
+      });
+   },
+
+   openWindowGroup: (urls) => {
       chrome.windows.create(
          {
-            url: tabUrl[0],
-            type: "normal",
             focused: true,
          },
          (window) => {
-            if (tabUrl.length > 1) {
-               tabUrl.slice(1).forEach(
-                  (url) => {
-                     chrome.tabs.create({
-                        windowId: window.id,
-                        url: url,
-                     });
-                  },
+            let index = 0;
+            urls.forEach((url) => {
+               chrome.tabs.move(
+                  url.id,
+                  { windowId: window.id, index: -1 },
                   (tab) => {
-                     console.log(tab);
+                     chrome.tabs.move(url.id, { index: index }, (movedTab) => {
+                        console.log(movedTab);
+                     });
                   }
                );
-            }
+               index = index + 1;
+            });
+            chrome.tabs.query({ windowId: window.id }, function (tabs) {
+               let activeTab = tabs[0]; // Lấy tab đang hoạt động
+               chrome.tabs.remove(activeTab.id, function () {
+                  console.log(`Tab đang hoạt động đã được xóa.`);
+               });
+            });
          }
       );
    },
@@ -109,3 +120,5 @@ export default {
       chrome.windows.update(windowCurrentId, { state: "minimized" });
    },
 };
+
+export default serviceChrome;

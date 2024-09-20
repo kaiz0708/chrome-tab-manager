@@ -15,7 +15,7 @@ function ListTab({ window }) {
    const [{ isOver }, drop] = useDrop({
       accept: "ITEM",
       drop: (item, monitor) => {
-         const tabId = item.tabId;
+         const tabId = item.tab.id;
          const clientOffset = monitor.getClientOffset();
          const hoverIndex = calculateHoverIndex(
             clientOffset,

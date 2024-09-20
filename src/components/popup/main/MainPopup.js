@@ -11,9 +11,10 @@ function MainPopup({ windowTabs, typeDisplay }) {
    const [{ isOver }, drop] = useDrop({
       accept: "ITEM",
       drop: (item, monitor) => {
-         const { windowId, tabId, url } = item;
-         serviceChrome.openWindow(url);
-         serviceChrome.closeTab(tabId, windowId);
+         if (monitor.didDrop()) {
+            return;
+         }
+         serviceChrome.openWindowGroup([item.tab]);
       },
       collect: (monitor) => ({
          isOver: !!monitor.isOver(),

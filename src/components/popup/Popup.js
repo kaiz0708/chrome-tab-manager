@@ -26,8 +26,6 @@ import {
 function Popup() {
    const windowTabs = useSelector((state) => state.window.value);
    const [windowList, setWindowList] = useState([]);
-   const [tabGroup, setTabGroup] = useState([]);
-   console.log(tabGroup);
    const typeDisplay = useSelector((state) => state.current.displayState);
    const dispatch = useDispatch();
 
@@ -93,42 +91,33 @@ function Popup() {
    }, []);
 
    const filterGroupTab = (value) => {
-      let tab = [];
       if (value === "") {
          setWindowList(windowTabs);
-         setTabGroup([]);
       } else {
          const windowGroup = windowTabs.map((window) => {
             const filteredTabs = window.tabs.filter((e) =>
                e.title.toLowerCase().includes(value.toLowerCase())
             );
-            tab.push([...filteredTabs]);
             return { ...window, tabs: filteredTabs };
          });
          setWindowList(windowGroup);
-         setTabGroup(tab);
       }
    };
 
    const groupTab = () => {
-      const url = tabGroup.map((tab) => tab.url);
-      serviceChrome.openWindow(url);
-
+      let urls = [];
       windowList.forEach((window) => {
          window.tabs.forEach((tab) => {
-            serviceChrome.closeTab(tab.id, tab.windowId);
+            urls.push(tab);
          });
       });
-
-      setTabGroup([]);
+      serviceChrome.openWindowGroup(urls);
    };
 
    return (
       <div className='w-full scrollbar-thumb-rounded font-sans text-xs font-normal text-custom-black'>
          <Header />
-         <DndProvider backend={HTML5Backend}>
-            <MainPopup windowTabs={windowList} typeDisplay={typeDisplay} />
-         </DndProvider>
+         <MainPopup windowTabs={windowList} typeDisplay={typeDisplay} />
          <TaskBarPopup filterGroupTab={filterGroupTab} groupTab={groupTab} />
       </div>
    );

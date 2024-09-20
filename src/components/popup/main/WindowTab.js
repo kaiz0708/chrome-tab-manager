@@ -11,7 +11,6 @@ import { Tooltip, Zoom } from "@mui/material";
 
 function WindowTab({ window }) {
    const currentWindow = useSelector((state) => state.current.value);
-   console.log(window.typeDisplay);
 
    const closeAllTabWindows = (windowCurrentId) => {
       serviceChrome.closeWindow(windowCurrentId);
