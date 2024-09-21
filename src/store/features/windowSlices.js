@@ -99,23 +99,15 @@ const windowSlice = createSlice({
             });
          });
 
-         let check = state.value.find(
-            (window) =>
-               window.id === newWindowId &&
-               window.tabs.some((tab) => tab.id === tabId)
-         );
-
-         if (check === undefined) {
-            state.value.forEach((window) => {
-               if (window.id === newWindowId) {
-                  if (newPosition !== -1) {
-                     window.tabs.splice(newPosition, 0, tabDrag);
-                  } else {
-                     window.tabs.push(tabDrag);
-                  }
+         state.value.forEach((window) => {
+            if (window.id === newWindowId) {
+               if (newPosition !== -1) {
+                  window.tabs.splice(newPosition, 0, tabDrag);
+               } else {
+                  window.tabs.push(tabDrag);
                }
-            });
-         }
+            }
+         });
       },
       activeTab: (state, action) => {
          const { tabId, windowId } = action.payload;

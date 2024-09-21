@@ -19,6 +19,7 @@ import {
    navigateTab,
    pinTab,
 } from "../../store/features/windowCopy";
+import { borderRight } from "@mui/system";
 
 /* global chrome */
 
@@ -86,17 +87,22 @@ function MainPage() {
          <Grid2
             height={"100%"}
             columns={{ xs: 12, sm: 12, md: 12, lg: 12, xl: 12 }}
-            container
-            spacing={1}>
-            <Grid2 size={{ xs: 3, sm: 3, md: 3, lg: 3, xl: 3 }}>
+            container>
+            <Grid2
+               xs={{ borderRight: "1px solid #ccc" }}
+               size={{ xs: 3, sm: 3, md: 3, lg: 3, xl: 3 }}>
                <NavBar />
             </Grid2>
 
-            <Grid2 size={{ xs: 7, sm: 7, md: 7, lg: 7, xl: 7 }}>
+            <Grid2
+               xs={{ borderRight: "1px solid #ccc" }}
+               size={{ xs: 7, sm: 7, md: 7, lg: 7, xl: 7 }}>
                <Collections />
             </Grid2>
 
-            <Grid2 size={{ xs: 2, sm: 2, md: 2, lg: 2, xl: 2 }}>
+            <Grid2
+               xs={{ borderRight: "1px solid #ccc" }}
+               size={{ xs: 2, sm: 2, md: 2, lg: 2, xl: 2 }}>
                <ListTabMainPage window={{ windowTabs, typeDisplay }} />
             </Grid2>
          </Grid2>

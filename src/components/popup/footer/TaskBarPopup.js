@@ -54,7 +54,7 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
    return (
       <div className='p-2'>
          <Grid2 columns={{ xs: 6, sm: 6, md: 6 }} container spacing={0.5}>
-            <Grid2 size={{ xs: 3, sm: 3, md: 3 }}>
+            <Grid2 size={{ xs: 4, sm: 4, md: 4 }}>
                <div className='h-full'>
                   <input
                      onChange={(e) => {
@@ -65,13 +65,13 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                            groupTab();
                         }
                      }}
-                     className='w-full h-full focus:outline-none border border-gray-200 rounded p-2 text-sm placeholder:text-sm'
+                     className='w-full h-full focus:outline-none border border-gray-200 rounded p-1.5 text-sm placeholder:text-sm'
                      placeholder='Start typing to search tabs....'
                   />
                </div>
             </Grid2>
 
-            <Grid2 size={{ xs: 3, sm: 3, md: 3 }}>
+            <Grid2 size={{ xs: 2, sm: 2, md: 2 }}>
                <Grid2 columns={{ xs: 5, sm: 5, md: 5 }} container spacing={0.5}>
                   <Grid2 size={{ xs: 1, sm: 1, md: 1 }}>
                      <Tooltip

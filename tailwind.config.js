@@ -25,6 +25,7 @@ module.exports = {
             "custom-hover-gray": "rgb(225, 225, 231)",
             "custom-color-tooltip": "rgb(255, 240, 241)",
             "custom-color-title": "rgb(246, 80, 119)",
+            "custom-title": "#70708C",
          },
          boxShadow: {
             custom: "1px 2px 4px rgba(112, 112, 140, 0.15)",
