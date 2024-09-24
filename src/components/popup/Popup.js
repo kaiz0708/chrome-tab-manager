@@ -1,14 +1,9 @@
 /** @format */
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, lazy } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { updateWindowCurrent } from "../../store/features/popupSlices";
-import TaskBarPopup from "./footer/TaskBarPopup";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 import { ActionTab } from "../../enums/ActionTab";
-import Header from "./header/Header";
-import MainPopup from "./main/MainPopup";
 import serviceChrome from "../services/ServiceChrome";
 import {
    deleteTab,
@@ -22,6 +17,9 @@ import {
    navigateTab,
    pinTab,
 } from "../../store/features/windowSlices";
+const Header = lazy(() => import("./header/Header"));
+const MainPopup = lazy(() => import("./main/MainPopup"));
+const TaskBarPopup = lazy(() => import("./footer/TaskBarPopup"));
 /* global chrome */
 function Popup() {
    const windowTabs = useSelector((state) => state.window.value);
@@ -117,7 +115,9 @@ function Popup() {
    return (
       <div className='w-full scrollbar-thumb-rounded font-sans text-xs font-normal text-custom-black'>
          <Header />
+
          <MainPopup windowTabs={windowList} typeDisplay={typeDisplay} />
+
          <TaskBarPopup filterGroupTab={filterGroupTab} groupTab={groupTab} />
       </div>
    );

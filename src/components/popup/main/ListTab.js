@@ -1,7 +1,7 @@
 /** @format */
 import Tab from "./Tab";
 import { useDrag, useDrop } from "react-dnd";
-import React, { useRef } from "react";
+import React, { useRef, lazy } from "react";
 import serviceChrome from "../../services/ServiceChrome";
 import { HiOutlinePlus } from "react-icons/hi2";
 import { Tooltip, Zoom } from "@mui/material";

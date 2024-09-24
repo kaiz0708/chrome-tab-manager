@@ -1,5 +1,5 @@
 /** @format */
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, lazy } from "react";
 import { IoIosClose } from "react-icons/io";
 import { IoEarthOutline } from "react-icons/io5";
 import servicesChrome from "../../services/ServiceChrome";
@@ -41,7 +41,7 @@ function Tab({ tab, index, typeDisplay }) {
       <div
          ref={drag}
          className={`${
-            typeDisplay === ActionTab.typeBlock ? "relative" : ""
+            isDragging ? "transition-all duration-300 ease-in-out" : ""
          } `}>
          <Tooltip
             TransitionComponent={Zoom}

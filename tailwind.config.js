@@ -50,6 +50,7 @@ module.exports = {
          },
          height: {
             custom: "470px",
+            customBlock: "81.325px",
          },
          keyframes: {
             hoverEffect: {
