@@ -17,13 +17,7 @@ function ListTab({ window }) {
       drop: (item, monitor) => {
          const tabId = item.tab.id;
          const clientOffset = monitor.getClientOffset();
-         const hoverIndex = calculateHoverIndex(
-            clientOffset,
-            dropRef,
-            window.windowTab.tabs,
-            process.env.REACT_APP_TYPE_AMOUNT_COLUMNS_TAB,
-            window.typeDisplay
-         );
+         const hoverIndex = calculateHoverIndex(clientOffset, dropRef, window.windowTab.tabs, process.env.REACT_APP_TYPE_AMOUNT_COLUMNS_TAB, window.typeDisplay);
          serviceChrome.moveTab(tabId, hoverIndex, window.windowTab.id);
       },
       collect: (monitor) => ({
@@ -31,13 +25,7 @@ function ListTab({ window }) {
       }),
    });
 
-   const calculateHoverIndex = (
-      clientOffset,
-      dropRef,
-      tabs,
-      columns,
-      typeDisplay
-   ) => {
+   const calculateHoverIndex = (clientOffset, dropRef, tabs, columns, typeDisplay) => {
       const containerRect = dropRef.current.getBoundingClientRect();
 
       if (typeDisplay === ActionTab.typeBlock) {
@@ -53,27 +41,16 @@ function ListTab({ window }) {
       }
 
       if (typeDisplay === ActionTab.typeTabHori) {
-         const {
-            left: containerLeft,
-            top: containerTop,
-            width: containerWidth,
-            height: containerHeight,
-         } = containerRect;
+         const { left: containerLeft, top: containerTop, width: containerWidth, height: containerHeight } = containerRect;
          const relativeX = clientOffset.x - containerLeft;
          const relativeY = clientOffset.y - containerTop;
          const averageTabWidth = containerWidth / columns;
-         const averageTabHeight =
-            containerHeight / Math.ceil(tabs.length / columns);
+         const averageTabHeight = containerHeight / Math.ceil(tabs.length / columns);
 
          const columnIndex = Math.floor(relativeX / averageTabWidth);
          const rowIndex = Math.floor(relativeY / averageTabHeight);
          let hoverIndex = rowIndex * columns + columnIndex;
-         if (
-            columnIndex < 0 ||
-            columnIndex >= columns ||
-            rowIndex < 0 ||
-            hoverIndex >= tabs.length
-         ) {
+         if (columnIndex < 0 || columnIndex >= columns || rowIndex < 0 || hoverIndex >= tabs.length) {
             return -1;
          }
          hoverIndex = Math.max(0, Math.min(hoverIndex, tabs.length - 1));
@@ -96,48 +73,22 @@ function ListTab({ window }) {
 
    return (
       <div ref={combinedRef}>
-         <Grid2
-            columns={
-               window.typeDisplay === ActionTab.typeTabHori
-                  ? { xs: 4, sm: 4, md: 4 }
-                  : { xs: 1, sm: 1, md: 1 }
-            }
-            container
-            spacing={1}>
+         <Grid2 columns={window.typeDisplay === ActionTab.typeTabHori ? { xs: 4, sm: 4, md: 4 } : { xs: 1, sm: 1, md: 1 }} container spacing={1}>
             {window.windowTab.tabs.map((tab, index) => (
                <Grid2 size={{ xs: 1, sm: 1, md: 1 }} key={index}>
-                  <Tab
-                     tab={tab}
-                     index={index}
-                     typeDisplay={window.typeDisplay}
-                     key={index}
-                  />
+                  <Tab tab={tab} index={index} typeDisplay={window.typeDisplay} key={index} />
                </Grid2>
             ))}
             <Grid2 size={{ xs: 1, sm: 1, md: 1 }}>
-               <Tooltip
-                  disableInteractive
-                  title={"Open new tab"}
-                  TransitionComponent={Zoom}
-                  TransitionProps={{ timeout: 200 }}>
+               <Tooltip disableInteractive title={"Open new tab"} TransitionComponent={Zoom} TransitionProps={{ timeout: 200 }}>
                   <div
                      onClick={(e) => {
                         e.stopPropagation();
                         addNewEmptyTab(window.windowTab.id);
                      }}
-                     style={
-                        window.typeDisplay === ActionTab.typeBlock
-                           ? { height: "40px", padding: "8px" }
-                           : {}
-                     }
+                     style={window.typeDisplay === ActionTab.typeBlock ? { height: "40px", padding: "8px" } : {}}
                      className='cursor-pointer border-1 flex justify-center items-center p-1.5 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
-                     <HiOutlinePlus
-                        className={`${
-                           window.typeDisplay === ActionTab.typeTabHori
-                              ? "w-full h-full"
-                              : ""
-                        }`}
-                     />
+                     <HiOutlinePlus className={`${window.typeDisplay === ActionTab.typeTabHori ? "w-full h-full" : ""}`} />
                   </div>
                </Tooltip>
             </Grid2>

@@ -12,6 +12,7 @@ import { CiGrid41 } from "react-icons/ci";
 import { updateStateDisplay } from "../../../store/features/popupSlices";
 import { GoPin } from "react-icons/go";
 import React, { useEffect, useState, useRef } from "react";
+import { updateStateCollection } from "../../../store/features/popupSlices";
 
 /* global chrome */
 
@@ -19,13 +20,15 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
    const dispatch = useDispatch();
    const windowCurrent = useSelector((state) => state.current.value);
    const typeDisplay = useSelector((state) => state.current.displayState);
+   const typeDisplayCollection = useSelector((state) => state.current.displayCollection);
 
    const minimizeWindow = (windowCurrentId) => {
       servicesChrome.minimizeWindow(windowCurrentId);
    };
 
-   const switchToWindow = (windowCurrent) => {
-      servicesChrome.switchToWindow(windowCurrent);
+   const openCollection = () => {
+      dispatch(updateStateCollection(!typeDisplayCollection));
+      servicesChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_COLLECTION_VARIABLE, !typeDisplayCollection);
    };
 
    const pinTabWindowCurrent = () => {
@@ -39,12 +42,12 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
    const changeState = () => {
       switch (typeDisplay) {
          case process.env.REACT_APP_TYPE_TAB_BLOCK:
-            dispatch(
-               updateStateDisplay(process.env.REACT_APP_TYPE_TAB_HORIZONTAL)
-            );
+            dispatch(updateStateDisplay(process.env.REACT_APP_TYPE_TAB_HORIZONTAL));
+            servicesChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE, process.env.REACT_APP_TYPE_TAB_HORIZONTAL);
             break;
          case process.env.REACT_APP_TYPE_TAB_HORIZONTAL:
             dispatch(updateStateDisplay(process.env.REACT_APP_TYPE_TAB_BLOCK));
+            servicesChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE, process.env.REACT_APP_TYPE_TAB_BLOCK);
             break;
          default:
             break;
@@ -93,7 +96,7 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                      <Tooltip
                         onClick={(e) => {
                            e.stopPropagation();
-                           switchToWindow(windowCurrent);
+                           openCollection();
                         }}
                         title={"Close this popup"}
                         TransitionComponent={Zoom}
@@ -132,12 +135,7 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         TransitionProps={{ timeout: 200 }}
                         disableInteractive>
                         <div className='h-full aspect-square cursor-pointer border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
-                           {typeDisplay ===
-                           process.env.REACT_APP_TYPE_TAB_HORIZONTAL ? (
-                              <CiGrid41 className='w-full h-full' />
-                           ) : (
-                              <CiGrid2H className='w-full h-full' />
-                           )}
+                           {typeDisplay === process.env.REACT_APP_TYPE_TAB_HORIZONTAL ? <CiGrid41 className='w-full h-full' /> : <CiGrid2H className='w-full h-full' />}
                         </div>
                      </Tooltip>
                   </Grid2>

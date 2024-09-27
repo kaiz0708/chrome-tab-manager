@@ -3,20 +3,12 @@
 import React, { useEffect, useRef, useState, lazy } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { updateWindowCurrent } from "../../store/features/popupSlices";
+import { updateStateCollection } from "../../store/features/popupSlices";
 import { ActionTab } from "../../enums/ActionTab";
 import serviceChrome from "../services/ServiceChrome";
-import {
-   deleteTab,
-   addEmptyTab,
-   deleteWindow,
-   setValue,
-   addWindow,
-   moveTabAroundWindow,
-   moveTabWithoutWindow,
-   activeTab,
-   navigateTab,
-   pinTab,
-} from "../../store/features/windowSlices";
+import { deleteTab, addEmptyTab, deleteWindow, setValue, addWindow, moveTabAroundWindow, moveTabWithoutWindow, activeTab, navigateTab, pinTab } from "../../store/features/windowSlices";
+import { updateStateDisplay } from "../../store/features/popupSlices";
+import { motion, AnimatePresence } from "framer-motion";
 const Header = lazy(() => import("./header/Header"));
 const MainPopup = lazy(() => import("./main/MainPopup"));
 const TaskBarPopup = lazy(() => import("./footer/TaskBarPopup"));
@@ -43,6 +35,19 @@ function Popup() {
 
             dispatch(setValue(sortedWindows));
          });
+      });
+
+      serviceChrome.createState();
+      let str = "www.facebook.com/kyanh.nguyen.35380399/";
+      let url = "0" + ";" + str.toString() + ":::" + "0" + ";" + str.toString();
+
+      serviceChrome.setStateSync("url_0", url);
+      chrome.storage.local.get([process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE], (result) => {
+         dispatch(updateStateDisplay(result[process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE]));
+      });
+
+      chrome.storage.local.get([process.env.REACT_APP_TYPE_NAME_COLLECTION_VARIABLE], (result) => {
+         dispatch(updateStateCollection(result[process.env.REACT_APP_TYPE_NAME_COLLECTION_VARIABLE]));
       });
    }, []);
 
@@ -93,9 +98,7 @@ function Popup() {
          setWindowList(windowTabs);
       } else {
          const windowGroup = windowTabs.map((window) => {
-            const filteredTabs = window.tabs.filter((e) =>
-               e.title.toLowerCase().includes(value.toLowerCase())
-            );
+            const filteredTabs = window.tabs.filter((e) => e.title.toLowerCase().includes(value.toLowerCase()));
             return { ...window, tabs: filteredTabs };
          });
          setWindowList(windowGroup);

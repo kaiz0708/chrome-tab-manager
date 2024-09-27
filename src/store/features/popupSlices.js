@@ -1,7 +1,6 @@
 /** @format */
 
 import { createSlice } from "@reduxjs/toolkit";
-import React from "react";
 /* global chrome */
 
 const popupSlice = createSlice({
@@ -9,6 +8,7 @@ const popupSlice = createSlice({
    initialState: {
       value: null,
       displayState: process.env.REACT_APP_TYPE_TAB_HORIZONTAL,
+      displayCollection: false,
    },
    reducers: {
       updateWindowCurrent: (state, action) => {
@@ -16,12 +16,19 @@ const popupSlice = createSlice({
       },
 
       updateStateDisplay: (state, action) => {
-         console.log(action.payload);
          state.displayState = action.payload;
+      },
+
+      updateStateCollection: (state, action) => {
+         state.displayCollection = action.payload;
       },
    },
 });
 
-export const { updateWindowCurrent, updateStateDisplay } = popupSlice.actions;
+export const {
+   updateWindowCurrent,
+   updateStateDisplay,
+   updateStateCollection,
+} = popupSlice.actions;
 
 export default popupSlice.reducer;

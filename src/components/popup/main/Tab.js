@@ -38,17 +38,8 @@ function Tab({ tab, index, typeDisplay }) {
    };
 
    return (
-      <div
-         ref={drag}
-         className={`${
-            isDragging ? "transition-all duration-300 ease-in-out" : ""
-         } `}>
-         <Tooltip
-            TransitionComponent={Zoom}
-            TransitionProps={{ timeout: 200 }}
-            onClick={() => switchToTab(tab.id)}
-            disableInteractive
-            title={tab.title}>
+      <div ref={drag} className={`${isDragging ? "transition-all duration-300 ease-in-out" : ""} `}>
+         <Tooltip TransitionComponent={Zoom} TransitionProps={{ timeout: 200 }} onClick={() => switchToTab(tab.id)} disableInteractive title={tab.title}>
             <div
                onMouseEnter={() => {
                   setShowCloseTab(true);
@@ -59,28 +50,13 @@ function Tab({ tab, index, typeDisplay }) {
                   checkActveTab(tab.active, false);
                }}
                className={` relative ${
-                  typeDisplay === process.env.REACT_APP_TYPE_TAB_HORIZONTAL
-                     ? "p-1.5 aspect-square"
-                     : "p-1.5 h-10"
+                  typeDisplay === process.env.REACT_APP_TYPE_TAB_HORIZONTAL ? "p-1.5 aspect-square" : "p-1.5 h-10"
                } w-full flex justify-center items-center hover:bg-gray-100 transition-all duration-300 ease-in-out border-1 border-opacity-5 z-10 space-x-1 cursor-pointer border-solid rounded`}>
-               <div className='h-5 w-5'>
-                  {tab.favIconUrl === "" || tab.favIconUrl === undefined ? (
-                     <IoEarthOutline className='w-full h-full' />
-                  ) : (
-                     <img
-                        className='rounded-sm object-contain w-full h-full'
-                        src={tab.favIconUrl}
-                     />
-                  )}
-               </div>
-               {typeDisplay === ActionTab.typeBlock ? (
-                  <p className='truncate flex-1 mr-2'>{tab.title}</p>
-               ) : null}
+               <div className='h-5 w-5'>{tab.favIconUrl === "" || tab.favIconUrl === undefined ? <IoEarthOutline className='w-full h-full' /> : <img className='rounded-sm object-contain w-full h-full' src={tab.favIconUrl} />}</div>
+               {typeDisplay === ActionTab.typeBlock ? <p className='truncate flex-1 mr-2'>{tab.title}</p> : null}
                {tab.active && activeTab ? (
                   typeDisplay === ActionTab.typeBlock ? (
-                     <span className='ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-green-500 text-white'>
-                        active
-                     </span>
+                     <span className='ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-green-500 text-white'>active</span>
                   ) : (
                      <span className='absolute z-20 -top-1.5 -right-1.5 w-4 h-4 bg-green-500 rounded-full'></span>
                   )

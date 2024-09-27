@@ -1,6 +1,8 @@
 /** @format */
 /* global chrome */
 
+import { stringify } from "postcss";
+
 const serviceChrome = {
    switchToWindow: (windowCurrent) => {
       chrome.windows.update(windowCurrent, { focused: true }, () => {
@@ -17,24 +19,16 @@ const serviceChrome = {
    moveTab: (tabId, indexHover, windowIdHover) => {
       chrome.tabs.move(tabId, { windowId: windowIdHover, index: -1 }, (tab) => {
          if (chrome.runtime.lastError) {
-            console.error(
-               `Lỗi khi di chuyển tab: ${chrome.runtime.lastError.message}`
-            );
+            console.error(`Lỗi khi di chuyển tab: ${chrome.runtime.lastError.message}`);
          } else {
-            console.log(
-               `Tab ${tabId} đã được di chuyển đến cửa sổ ${windowIdHover}.`
-            );
+            console.log(`Tab ${tabId} đã được di chuyển đến cửa sổ ${windowIdHover}.`);
 
             // Cập nhật vị trí của tab trong cửa sổ mục tiêu
             chrome.tabs.move(tabId, { index: indexHover }, (movedTab) => {
                if (chrome.runtime.lastError) {
-                  console.error(
-                     `Lỗi khi thay đổi vị trí của tab: ${chrome.runtime.lastError.message}`
-                  );
+                  console.error(`Lỗi khi thay đổi vị trí của tab: ${chrome.runtime.lastError.message}`);
                } else {
-                  console.log(
-                     `Tab ${tabId} đã được di chuyển đến vị trí ${indexHover} trong cửa sổ ${windowIdHover}.`
-                  );
+                  console.log(`Tab ${tabId} đã được di chuyển đến vị trí ${indexHover} trong cửa sổ ${windowIdHover}.`);
                }
             });
          }
@@ -48,10 +42,7 @@ const serviceChrome = {
          },
          (newTab) => {
             if (chrome.runtime.lastError) {
-               console.error(
-                  "Error creating new tab:",
-                  chrome.runtime.lastError
-               );
+               console.error("Error creating new tab:", chrome.runtime.lastError);
             } else {
                console.log("New tab created successfully:", newTab);
             }
@@ -82,29 +73,27 @@ const serviceChrome = {
    },
 
    openWindowGroup: (urls) => {
+      console.log(urls);
       chrome.windows.create(
          {
             focused: true,
+            url: "chrome://newtab",
          },
          (window) => {
-            let index = 0;
-            urls.forEach((url) => {
-               chrome.tabs.move(
-                  url.id,
-                  { windowId: window.id, index: -1 },
-                  (tab) => {
-                     chrome.tabs.move(url.id, { index: index }, (movedTab) => {
-                        console.log(movedTab);
-                     });
-                  }
-               );
-               index = index + 1;
-            });
             chrome.tabs.query({ windowId: window.id }, function (tabs) {
-               let activeTab = tabs[0]; // Lấy tab đang hoạt động
+               let activeTab = tabs[0];
                chrome.tabs.remove(activeTab.id, function () {
                   console.log(`Tab đang hoạt động đã được xóa.`);
                });
+            });
+            let index = 0;
+            urls.forEach((url, indx) => {
+               chrome.tabs.move(url.id, { windowId: window.id, index: -1 }, (tab) => {
+                  chrome.tabs.move(url.id, { index: index }, (movedTab) => {
+                     console.log(movedTab);
+                  });
+               });
+               index = index + 1;
             });
          }
       );
@@ -118,6 +107,57 @@ const serviceChrome = {
 
    minimizeWindow: (windowCurrentId) => {
       chrome.windows.update(windowCurrentId, { state: "minimized" });
+   },
+
+   createState: () => {
+      const keys = ["view", "collection"];
+      const keyCollections = ["inforBase"];
+      const amountUrl = 12;
+      const valueDefaults = [process.env.REACT_APP_TYPE_TAB_HORIZONTAL, false];
+      chrome.storage.local.get(keys, (result) => {
+         keys.forEach((key, index) => {
+            if (result[key] === undefined) {
+               chrome.storage.local.set({ [key]: valueDefaults[index] }, () => {
+                  console.log("Đối tượng đã được lưu.");
+               });
+            }
+         });
+      });
+
+      chrome.storage.sync.get([keyCollections[0]], function (result) {
+         if (result[keyCollections[0]] === undefined) {
+            chrome.storage.sync.set({ [keyCollections[0]]: "0;Test;27/09/2024:::" }, () => {
+               console.log("Đối tượng đã được lưu.");
+            });
+         } else {
+            console.log(result[keyCollections[0]]);
+         }
+      });
+
+      for (let index = 0; index < amountUrl; index++) {
+         let defauls_url = "url_";
+         chrome.storage.sync.get([defauls_url + index], function (result) {
+            if (result[defauls_url + index] === undefined) {
+               chrome.storage.sync.remove([defauls_url + index], () => {
+                  console.log("Đối tượng đã được lưu.");
+               });
+            } else {
+               console.log(result[defauls_url + index]);
+            }
+         });
+      }
+   },
+
+   setStateLocal: (field, value) => {
+      chrome.storage.local.set({ [field]: value }, function () {
+         console.log("Đối tượng đã được lưu.");
+      });
+   },
+
+   setStateSync: (field, value) => {
+      chrome.storage.sync.set({ [field]: String(value) }, function () {
+         console.log("Đối tượng đã được lưu.");
+      });
    },
 };
 
