@@ -96,3 +96,16 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       });
    }
 });
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+   if (message.type === "ADD_COLLECTION") {
+      chrome.runtime.sendMessage({
+         type: "ADD_COLLECTION",
+         data: {
+            ...message.data,
+         },
+      });
+   }
+
+   sendResponse({ status: "success", message: "Collection added successfully" });
+});

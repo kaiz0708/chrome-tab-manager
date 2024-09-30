@@ -12,8 +12,6 @@ const ListTab = lazy(() => import("./ListTab"));
 function WindowTab({ window }) {
    const currentWindow = useSelector((state) => state.current.value);
 
-   console.log(window);
-
    const closeAllTabWindows = (windowCurrentId) => {
       serviceChrome.closeWindow(windowCurrentId);
    };
@@ -27,7 +25,11 @@ function WindowTab({ window }) {
          className='transition duration-200 ease-in space-y-2 hover:-translate-y-1 bg-white p-2 hover:shadow-custom-hover cursor-pointer shadow-custom rounded-md z-10 will-change-transform will-change-shadow'>
          <div className='flex justify-between items-center'>
             <span>
-               {window.for ? <span className='text-custom-color-title text-xs font-semibold'>#{window.index + 1}</span> : <span>#{window.windowTab.title}</span>}
+               {window.typeFeature === process.env.REACT_APP_TYPE_TAB ? (
+                  <span className='text-custom-color-title text-xs font-semibold'>#{window.index + 1}</span>
+               ) : (
+                  <span className='text-custom-color-title text-xs font-semibold'>#{window.windowTab.name}</span>
+               )}
 
                <span className='text-xs font-medium text-center'>{window.windowTab.tabs.length > 1 ? <span> ({window.windowTab.tabs.length} tabs)</span> : <span> ({1} tab)</span>}</span>
             </span>
@@ -43,7 +45,7 @@ function WindowTab({ window }) {
             </Tooltip>
          </div>
 
-         {window.for ? null : (
+         {window.typeFeature === process.env.REACT_APP_TYPE_TAB ? null : (
             <div>
                <span className='text-xs font-medium text-center'>${window.windowTab.date}</span>
             </div>

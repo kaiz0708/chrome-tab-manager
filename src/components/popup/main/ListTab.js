@@ -12,13 +12,29 @@ import { ActionTab } from "../../../enums/ActionTab";
 
 function ListTab({ window }) {
    const dropRef = useRef(null);
+   const tabType = process.env.REACT_APP_TYPE_TAB;
+   const collectionType = process.env.REACT_APP_TYPE_COLLECTION;
    const [{ isOver }, drop] = useDrop({
       accept: "ITEM",
       drop: (item, monitor) => {
          const tabId = item.tab.id;
+         const windowId = window.windowTab.id;
          const clientOffset = monitor.getClientOffset();
          const hoverIndex = calculateHoverIndex(clientOffset, dropRef, window.windowTab.tabs, process.env.REACT_APP_TYPE_AMOUNT_COLUMNS_TAB, window.typeDisplay);
-         serviceChrome.moveTab(tabId, hoverIndex, window.windowTab.id);
+
+         if (item.display === tabType) {
+            if (window.typeFeature === tabType) {
+               serviceChrome.moveTab(tabId, hoverIndex, window.windowTab.id);
+            } else {
+               serviceChrome.sendMessage({ id: windowId, tab: item.tab, newPosition: hoverIndex }, ActionTab.typeAddCollection);
+            }
+         } else {
+            if (window.typeFeature === collectionType) {
+               console.log(123);
+            } else {
+               serviceChrome.openNewTabEmpty(windowId, item.tab.url);
+            }
+         }
       },
       collect: (monitor) => ({
          isOver: !!monitor.isOver(),
@@ -68,7 +84,7 @@ function ListTab({ window }) {
    };
 
    const addNewEmptyTab = (windowId) => {
-      serviceChrome.openNewTabEmpty(windowId);
+      serviceChrome.openNewTabEmpty(windowId, "chrome://newtab");
    };
 
    return (
@@ -76,7 +92,7 @@ function ListTab({ window }) {
          <Grid2 columns={window.typeDisplay === ActionTab.typeTabHori ? { xs: 4, sm: 4, md: 4 } : { xs: 1, sm: 1, md: 1 }} container spacing={1}>
             {window.windowTab.tabs.map((tab, index) => (
                <Grid2 size={{ xs: 1, sm: 1, md: 1 }} key={index}>
-                  <Tab tab={tab} index={index} typeDisplay={window.typeDisplay} key={index} />
+                  <Tab tab={tab} index={index} typeDisplay={window.typeDisplay} display={window.typeFeature} key={index} />
                </Grid2>
             ))}
             <Grid2 size={{ xs: 1, sm: 1, md: 1 }}>

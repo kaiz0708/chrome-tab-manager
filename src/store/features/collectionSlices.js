@@ -9,12 +9,12 @@ const collectionSlice = createSlice({
       value: [],
    },
    reducers: {
-      setValue: (state, action) => {
+      setValueCollection: (state, action) => {
          state.value = action.payload;
       },
    },
 });
 
-export const { setValue } = collectionSlice.actions;
+export const { setValueCollection } = collectionSlice.actions;
 
 export default collectionSlice.reducer;

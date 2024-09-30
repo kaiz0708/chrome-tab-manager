@@ -3,16 +3,18 @@ import { useDrag, useDrop } from "react-dnd";
 import serviceChrome from "../../services/ServiceChrome";
 import React, { useEffect, useRef, lazy, Suspense } from "react";
 import { Grid2, Tooltip, Zoom } from "@mui/material";
-import Collection from "./Collections";
 import { useSelector, useDispatch } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
+import { CircularProgress } from "@mui/material";
+import Typography from "@mui/material/Typography";
+const MainCollections = lazy(() => import("./MainCollections"));
 /* global chrome */
 
 const WindowTab = lazy(() => import("./WindowTab"));
 
-function MainPopup({ windowTabs, typeDisplay }) {
+function MainPopup({ windowTabs, typeDisplay, loadingCollection }) {
    const dropRef = useRef(null);
-   const forTab = useRef(true);
+   const type = process.env.REACT_APP_TYPE_TAB;
    const stateCollection = useSelector((state) => state.current.displayCollection);
 
    const [{ isOver }, drop] = useDrop({
@@ -44,7 +46,7 @@ function MainPopup({ windowTabs, typeDisplay }) {
                               windowTab,
                               index,
                               typeDisplay: typeDisplay,
-                              for: forTab.current,
+                              typeFeature: type,
                            }}
                         />
                      </Suspense>
@@ -54,7 +56,19 @@ function MainPopup({ windowTabs, typeDisplay }) {
          </div>
 
          <div className={`relative border-1 p-2 text-black overflow-y-auto scrollbar-thumb-rounded ${stateCollection ? "h-[50%]" : "overflow hidden"}`}>
-            <AnimatePresence>{stateCollection ? <Collection /> : null}</AnimatePresence>
+            {stateCollection ? (
+               loadingCollection ? (
+                  <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                     <CircularProgress aria-label='Loading....' aria-busy={loadingCollection ? "true" : "false"} aria-live='polite' />
+                  </div>
+               ) : (
+                  <Suspense>
+                     <AnimatePresence>
+                        <MainCollections />
+                     </AnimatePresence>
+                  </Suspense>
+               )
+            ) : null}
          </div>
       </div>
    );

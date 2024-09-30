@@ -27,8 +27,7 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
    };
 
    const openCollection = () => {
-      dispatch(updateStateCollection(!typeDisplayCollection));
-      servicesChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_COLLECTION_VARIABLE, !typeDisplayCollection);
+      typeDisplayCollection ? dispatch(updateStateCollection(false)) : dispatch(updateStateCollection(true));
    };
 
    const pinTabWindowCurrent = () => {

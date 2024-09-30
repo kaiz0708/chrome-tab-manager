@@ -35,10 +35,11 @@ const serviceChrome = {
       });
    },
 
-   openNewTabEmpty: (windowId) => {
+   openNewTabEmpty: (windowId, url) => {
       chrome.tabs.create(
          {
             windowId: windowId,
+            url: url,
          },
          (newTab) => {
             if (chrome.runtime.lastError) {
@@ -126,7 +127,7 @@ const serviceChrome = {
 
       chrome.storage.sync.get([keyCollections[0]], function (result) {
          if (result[keyCollections[0]] === undefined) {
-            chrome.storage.sync.set({ [keyCollections[0]]: "0;Test;27/09/2024:::" }, () => {
+            chrome.storage.sync.set({ [keyCollections[0]]: "0;Test;27/09/2024" }, () => {
                console.log("Đối tượng đã được lưu.");
             });
          } else {
@@ -138,7 +139,7 @@ const serviceChrome = {
          let defauls_url = "url_";
          chrome.storage.sync.get([defauls_url + index], function (result) {
             if (result[defauls_url + index] === undefined) {
-               chrome.storage.sync.remove([defauls_url + index], () => {
+               chrome.storage.sync.set({ [defauls_url + index]: "" }, () => {
                   console.log("Đối tượng đã được lưu.");
                });
             } else {
@@ -157,6 +158,12 @@ const serviceChrome = {
    setStateSync: (field, value) => {
       chrome.storage.sync.set({ [field]: String(value) }, function () {
          console.log("Đối tượng đã được lưu.");
+      });
+   },
+
+   sendMessage: (data, message) => {
+      chrome.runtime.sendMessage({ data, type: message }, (response) => {
+         console.log("Response from background:", response);
       });
    },
 };

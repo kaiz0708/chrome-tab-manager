@@ -9,13 +9,13 @@ import { ActionTab } from "../../../enums/ActionTab";
 
 /* global chrome */
 
-function Tab({ tab, index, typeDisplay }) {
+function Tab({ tab, index, typeDisplay, display }) {
    const [showCloseTab, setShowCloseTab] = useState(false);
    const [activeTab, setActiveTab] = useState(true);
 
    const [{ isDragging }, drag] = useDrag({
       type: "ITEM",
-      item: { index, tab },
+      item: { index, tab, display },
       collect: (monitor) => ({
          isDragging: !!monitor.isDragging(),
       }),
@@ -54,7 +54,7 @@ function Tab({ tab, index, typeDisplay }) {
                } w-full flex justify-center items-center hover:bg-gray-100 transition-all duration-300 ease-in-out border-1 border-opacity-5 z-10 space-x-1 cursor-pointer border-solid rounded`}>
                <div className='h-5 w-5'>{tab.favIconUrl === "" || tab.favIconUrl === undefined ? <IoEarthOutline className='w-full h-full' /> : <img className='rounded-sm object-contain w-full h-full' src={tab.favIconUrl} />}</div>
                {typeDisplay === ActionTab.typeBlock ? <p className='truncate flex-1 mr-2'>{tab.title}</p> : null}
-               {tab.active && activeTab ? (
+               {tab.active && activeTab && display === process.env.REACT_APP_TYPE_TAB ? (
                   typeDisplay === ActionTab.typeBlock ? (
                      <span className='ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-green-500 text-white'>active</span>
                   ) : (
@@ -66,7 +66,9 @@ function Tab({ tab, index, typeDisplay }) {
                      <IoIosClose
                         onClick={(e) => {
                            e.stopPropagation();
-                           closeTab(tab.id, tab.windowId);
+                           if (display === process.env.REACT_APP_TYPE_TAB) {
+                              closeTab(tab.id, tab.windowId);
+                           }
                         }}
                         className=' hover:bg-custom-pink cursor-pointer text-white bg-gray-200 rounded-full text-base transition duration-300 ease-in-out'
                      />
@@ -74,7 +76,9 @@ function Tab({ tab, index, typeDisplay }) {
                      <IoIosClose
                         onClick={(e) => {
                            e.stopPropagation();
-                           closeTab(tab.id, tab.windowId);
+                           if (display === process.env.REACT_APP_TYPE_TAB) {
+                              closeTab(tab.id, tab.windowId);
+                           }
                         }}
                         className='absolute z-20 hover:bg-custom-pink -top-1.5 -right-1.5 cursor-pointer text-white bg-gray-200 rounded-full text-base transition duration-300 ease-in-out'
                      />
