@@ -99,6 +99,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
    if (message.type === "ADD_COLLECTION") {
+      console.log("background : ", message.type);
       chrome.runtime.sendMessage({
          type: "ADD_COLLECTION",
          data: {
@@ -107,5 +108,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       });
    }
 
-   sendResponse({ status: "success", message: "Collection added successfully" });
+   if (message.type === "DELETE_COLLECTION") {
+      console.log("background : ", message.type);
+      chrome.runtime.sendMessage({
+         type: "DELETE_COLLECTION",
+         data: {
+            ...message.data,
+         },
+      });
+   }
+
+   return true;
 });

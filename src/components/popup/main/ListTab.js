@@ -30,9 +30,10 @@ function ListTab({ window }) {
             }
          } else {
             if (window.typeFeature === collectionType) {
-               console.log(123);
+               console.log("jiji");
             } else {
                serviceChrome.openNewTabEmpty(windowId, item.tab.url);
+               serviceChrome.sendMessage({ idCollection: tabId, index: item.index }, ActionTab.typeDeleteCollection);
             }
          }
       },
@@ -71,7 +72,7 @@ function ListTab({ window }) {
          }
          hoverIndex = Math.max(0, Math.min(hoverIndex, tabs.length - 1));
          if (hoverIndex >= tabs.length) {
-            return -1; // Trả về -1 nếu hoverIndex ngoài phạm vi của tabs
+            return -1;
          }
 
          return hoverIndex;

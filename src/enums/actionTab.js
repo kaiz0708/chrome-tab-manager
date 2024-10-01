@@ -24,4 +24,6 @@ export const ActionTab = Object.freeze({
    typeTabHori: process.env.REACT_APP_TYPE_TAB_HORIZONTAL,
 
    typeAddCollection: process.env.REACT_APP_TYPE_ADD_COLLECTION,
+
+   typeDeleteCollection: process.env.REACT_APP_TYPE_DELETE_COLLECTION,
 });

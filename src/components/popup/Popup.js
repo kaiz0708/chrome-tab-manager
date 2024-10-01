@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { updateWindowCurrent } from "../../store/features/popupSlices";
 import { ActionTab } from "../../enums/ActionTab";
 import serviceChrome from "../services/ServiceChrome";
-import { deleteTab, setValueCollection, addCollection, addEmptyTab, deleteWindow, setValue, addWindow, moveTabAroundWindow, moveTabWithoutWindow, activeTab, navigateTab, pinTab } from "../../store/features/windowSlices";
+import { deleteTab, setValueCollection, addCollectionItem, addEmptyTab, deleteWindow, setValue, addWindow, moveTabAroundWindow, moveTabWithoutWindow, activeTab, navigateTab, pinTab, deleteCollectionItem } from "../../store/features/windowSlices";
 import { updateStateDisplay } from "../../store/features/popupSlices";
 import utils from "../../common/utils";
 const Header = lazy(() => import("./header/Header"));
@@ -53,17 +53,19 @@ function Popup() {
       return urls;
    }
 
-   const fetchData = async () => {
-      const result = await getStorageSync(process.env.REACT_APP_TYPE_NAME_INFORBASE_VARIABLE);
+   const fetchData = () => {
       let fieldNamesMain = ["id", "name", "date"];
-      let fieldNamesUrl = ["id", "url"];
-      let urls = "";
-      const amountUrl = 12;
-      let url = await getUrl(amountUrl, urls);
-      const res = utils.parseStringToObjects(result[process.env.REACT_APP_TYPE_NAME_INFORBASE_VARIABLE], ":::", ";", fieldNamesMain);
-      const resUrl = utils.parseStringToObjects(url, ":::", ";", fieldNamesUrl);
-      let combined = await utils.combineObjectsToTabs(res, resUrl, "id");
-      dispatch(setValueCollection(combined));
+      let fieldNamesUrl = ["id", "url", "title", "favIconUrl"];
+      chrome.storage.local.get(process.env.REACT_APP_TYPE_NAME_INFORBASE_VARIABLE, function (result) {
+         const res = utils.parseStringToObjects(result[process.env.REACT_APP_TYPE_NAME_INFORBASE_VARIABLE], ":::", ";", fieldNamesMain);
+
+         chrome.storage.local.get(process.env.REACT_APP_TYPE_NAME_URL_VARIABLE, function (result) {
+            const resUrl = utils.parseStringToObjects(result[process.env.REACT_APP_TYPE_NAME_URL_VARIABLE], ":::", ";", fieldNamesUrl);
+            let combined = utils.combineObjectsToTabs(res, resUrl, "id");
+            dispatch(setValueCollection(combined));
+            setLoading(false);
+         });
+      });
    };
 
    useEffect(() => {
@@ -85,12 +87,16 @@ function Popup() {
 
       serviceChrome.createState();
 
-      serviceChrome.setStateSync("url_0", "0;www.youtube.com/watch?v=a-jdOviGQ00&list=RDa-jdOviGQ00&start_radio=1:::0;www.youtube.com/watch?v=a-jdOviGQ00&list=RDa-jdOviGQ00&start_radio=1");
+      serviceChrome.setStateLocal("inforBase", "0;Test;27/09/2024");
+      serviceChrome.setStateLocal(
+         "url_collection",
+         "0;https://www.youtube.com/;(97) YouTube;https://www.youtube.com/s/desktop/6e5f8289/img/favicon_32x32.png:::0;https://www.youtube.com/;(97) YouTube;https://www.youtube.com/s/desktop/6e5f8289/img/favicon_32x32.png"
+      );
 
       chrome.storage.local.get([process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE], (result) => {
          dispatch(updateStateDisplay(result[process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE]));
       });
-      fetchData().then(() => setLoading(false));
+      fetchData();
    }, []);
 
    useEffect(() => {
@@ -126,11 +132,15 @@ function Popup() {
                break;
             case ActionTab.typeAddCollection:
                console.log(ActionTab.typeAddCollection);
-               dispatch(addCollection(msg.data));
+               dispatch(addCollectionItem(msg.data));
+               break;
+            case ActionTab.typeDeleteCollection:
+               dispatch(deleteCollectionItem(msg.data));
                break;
          }
       };
 
+      chrome.runtime.onMessage.removeListener(handleMessage);
       chrome.runtime.onMessage.addListener(handleMessage);
       return () => {
          chrome.runtime.onMessage.removeListener(handleMessage);
