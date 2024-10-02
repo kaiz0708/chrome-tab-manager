@@ -6,12 +6,15 @@ import servicesChrome from "../../services/ServiceChrome";
 import { Tooltip, Zoom } from "@mui/material";
 import { useDrag, useDrop } from "react-dnd";
 import { ActionTab } from "../../../enums/ActionTab";
+import { useSelector, useDispatch } from "react-redux";
+import { deleteCollectionItem } from "../../../store/features/windowSlices";
 
 /* global chrome */
 
 function Tab({ tab, index, typeDisplay, display }) {
    const [showCloseTab, setShowCloseTab] = useState(false);
    const [activeTab, setActiveTab] = useState(true);
+   const dispatch = useDispatch();
 
    const [{ isDragging }, drag] = useDrag({
       type: "ITEM",
@@ -23,6 +26,10 @@ function Tab({ tab, index, typeDisplay, display }) {
 
    const closeTab = (tabId, windowId) => {
       servicesChrome.closeTab(tabId, windowId);
+   };
+
+   const deleteItemCollection = (idCollection, index) => {
+      dispatch(deleteCollectionItem({ idCollection, index }));
    };
 
    const switchToTab = (tabId) => {
@@ -62,27 +69,21 @@ function Tab({ tab, index, typeDisplay, display }) {
                   )
                ) : null}
                {showCloseTab ? (
-                  typeDisplay === ActionTab.typeBlock ? (
-                     <IoIosClose
-                        onClick={(e) => {
-                           e.stopPropagation();
-                           if (display === process.env.REACT_APP_TYPE_TAB) {
-                              closeTab(tab.id, tab.windowId);
-                           }
-                        }}
-                        className=' hover:bg-custom-pink cursor-pointer text-white bg-gray-200 rounded-full text-base transition duration-300 ease-in-out'
-                     />
-                  ) : (
-                     <IoIosClose
-                        onClick={(e) => {
-                           e.stopPropagation();
-                           if (display === process.env.REACT_APP_TYPE_TAB) {
-                              closeTab(tab.id, tab.windowId);
-                           }
-                        }}
-                        className='absolute z-20 hover:bg-custom-pink -top-1.5 -right-1.5 cursor-pointer text-white bg-gray-200 rounded-full text-base transition duration-300 ease-in-out'
-                     />
-                  )
+                  <IoIosClose
+                     onClick={(e) => {
+                        e.stopPropagation();
+                        if (display === process.env.REACT_APP_TYPE_TAB) {
+                           closeTab(tab.id, tab.windowId);
+                        } else {
+                           deleteItemCollection(tab.id, index);
+                        }
+                     }}
+                     className={`${
+                        typeDisplay === ActionTab.typeBlock
+                           ? "hover:bg-custom-pink cursor-pointer text-white bg-gray-200 rounded-full text-base transition duration-300 ease-in-out"
+                           : "absolute z-20 hover:bg-custom-pink -top-1.5 -right-1.5 cursor-pointer text-white bg-gray-200 rounded-full text-base transition duration-300 ease-in-out"
+                     }`}
+                  />
                ) : null}
             </div>
          </Tooltip>

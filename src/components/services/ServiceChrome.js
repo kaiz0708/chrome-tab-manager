@@ -35,11 +35,12 @@ const serviceChrome = {
       });
    },
 
-   openNewTabEmpty: (windowId, url) => {
+   openNewTabEmpty: (windowId, url, state) => {
       chrome.tabs.create(
          {
             windowId: windowId,
             url: url,
+            active: state,
          },
          (newTab) => {
             if (chrome.runtime.lastError) {
@@ -127,7 +128,7 @@ const serviceChrome = {
 
       chrome.storage.sync.get([keyCollections[0]], function (result) {
          if (result[keyCollections[0]] === undefined) {
-            chrome.storage.sync.set({ [keyCollections[0]]: "0;Test;27/09/2024" }, () => {
+            chrome.storage.sync.set({ [keyCollections[0]]: "0;Test;27/09/2024:::1;Test1;28/09/2024" }, () => {
                console.log("Đối tượng đã được lưu.");
             });
          } else {

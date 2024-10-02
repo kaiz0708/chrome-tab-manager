@@ -90,7 +90,7 @@ function Popup() {
       serviceChrome.setStateLocal("inforBase", "0;Test;27/09/2024");
       serviceChrome.setStateLocal(
          "url_collection",
-         "0;https://www.youtube.com/;(97) YouTube;https://www.youtube.com/s/desktop/6e5f8289/img/favicon_32x32.png:::0;https://www.youtube.com/;(97) YouTube;https://www.youtube.com/s/desktop/6e5f8289/img/favicon_32x32.png"
+         "0;https://www.youtube.com/;(97) YouTube;https://www.youtube.com/s/desktop/6e5f8289/img/favicon_32x32.png:::1;https://www.youtube.com/;(97) YouTube;https://www.youtube.com/s/desktop/6e5f8289/img/favicon_32x32.png"
       );
 
       chrome.storage.local.get([process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE], (result) => {
@@ -131,7 +131,6 @@ function Popup() {
                dispatch(pinTab(msg.data));
                break;
             case ActionTab.typeAddCollection:
-               console.log(ActionTab.typeAddCollection);
                dispatch(addCollectionItem(msg.data));
                break;
             case ActionTab.typeDeleteCollection:
@@ -140,7 +139,6 @@ function Popup() {
          }
       };
 
-      chrome.runtime.onMessage.removeListener(handleMessage);
       chrome.runtime.onMessage.addListener(handleMessage);
       return () => {
          chrome.runtime.onMessage.removeListener(handleMessage);

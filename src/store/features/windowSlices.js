@@ -120,39 +120,43 @@ const windowSlice = createSlice({
             if (window.id !== action.payload.windowId) {
                return window;
             }
-            const updatedTabs = window.tabs.map((tab) => ({
-               ...tab,
-               active: false,
-            }));
 
             // Thêm tab mới vào mảng tabs
-            updatedTabs.push({
+            window.tabs.push({
                ...action.payload.newTab,
-               active: true,
+               active: false,
             });
 
             // Trả về window với mảng tabs mới
             return {
                ...window,
-               tabs: updatedTabs,
+               tabs: window.tabs,
             };
          });
       },
-
-      ///Collection
 
       setValueCollection: (state, action) => {
          state.collection = action.payload;
       },
 
       deleteCollectionItem: (state, action) => {
-         console.log(action.payload);
          const { idCollection, index } = action.payload;
          state.collection.forEach((collection) => {
             if (collection.id === idCollection) {
                collection.tabs = collection.tabs.filter((_, i) => index !== i);
             }
          });
+      },
+
+      moveCollection: (state, action) => {
+         const { indexFrom, indexTo, collectionFrom, collectionTo } = action.payload;
+         let valueMove = state.collection[collectionFrom].tabs[indexFrom];
+         state.collection[collectionFrom].tabs.filter((_, i) => i !== indexFrom);
+         if (indexTo === -1) {
+            state.collection[collectionTo].tabs.push(valueMove);
+         } else {
+            state.collection[collectionTo].tabs.splice(indexTo, 0, valueMove);
+         }
       },
 
       addCollectionItem: (state, action) => {

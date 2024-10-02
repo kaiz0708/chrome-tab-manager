@@ -11,7 +11,7 @@ import { CiGrid2H } from "react-icons/ci";
 import { CiGrid41 } from "react-icons/ci";
 import { updateStateDisplay } from "../../../store/features/popupSlices";
 import { GoPin } from "react-icons/go";
-import React, { useEffect, useState, useRef } from "react";
+import React from "react";
 import { updateStateCollection } from "../../../store/features/popupSlices";
 
 /* global chrome */

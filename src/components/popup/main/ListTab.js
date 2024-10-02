@@ -7,6 +7,8 @@ import { HiOutlinePlus } from "react-icons/hi2";
 import { Tooltip, Zoom } from "@mui/material";
 import { Grid2 } from "@mui/material";
 import { ActionTab } from "../../../enums/ActionTab";
+import { useDispatch } from "react-redux";
+import { addCollectionItem, deleteCollectionItem } from "../../../store/features/windowSlices";
 
 /* global chrome */
 
@@ -14,6 +16,7 @@ function ListTab({ window }) {
    const dropRef = useRef(null);
    const tabType = process.env.REACT_APP_TYPE_TAB;
    const collectionType = process.env.REACT_APP_TYPE_COLLECTION;
+   const dispatch = useDispatch();
    const [{ isOver }, drop] = useDrop({
       accept: "ITEM",
       drop: (item, monitor) => {
@@ -27,13 +30,15 @@ function ListTab({ window }) {
                serviceChrome.moveTab(tabId, hoverIndex, window.windowTab.id);
             } else {
                serviceChrome.sendMessage({ id: windowId, tab: item.tab, newPosition: hoverIndex }, ActionTab.typeAddCollection);
+               dispatch(addCollectionItem({ id: windowId, tab: item.tab, newPosition: hoverIndex }));
+               serviceChrome.closeTab(tabId, item.tab.windowId);
             }
          } else {
             if (window.typeFeature === collectionType) {
-               console.log("jiji");
             } else {
-               serviceChrome.openNewTabEmpty(windowId, item.tab.url);
+               serviceChrome.openNewTabEmpty(windowId, item.tab.url, false);
                serviceChrome.sendMessage({ idCollection: tabId, index: item.index }, ActionTab.typeDeleteCollection);
+               dispatch(deleteCollectionItem({ idCollection: tabId, index: item.index }));
             }
          }
       },
@@ -85,7 +90,7 @@ function ListTab({ window }) {
    };
 
    const addNewEmptyTab = (windowId) => {
-      serviceChrome.openNewTabEmpty(windowId, "chrome://newtab");
+      serviceChrome.openNewTabEmpty(windowId, "chrome://newtab", false);
    };
 
    return (

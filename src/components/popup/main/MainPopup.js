@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 import { CircularProgress } from "@mui/material";
 import Typography from "@mui/material/Typography";
+import { ActionTab } from "../../../enums/ActionTab";
 const MainCollections = lazy(() => import("./MainCollections"));
 /* global chrome */
 
@@ -16,14 +17,22 @@ function MainPopup({ windowTabs, typeDisplay, loadingCollection }) {
    const dropRef = useRef(null);
    const type = process.env.REACT_APP_TYPE_TAB;
    const stateCollection = useSelector((state) => state.current.displayCollection);
+   const tabType = process.env.REACT_APP_TYPE_TAB;
+   const collectionType = process.env.REACT_APP_TYPE_COLLECTION;
 
    const [{ isOver }, drop] = useDrop({
       accept: "ITEM",
       drop: (item, monitor) => {
+         const { tab, index } = item;
          if (monitor.didDrop()) {
             return;
          }
-         serviceChrome.openWindowGroup([item.tab]);
+         if (item.display === tabType) {
+            serviceChrome.openWindowGroup([tab]);
+         } else {
+            serviceChrome.sendMessage({ idCollection: tab.id, index }, ActionTab.typeDeleteCollection);
+            serviceChrome.openWindow(tab.url);
+         }
       },
       collect: (monitor) => ({
          isOver: !!monitor.isOver(),

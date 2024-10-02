@@ -14,6 +14,8 @@ function MainCollections() {
    const windowTabs = useSelector((state) => state.window.collection);
    const type = process.env.REACT_APP_TYPE_COLLECTION;
    const typeDisplay = useSelector((state) => state.current.displayState);
+   const tabType = process.env.REACT_APP_TYPE_TAB;
+   const collectionType = process.env.REACT_APP_TYPE_COLLECTION;
 
    const [{ isOver }, drop] = useDrop({
       accept: "ITEM",

@@ -96,27 +96,3 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       });
    }
 });
-
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-   if (message.type === "ADD_COLLECTION") {
-      console.log("background : ", message.type);
-      chrome.runtime.sendMessage({
-         type: "ADD_COLLECTION",
-         data: {
-            ...message.data,
-         },
-      });
-   }
-
-   if (message.type === "DELETE_COLLECTION") {
-      console.log("background : ", message.type);
-      chrome.runtime.sendMessage({
-         type: "DELETE_COLLECTION",
-         data: {
-            ...message.data,
-         },
-      });
-   }
-
-   return true;
-});
