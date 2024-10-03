@@ -8,6 +8,8 @@ import serviceChrome from "../services/ServiceChrome";
 import { deleteTab, setValueCollection, addCollectionItem, addEmptyTab, deleteWindow, setValue, addWindow, moveTabAroundWindow, moveTabWithoutWindow, activeTab, navigateTab, pinTab, deleteCollectionItem } from "../../store/features/windowSlices";
 import { updateStateDisplay } from "../../store/features/popupSlices";
 import utils from "../../common/utils";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 const Header = lazy(() => import("./header/Header"));
 const MainPopup = lazy(() => import("./main/MainPopup"));
 const TaskBarPopup = lazy(() => import("./footer/TaskBarPopup"));
@@ -171,7 +173,9 @@ function Popup() {
       <div className='w-full scrollbar-thumb-rounded font-sans text-xs font-normal text-custom-black'>
          <Header />
 
-         <MainPopup windowTabs={windowList} typeDisplay={typeDisplay} loadingCollection={loading} />
+         <DndProvider backend={HTML5Backend}>
+            <MainPopup windowTabs={windowList} typeDisplay={typeDisplay} loadingCollection={loading} />
+         </DndProvider>
 
          <TaskBarPopup filterGroupTab={filterGroupTab} groupTab={groupTab} />
       </div>

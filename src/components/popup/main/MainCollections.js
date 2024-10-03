@@ -6,6 +6,8 @@ import { useDrag, useDrop } from "react-dnd";
 import serviceChrome from "../../services/ServiceChrome";
 import { useDispatch, useSelector } from "react-redux";
 import { Grid2 } from "@mui/material";
+import Masonry from "@mui/lab/Masonry";
+import { Box } from "@mui/material";
 const WindowTab = lazy(() => import("./WindowTab"));
 /* global chrome */
 
@@ -38,8 +40,8 @@ function MainCollections() {
       <motion.div ref={combinedRef} initial={{ y: "100%", opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: "100%", opacity: 0 }} transition={{ duration: 0.3 }}>
          <Grid2 spacing={1} columns={{ xs: 3, sm: 3, md: 3 }} container>
             {windowTabs.map((windowTab, index) => (
-               <Grid2 size={{ xs: 1, sm: 1, md: 1 }} key={index}>
-                  <Suspense>
+               <Masonry columns={3} spacing={1}>
+                  <Box key={index} sx={{ height: "auto" }}>
                      <WindowTab
                         window={{
                            windowTab,
@@ -48,8 +50,8 @@ function MainCollections() {
                            typeFeature: type,
                         }}
                      />
-                  </Suspense>
-               </Grid2>
+                  </Box>
+               </Masonry>
             ))}
          </Grid2>
       </motion.div>
