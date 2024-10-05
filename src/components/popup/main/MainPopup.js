@@ -5,7 +5,6 @@ import React, { useEffect, useRef, lazy, Suspense } from "react";
 import { Tooltip, Zoom } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { AnimatePresence } from "framer-motion";
-import { CircularProgress } from "@mui/material";
 import { ActionTab } from "../../../enums/action";
 import Masonry from "@mui/lab/Masonry";
 import { Box } from "@mui/material";
@@ -88,17 +87,11 @@ function MainPopup({ windowTabs, typeDisplay, loadingCollection }) {
 
          <div className={`relative border-1 p-2 text-black overflow-y-auto scrollbar-thumb-rounded ${stateCollection ? "h-[50%]" : "overflow hidden"}`}>
             {stateCollection ? (
-               loadingCollection ? (
-                  <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-                     <CircularProgress aria-label='Loading....' aria-busy={loadingCollection ? "true" : "false"} aria-live='polite' />
-                  </div>
-               ) : (
-                  <Suspense>
-                     <AnimatePresence>
-                        <MainCollections />
-                     </AnimatePresence>
-                  </Suspense>
-               )
+               <Suspense>
+                  <AnimatePresence>
+                     <MainCollections />
+                  </AnimatePresence>
+               </Suspense>
             ) : null}
          </div>
       </div>

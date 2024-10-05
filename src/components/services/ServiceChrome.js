@@ -68,7 +68,7 @@ const serviceChrome = {
       chrome.windows.create({
          url: tabUrl,
          type: "normal",
-         focused: true,
+         focused: false,
       });
    },
 
@@ -110,42 +110,13 @@ const serviceChrome = {
    },
 
    createState: () => {
-      const keys = ["view", "collection"];
-      const keyCollections = ["inforBase"];
-      const amountUrl = 12;
-      const valueDefaults = [process.env.REACT_APP_TYPE_TAB_HORIZONTAL, false];
-      chrome.storage.local.get(keys, (result) => {
-         keys.forEach((key, index) => {
-            if (result[key] === undefined) {
-               chrome.storage.local.set({ [key]: valueDefaults[index] }, () => {
-                  console.log("Đối tượng đã được lưu.");
-               });
-            }
-         });
-      });
-
-      chrome.storage.sync.get([keyCollections[0]], function (result) {
-         if (result[keyCollections[0]] === undefined) {
-            chrome.storage.sync.set({ [keyCollections[0]]: "0;Test;27/09/2024:::1;Test1;28/09/2024" }, () => {
+      chrome.storage.local.get(process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE, (result) => {
+         if (result[process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE] === undefined) {
+            chrome.storage.local.set({ [process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE]: process.env.REACT_APP_TYPE_TAB_HORIZONTAL }, () => {
                console.log("Đối tượng đã được lưu.");
             });
-         } else {
-            console.log(result[keyCollections[0]]);
          }
       });
-
-      for (let index = 0; index < amountUrl; index++) {
-         let defauls_url = "url_";
-         chrome.storage.sync.get([defauls_url + index], function (result) {
-            if (result[defauls_url + index] === undefined) {
-               chrome.storage.sync.set({ [defauls_url + index]: "" }, () => {
-                  console.log("Đối tượng đã được lưu.");
-               });
-            } else {
-               console.log(result[defauls_url + index]);
-            }
-         });
-      }
    },
 
    setStateLocal: (field, value) => {

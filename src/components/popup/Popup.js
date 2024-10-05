@@ -21,55 +21,6 @@ function Popup() {
    const dispatch = useDispatch();
    const [loading, setLoading] = useState(true);
 
-   const getStorageSync = (key) => {
-      return new Promise((resolve, reject) => {
-         chrome.storage.sync.get(key, (result) => {
-            if (chrome.runtime.lastError) {
-               return reject(chrome.runtime.lastError);
-            }
-            resolve(result);
-         });
-      });
-   };
-
-   async function getUrl(amountUrl, urls) {
-      const promises = [];
-
-      for (let i = 0; i < amountUrl; i++) {
-         const urlString = process.env.REACT_APP_TYPE_NAME_URL_VARIABLE + i;
-         promises.push(getStorageSync(urlString));
-      }
-
-      const results = await Promise.all(promises);
-      results.forEach((result, i) => {
-         const urlString = process.env.REACT_APP_TYPE_NAME_URL_VARIABLE + i;
-         if (result[urlString] !== "") {
-            if (i !== 0) {
-               urls = urls + ":::" + result[urlString];
-            } else {
-               urls = urls + result[urlString];
-            }
-         }
-      });
-
-      return urls;
-   }
-
-   const fetchData = () => {
-      let fieldNamesMain = ["id", "name", "date"];
-      let fieldNamesUrl = ["id", "url", "title", "favIconUrl"];
-      chrome.storage.local.get(process.env.REACT_APP_TYPE_NAME_INFORBASE_VARIABLE, function (result) {
-         const res = utils.parseStringToObjects(result[process.env.REACT_APP_TYPE_NAME_INFORBASE_VARIABLE], ":::", ";", fieldNamesMain);
-
-         chrome.storage.local.get(process.env.REACT_APP_TYPE_NAME_URL_VARIABLE, function (result) {
-            const resUrl = utils.parseStringToObjects(result[process.env.REACT_APP_TYPE_NAME_URL_VARIABLE], ":::", ";", fieldNamesUrl);
-            let combined = utils.combineObjectsToTabs(res, resUrl, "id");
-            dispatch(setValueCollection(combined));
-            setLoading(false);
-         });
-      });
-   };
-
    useEffect(() => {
       setWindowList(windowTabs);
    }, [windowTabs]);
@@ -88,16 +39,9 @@ function Popup() {
       });
 
       serviceChrome.createState();
-      serviceChrome.setStateLocal("inforBase", "0;Test;27/09/2024");
-      serviceChrome.setStateLocal(
-         "url_collection",
-         "0;https://www.youtube.com/;(97) YouTube;https://www.youtube.com/s/desktop/6e5f8289/img/favicon_32x32.png:::1;https://www.youtube.com/;(97) YouTube;https://www.youtube.com/s/desktop/6e5f8289/img/favicon_32x32.png"
-      );
-
       chrome.storage.local.get([process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE], (result) => {
          dispatch(updateStateDisplay(result[process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE]));
       });
-      fetchData();
    }, []);
 
    useEffect(() => {

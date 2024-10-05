@@ -10,8 +10,7 @@ const ListTab = lazy(() => import("./ListTab"));
 /* global chrome */
 
 function WindowTab({ window }) {
-   const currentWindow = useSelector((state) => state.current.value);
-
+   console.log(window.windowTab);
    const closeAllTabWindows = (windowCurrentId) => {
       serviceChrome.closeWindow(windowCurrentId);
    };
@@ -19,7 +18,6 @@ function WindowTab({ window }) {
    return (
       <div
          onClick={(e) => {
-            services.switchToWindow(currentWindow);
             services.switchToWindow(window.windowTab.id);
          }}
          className='transition duration-200 ease-in space-y-2 hover:-translate-y-1 bg-white p-2 hover:shadow-custom-hover cursor-pointer shadow-custom rounded-md z-10 will-change-transform will-change-shadow'>
@@ -47,7 +45,14 @@ function WindowTab({ window }) {
 
          {window.typeFeature === process.env.REACT_APP_TYPE_TAB ? null : (
             <div>
-               <span className='text-xs font-medium text-center'>${window.windowTab.date}</span>
+               <span className='text-xs text-custom-color-title font-medium text-center'>Note : </span>
+               <span className='text-xs font-medium text-center'>${window.windowTab.note}</span>
+            </div>
+         )}
+
+         {window.typeFeature === process.env.REACT_APP_TYPE_TAB ? null : (
+            <div>
+               <span className='text-xs font-medium text-center'>${window.windowTab.createdAt}</span>
             </div>
          )}
 
