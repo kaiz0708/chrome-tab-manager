@@ -5,7 +5,7 @@ import { IoEarthOutline } from "react-icons/io5";
 import servicesChrome from "../../services/ServiceChrome";
 import { Tooltip, Zoom } from "@mui/material";
 import { useDrag, useDrop } from "react-dnd";
-import { ActionTab } from "../../../enums/ActionTab";
+import { ActionTab } from "../../../enums/action";
 import { useSelector, useDispatch } from "react-redux";
 import { deleteCollectionItem } from "../../../store/features/windowSlices";
 

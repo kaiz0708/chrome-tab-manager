@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState, lazy } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { updateWindowCurrent } from "../../store/features/popupSlices";
-import { ActionTab } from "../../enums/ActionTab";
+import { ActionTab } from "../../enums/action";
 import serviceChrome from "../services/ServiceChrome";
 import { deleteTab, setValueCollection, addCollectionItem, addEmptyTab, deleteWindow, setValue, addWindow, moveTabAroundWindow, moveTabWithoutWindow, activeTab, navigateTab, pinTab, deleteCollectionItem } from "../../store/features/windowSlices";
 import { updateStateDisplay } from "../../store/features/popupSlices";
@@ -88,7 +88,6 @@ function Popup() {
       });
 
       serviceChrome.createState();
-
       serviceChrome.setStateLocal("inforBase", "0;Test;27/09/2024");
       serviceChrome.setStateLocal(
          "url_collection",

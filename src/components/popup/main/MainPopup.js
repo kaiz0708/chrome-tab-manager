@@ -6,7 +6,7 @@ import { Tooltip, Zoom } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { AnimatePresence } from "framer-motion";
 import { CircularProgress } from "@mui/material";
-import { ActionTab } from "../../../enums/ActionTab";
+import { ActionTab } from "../../../enums/action";
 import Masonry from "@mui/lab/Masonry";
 import { Box } from "@mui/material";
 import { HiOutlinePlus } from "react-icons/hi2";

@@ -3,7 +3,6 @@
 import React, { useState, useRef, useEffect, Suspense, lazy } from "react";
 import { motion } from "framer-motion";
 import { useDrag, useDrop } from "react-dnd";
-import serviceChrome from "../../services/ServiceChrome";
 import { useDispatch, useSelector } from "react-redux";
 import { Grid2 } from "@mui/material";
 import Masonry from "@mui/lab/Masonry";

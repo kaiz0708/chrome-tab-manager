@@ -9,7 +9,9 @@ const popupSlice = createSlice({
       value: null,
       displayState: process.env.REACT_APP_TYPE_TAB_HORIZONTAL,
       displayCollection: false,
-      login: false,
+      auth: false,
+      register: false,
+      display: false,
    },
    reducers: {
       updateWindowCurrent: (state, action) => {
@@ -24,12 +26,20 @@ const popupSlice = createSlice({
          state.displayCollection = action.payload;
       },
 
-      updateLogin: (state, action) => {
-         state.login = action.payload;
+      updateAuth: (state, action) => {
+         state.auth = action.payload;
+      },
+
+      updateRegister: (state, action) => {
+         state.register = action.payload;
+      },
+
+      updateDisplay: (state, action) => {
+         state.display = action.payload;
       },
    },
 });
 
-export const { updateWindowCurrent, updateStateDisplay, updateStateCollection, updateLogin } = popupSlice.actions;
+export const { updateWindowCurrent, updateStateDisplay, updateStateCollection, updateAuth, updateRegister, updateDisplay } = popupSlice.actions;
 
 export default popupSlice.reducer;

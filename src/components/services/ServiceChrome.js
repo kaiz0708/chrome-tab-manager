@@ -1,8 +1,6 @@
 /** @format */
 /* global chrome */
 
-import { stringify } from "postcss";
-
 const serviceChrome = {
    switchToWindow: (windowCurrent) => {
       chrome.windows.update(windowCurrent, { focused: true }, () => {
@@ -151,13 +149,13 @@ const serviceChrome = {
    },
 
    setStateLocal: (field, value) => {
-      chrome.storage.local.set({ [field]: value }, function () {
+      chrome.storage.local.set({ [field]: value }, () => {
          console.log("Đối tượng đã được lưu.");
       });
    },
 
    setStateSync: (field, value) => {
-      chrome.storage.sync.set({ [field]: String(value) }, function () {
+      chrome.storage.sync.set({ [field]: value }, function () {
          console.log("Đối tượng đã được lưu.");
       });
    },
@@ -165,6 +163,20 @@ const serviceChrome = {
    sendMessage: (data, message) => {
       chrome.runtime.sendMessage({ data, type: message }, (response) => {
          console.log("Response from background:", response);
+      });
+   },
+
+   getValueLocal: (key) => {
+      return new Promise((resolve) => {
+         chrome.storage.local.get([key], (value) => {
+            resolve(value.token);
+         });
+      });
+   },
+
+   removeValueLocal: (keyList) => {
+      chrome.storage.local.remove(keyList, function () {
+         console.log("remove key success");
       });
    },
 };
