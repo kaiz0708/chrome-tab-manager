@@ -6,11 +6,12 @@ import services from "../../services/ServiceChrome";
 import { IoCloseOutline } from "react-icons/io5";
 import serviceChrome from "../../services/ServiceChrome";
 import { Tooltip, Zoom } from "@mui/material";
+import { CiCalendarDate } from "react-icons/ci";
+import { PiNotePencilThin } from "react-icons/pi";
 const ListTab = lazy(() => import("./ListTab"));
 /* global chrome */
 
 function WindowTab({ window }) {
-   console.log(window.windowTab);
    const closeAllTabWindows = (windowCurrentId) => {
       serviceChrome.closeWindow(windowCurrentId);
    };
@@ -26,7 +27,7 @@ function WindowTab({ window }) {
                {window.typeFeature === process.env.REACT_APP_TYPE_TAB ? (
                   <span className='text-custom-color-title text-xs font-semibold'>#{window.index + 1}</span>
                ) : (
-                  <span className='text-custom-color-title text-xs font-semibold'>#{window.windowTab.name}</span>
+                  <span className='text-custom-color-title text-xs font-semibold'>#{window.windowTab.title}</span>
                )}
 
                <span className='text-xs font-medium text-center'>{window.windowTab.tabs.length > 1 ? <span> ({window.windowTab.tabs.length} tabs)</span> : <span> ({1} tab)</span>}</span>
@@ -44,15 +45,14 @@ function WindowTab({ window }) {
          </div>
 
          {window.typeFeature === process.env.REACT_APP_TYPE_TAB ? null : (
-            <div>
-               <span className='text-xs text-custom-color-title font-medium text-center'>Note : </span>
-               <span className='text-xs font-medium text-center'>${window.windowTab.note}</span>
+            <div className='flex items-center space-x-1'>
+               <CiCalendarDate className='text-base text-custom-color-title font-bold' /> <span className='text-xs font-medium text-center'>{window.windowTab.createdAt.split("T")[0]}</span>
             </div>
          )}
 
          {window.typeFeature === process.env.REACT_APP_TYPE_TAB ? null : (
-            <div>
-               <span className='text-xs font-medium text-center'>${window.windowTab.createdAt}</span>
+            <div className='flex items-center space-x-1'>
+               <PiNotePencilThin className='text-base text-custom-color-title font-bold' /> <span className='text-xs font-medium text-center'>{window.windowTab.note}</span>
             </div>
          )}
 

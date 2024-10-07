@@ -9,6 +9,8 @@ import { ActionTab } from "../../../enums/action";
 import Masonry from "@mui/lab/Masonry";
 import { Box } from "@mui/material";
 import { HiOutlinePlus } from "react-icons/hi2";
+import servicePopup from "../servicePopup";
+import { deleteCollectionItem } from "../../../store/features/windowSlices";
 
 const MainCollections = lazy(() => import("./MainCollections"));
 /* global chrome */
@@ -19,12 +21,13 @@ function MainPopup({ windowTabs, typeDisplay, loadingCollection }) {
    const dropRef = useRef(null);
    const type = process.env.REACT_APP_TYPE_TAB;
    const stateCollection = useSelector((state) => state.current.displayCollection);
+   const dispatch = useDispatch();
    const tabType = process.env.REACT_APP_TYPE_TAB;
    const collectionType = process.env.REACT_APP_TYPE_COLLECTION;
 
    const [{ isOver }, drop] = useDrop({
       accept: "ITEM",
-      drop: (item, monitor) => {
+      drop: async (item, monitor) => {
          const { tab, index } = item;
          if (monitor.didDrop()) {
             return;
@@ -32,7 +35,11 @@ function MainPopup({ windowTabs, typeDisplay, loadingCollection }) {
          if (item.display === tabType) {
             serviceChrome.openWindowGroup([tab]);
          } else {
-            serviceChrome.sendMessage({ idCollection: tab.id, index }, ActionTab.typeDeleteCollection);
+            const response = await servicePopup.deleteTabToCollection(item.tab, item.tab.collection);
+            const { data } = response.data;
+            const idCollection = item.tab.collection;
+            serviceChrome.sendMessage({ idCollection: idCollection, tab: data }, ActionTab.typeDeleteCollection);
+            dispatch(deleteCollectionItem({ idCollection: idCollection, tab: data }));
             serviceChrome.openWindow(tab.url);
          }
       },

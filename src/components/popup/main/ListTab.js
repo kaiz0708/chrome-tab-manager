@@ -9,6 +9,8 @@ import { Grid2 } from "@mui/material";
 import { ActionTab } from "../../../enums/action";
 import { useDispatch } from "react-redux";
 import { addCollectionItem, deleteCollectionItem } from "../../../store/features/windowSlices";
+import servicePopup from "../servicePopup";
+import { positions } from "@mui/system";
 
 /* global chrome */
 
@@ -19,9 +21,8 @@ function ListTab({ window }) {
    const dispatch = useDispatch();
    const [{ isOver }, drop] = useDrop({
       accept: "ITEM",
-      drop: (item, monitor) => {
+      drop: async (item, monitor) => {
          const tabId = item.tab.id;
-         const windowId = window.windowTab.id;
          const clientOffset = monitor.getClientOffset();
          const hoverIndex = calculateHoverIndex(clientOffset, dropRef, window.windowTab.tabs, process.env.REACT_APP_TYPE_AMOUNT_COLUMNS_TAB, window.typeDisplay);
 
@@ -29,16 +30,22 @@ function ListTab({ window }) {
             if (window.typeFeature === tabType) {
                serviceChrome.moveTab(tabId, hoverIndex, window.windowTab.id);
             } else {
-               serviceChrome.sendMessage({ id: windowId, tab: item.tab, newPosition: hoverIndex }, ActionTab.typeAddCollection);
-               dispatch(addCollectionItem({ id: windowId, tab: item.tab, newPosition: hoverIndex }));
+               const collectionId = window.windowTab.id;
+               const response = await servicePopup.addTabToCollection(item.tab, collectionId, hoverIndex);
+               const { data } = response.data;
+               serviceChrome.sendMessage({ id: collectionId, tab: data, newPosition: hoverIndex }, ActionTab.typeAddCollection);
+               dispatch(addCollectionItem({ id: collectionId, tab: data, newPosition: hoverIndex }));
                serviceChrome.closeTab(tabId, item.tab.windowId);
             }
          } else {
             if (window.typeFeature === collectionType) {
             } else {
-               serviceChrome.openNewTabEmpty(windowId, item.tab.url, false);
-               serviceChrome.sendMessage({ idCollection: tabId, index: item.index }, ActionTab.typeDeleteCollection);
-               dispatch(deleteCollectionItem({ idCollection: tabId, index: item.index }));
+               const collectionId = item.tab.collection;
+               const response = await servicePopup.deleteTabToCollection(item.tab, collectionId);
+               const { data } = response.data;
+               serviceChrome.openNewTabEmpty(window.windowTab.id, data.url, false);
+               serviceChrome.sendMessage({ idCollection: collectionId, tab: data }, ActionTab.typeDeleteCollection);
+               dispatch(deleteCollectionItem({ idCollection: collectionId, tab: data }));
             }
          }
       },

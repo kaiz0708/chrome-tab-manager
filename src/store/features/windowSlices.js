@@ -140,10 +140,10 @@ const windowSlice = createSlice({
       },
 
       deleteCollectionItem: (state, action) => {
-         const { idCollection, index } = action.payload;
+         const { idCollection, tab } = action.payload;
          state.collection.forEach((collection) => {
             if (collection.id === idCollection) {
-               collection.tabs = collection.tabs.filter((_, i) => index !== i);
+               collection.tabs = collection.tabs.filter((e) => e.id !== tab.id);
             }
          });
       },
@@ -161,23 +161,18 @@ const windowSlice = createSlice({
 
       addCollectionItem: (state, action) => {
          const { id, newPosition, tab } = action.payload;
-         const { title, url, favIconUrl } = tab;
-         const newitem = { title, url, favIconUrl, id: id };
          state.collection.forEach((collection) => {
             if (id === collection.id) {
                if (newPosition !== -1) {
-                  collection.tabs.splice(newPosition, 0, newitem);
+                  collection.tabs.splice(newPosition, 0, tab);
                } else {
-                  collection.tabs.push(newitem);
+                  collection.tabs.push(tab);
                }
             }
          });
       },
    },
 });
-
-// Lưu trạng thái Redux vào chrome.storage mỗi khi store thay đổi
-
 export const { deleteWindow, deleteCollectionItem, setValueCollection, addCollectionItem, setValue, deleteTab, addEmptyTab, addWindow, moveTabAroundWindow, moveTabWithoutWindow, activeTab, navigateTab, pinTab } = windowSlice.actions;
 
 export default windowSlice.reducer;

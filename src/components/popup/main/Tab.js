@@ -6,8 +6,10 @@ import servicesChrome from "../../services/ServiceChrome";
 import { Tooltip, Zoom } from "@mui/material";
 import { useDrag, useDrop } from "react-dnd";
 import { ActionTab } from "../../../enums/action";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { deleteCollectionItem } from "../../../store/features/windowSlices";
+import servicePopup from "../servicePopup";
+import serviceChrome from "../../services/ServiceChrome";
 
 /* global chrome */
 
@@ -28,8 +30,11 @@ function Tab({ tab, index, typeDisplay, display }) {
       servicesChrome.closeTab(tabId, windowId);
    };
 
-   const deleteItemCollection = (idCollection, index) => {
-      dispatch(deleteCollectionItem({ idCollection, index }));
+   const deleteItemCollection = async (collectionId, tab) => {
+      const response = await servicePopup.deleteTabToCollection(tab, collectionId);
+      const { data } = response.data;
+      serviceChrome.sendMessage({ idCollection: collectionId, tab: data }, ActionTab.typeDeleteCollection);
+      dispatch(deleteCollectionItem({ idCollection: collectionId, tab: data }));
    };
 
    const switchToTab = (tabId) => {
@@ -75,7 +80,7 @@ function Tab({ tab, index, typeDisplay, display }) {
                         if (display === process.env.REACT_APP_TYPE_TAB) {
                            closeTab(tab.id, tab.windowId);
                         } else {
-                           deleteItemCollection(tab.id, index);
+                           deleteItemCollection(tab.collection, tab).then();
                         }
                      }}
                      className={`${
