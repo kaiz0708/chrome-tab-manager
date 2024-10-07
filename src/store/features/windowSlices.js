@@ -1,6 +1,5 @@
 /** @format */
 import { createSlice } from "@reduxjs/toolkit";
-import React from "react";
 
 const solveDelele = (window, tabId) => {
    for (let i = 0; i < window.length; i++) {
@@ -13,9 +12,7 @@ const solveDelele = (window, tabId) => {
             if (index == 0) {
                window[i].tabs[index_last].active = true;
             } else {
-               index < index_last
-                  ? (window[i].tabs[index + 1].active = true)
-                  : (window[i].tabs[index - 1].active = true);
+               index < index_last ? (window[i].tabs[index + 1].active = true) : (window[i].tabs[index - 1].active = true);
             }
          }
          window[i].tabs = window[i].tabs.filter((e) => e.id !== tabId);
@@ -28,6 +25,7 @@ const windowSlice = createSlice({
    name: "window",
    initialState: {
       value: [],
+      collection: [],
    },
    reducers: {
       setValue: (state, action) => {
@@ -99,31 +97,21 @@ const windowSlice = createSlice({
             });
          });
 
-         let check = state.value.find(
-            (window) =>
-               window.id === newWindowId &&
-               window.tabs.some((tab) => tab.id === tabId)
-         );
-
-         if (check === undefined) {
-            state.value.forEach((window) => {
-               if (window.id === newWindowId) {
-                  if (newPosition !== -1) {
-                     window.tabs.splice(newPosition, 0, tabDrag);
-                  } else {
-                     window.tabs.push(tabDrag);
-                  }
+         state.value.forEach((window) => {
+            if (window.id === newWindowId) {
+               if (newPosition !== -1) {
+                  window.tabs.splice(newPosition, 0, tabDrag);
+               } else {
+                  window.tabs.push(tabDrag);
                }
-            });
-         }
+            }
+         });
       },
       activeTab: (state, action) => {
          const { tabId, windowId } = action.payload;
          state.value.forEach((window) => {
             if (window.id === windowId) {
-               window.tabs.forEach((tab) =>
-                  tab.id === tabId ? (tab.active = true) : (tab.active = false)
-               );
+               window.tabs.forEach((tab) => (tab.id === tabId ? (tab.active = true) : (tab.active = false)));
             }
          });
       },
@@ -132,40 +120,59 @@ const windowSlice = createSlice({
             if (window.id !== action.payload.windowId) {
                return window;
             }
-            const updatedTabs = window.tabs.map((tab) => ({
-               ...tab,
-               active: false,
-            }));
 
             // Thêm tab mới vào mảng tabs
-            updatedTabs.push({
+            window.tabs.push({
                ...action.payload.newTab,
-               active: true,
+               active: false,
             });
 
             // Trả về window với mảng tabs mới
             return {
                ...window,
-               tabs: updatedTabs,
+               tabs: window.tabs,
             };
+         });
+      },
+
+      setValueCollection: (state, action) => {
+         state.collection = action.payload;
+      },
+
+      deleteCollectionItem: (state, action) => {
+         const { idCollection, tab } = action.payload;
+         state.collection.forEach((collection) => {
+            if (collection.id === idCollection) {
+               collection.tabs = collection.tabs.filter((e) => e.id !== tab.id);
+            }
+         });
+      },
+
+      moveCollection: (state, action) => {
+         const { indexFrom, indexTo, collectionFrom, collectionTo } = action.payload;
+         let valueMove = state.collection[collectionFrom].tabs[indexFrom];
+         state.collection[collectionFrom].tabs.filter((_, i) => i !== indexFrom);
+         if (indexTo === -1) {
+            state.collection[collectionTo].tabs.push(valueMove);
+         } else {
+            state.collection[collectionTo].tabs.splice(indexTo, 0, valueMove);
+         }
+      },
+
+      addCollectionItem: (state, action) => {
+         const { id, newPosition, tab } = action.payload;
+         state.collection.forEach((collection) => {
+            if (id === collection.id) {
+               if (newPosition !== -1) {
+                  collection.tabs.splice(newPosition, 0, tab);
+               } else {
+                  collection.tabs.push(tab);
+               }
+            }
          });
       },
    },
 });
-
-// Lưu trạng thái Redux vào chrome.storage mỗi khi store thay đổi
-
-export const {
-   deleteWindow,
-   setValue,
-   deleteTab,
-   addEmptyTab,
-   addWindow,
-   moveTabAroundWindow,
-   moveTabWithoutWindow,
-   activeTab,
-   navigateTab,
-   pinTab,
-} = windowSlice.actions;
+export const { deleteWindow, deleteCollectionItem, setValueCollection, addCollectionItem, setValue, deleteTab, addEmptyTab, addWindow, moveTabAroundWindow, moveTabWithoutWindow, activeTab, navigateTab, pinTab } = windowSlice.actions;
 
 export default windowSlice.reducer;

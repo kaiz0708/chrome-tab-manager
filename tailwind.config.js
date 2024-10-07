@@ -8,13 +8,7 @@ module.exports = {
    theme: {
       extend: {
          fontFamily: {
-            sans: [
-               "Open Sans",
-               "Roboto",
-               "Arial",
-               "Helvetica Neue",
-               "sans-serif",
-            ],
+            sans: ["Open Sans", "Roboto", "Arial", "Helvetica Neue", "sans-serif"],
             serif: ["Merriweather", "Georgia", "serif"],
          },
          colors: {
@@ -25,14 +19,14 @@ module.exports = {
             "custom-hover-gray": "rgb(225, 225, 231)",
             "custom-color-tooltip": "rgb(255, 240, 241)",
             "custom-color-title": "rgb(246, 80, 119)",
+            "custom-title": "#70708C",
          },
          boxShadow: {
             custom: "1px 2px 4px rgba(112, 112, 140, 0.15)",
             "custom-hover": "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
          },
          filter: {
-            "custom-drop-shadow":
-               "drop-shadow(1px 2px 4px rgba(112, 112, 140, 0.15))", // Thêm filter drop-shadow tùy chỉnh
+            "custom-drop-shadow": "drop-shadow(1px 2px 4px rgba(112, 112, 140, 0.15))", // Thêm filter drop-shadow tùy chỉnh
          },
          borderColor: {
             custom: "rgb(240, 240, 247);",
@@ -48,7 +42,8 @@ module.exports = {
             custom: "189px",
          },
          height: {
-            custom: "470px",
+            custom: "480px",
+            customBlock: "79.325px",
          },
          keyframes: {
             hoverEffect: {
@@ -89,13 +84,11 @@ module.exports = {
                   height: "8px" /* Độ cao cho thanh cuộn ngang */,
                },
                "&::-webkit-scrollbar-thumb": {
-                  "background-color":
-                     "rgba(156, 163, 175, 0.3)" /* Màu của thanh kéo */,
+                  "background-color": "rgba(156, 163, 175, 0.3)" /* Màu của thanh kéo */,
                   "border-radius": "8px" /* Bo tròn thanh kéo */,
                },
                "&::-webkit-scrollbar-track": {
-                  background:
-                     "rgba(229, 231, 235, 0.3)" /* Màu nền của track */,
+                  background: "rgba(229, 231, 235, 0.3)" /* Màu nền của track */,
                },
             },
          });

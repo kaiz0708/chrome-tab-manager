@@ -1,35 +1,25 @@
 /** @format */
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, lazy } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { updateWindowCurrent } from "../../store/features/popupSlices";
-import TaskBarPopup from "./footer/TaskBarPopup";
+import { ActionTab } from "../../enums/action";
+import serviceChrome from "../services/ServiceChrome";
+import { deleteTab, setValueCollection, addCollectionItem, addEmptyTab, deleteWindow, setValue, addWindow, moveTabAroundWindow, moveTabWithoutWindow, activeTab, navigateTab, pinTab, deleteCollectionItem } from "../../store/features/windowSlices";
+import { updateStateDisplay } from "../../store/features/popupSlices";
+import utils from "../../common/utils";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { ActionTab } from "../../enums/ActionTab";
-import Header from "./header/Header";
-import MainPopup from "./main/MainPopup";
-import serviceChrome from "../services/ServiceChrome";
-import {
-   deleteTab,
-   addEmptyTab,
-   deleteWindow,
-   setValue,
-   addWindow,
-   moveTabAroundWindow,
-   moveTabWithoutWindow,
-   activeTab,
-   navigateTab,
-   pinTab,
-} from "../../store/features/windowSlices";
+const Header = lazy(() => import("./header/Header"));
+const MainPopup = lazy(() => import("./main/MainPopup"));
+const TaskBarPopup = lazy(() => import("./footer/TaskBarPopup"));
 /* global chrome */
 function Popup() {
    const windowTabs = useSelector((state) => state.window.value);
    const [windowList, setWindowList] = useState([]);
-   const [tabGroup, setTabGroup] = useState([]);
-   console.log(tabGroup);
    const typeDisplay = useSelector((state) => state.current.displayState);
    const dispatch = useDispatch();
+   const [loading, setLoading] = useState(true);
 
    useEffect(() => {
       setWindowList(windowTabs);
@@ -44,9 +34,13 @@ function Popup() {
                if (b.id === currentWindow.id) return 1;
                return 0;
             });
-
             dispatch(setValue(sortedWindows));
          });
+      });
+
+      serviceChrome.createState();
+      chrome.storage.local.get([process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE], (result) => {
+         dispatch(updateStateDisplay(result[process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE]));
       });
    }, []);
 
@@ -66,12 +60,10 @@ function Popup() {
                dispatch(addWindow(msg.data.window));
                break;
             case ActionTab.typeMoveTabAroundWindow:
-               console.log("move around");
                console.log(msg.data);
                dispatch(moveTabAroundWindow(msg.data));
                break;
             case ActionTab.typeMoveTabWithOutWindow:
-               console.log("move without");
                dispatch(moveTabWithoutWindow(msg.data));
                break;
             case ActionTab.typeActiveTab:
@@ -83,6 +75,12 @@ function Popup() {
             case ActionTab.typePinTab:
                dispatch(pinTab(msg.data));
                break;
+            case ActionTab.typeAddCollection:
+               dispatch(addCollectionItem(msg.data));
+               break;
+            case ActionTab.typeDeleteCollection:
+               dispatch(deleteCollectionItem(msg.data));
+               break;
          }
       };
 
@@ -93,42 +91,35 @@ function Popup() {
    }, []);
 
    const filterGroupTab = (value) => {
-      let tab = [];
       if (value === "") {
          setWindowList(windowTabs);
-         setTabGroup([]);
       } else {
          const windowGroup = windowTabs.map((window) => {
-            const filteredTabs = window.tabs.filter((e) =>
-               e.title.toLowerCase().includes(value.toLowerCase())
-            );
-            tab.push([...filteredTabs]);
+            const filteredTabs = window.tabs.filter((e) => e.title.toLowerCase().includes(value.toLowerCase()));
             return { ...window, tabs: filteredTabs };
          });
          setWindowList(windowGroup);
-         setTabGroup(tab);
       }
    };
 
    const groupTab = () => {
-      const url = tabGroup.map((tab) => tab.url);
-      serviceChrome.openWindow(url);
-
+      let urls = [];
       windowList.forEach((window) => {
          window.tabs.forEach((tab) => {
-            serviceChrome.closeTab(tab.id, tab.windowId);
+            urls.push(tab);
          });
       });
-
-      setTabGroup([]);
+      serviceChrome.openWindowGroup(urls);
    };
 
    return (
       <div className='w-full scrollbar-thumb-rounded font-sans text-xs font-normal text-custom-black'>
          <Header />
+
          <DndProvider backend={HTML5Backend}>
-            <MainPopup windowTabs={windowList} typeDisplay={typeDisplay} />
+            <MainPopup windowTabs={windowList} typeDisplay={typeDisplay} loadingCollection={loading} />
          </DndProvider>
+
          <TaskBarPopup filterGroupTab={filterGroupTab} groupTab={groupTab} />
       </div>
    );
