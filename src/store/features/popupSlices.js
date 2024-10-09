@@ -1,7 +1,6 @@
 /** @format */
 
 import { createSlice } from "@reduxjs/toolkit";
-/* global chrome */
 
 const popupSlice = createSlice({
    name: "current",
@@ -12,6 +11,7 @@ const popupSlice = createSlice({
       auth: false,
       register: false,
       display: false,
+      notification: [],
    },
    reducers: {
       updateWindowCurrent: (state, action) => {
@@ -37,9 +37,17 @@ const popupSlice = createSlice({
       updateDisplay: (state, action) => {
          state.display = action.payload;
       },
+
+      addNoti: (state, action) => {
+         state.notification.push(action.payload);
+      },
+
+      removeNoti: (state, action) => {
+         state.notification = state.notification.filter((e) => e.id !== action.payload);
+      },
    },
 });
 
-export const { updateWindowCurrent, updateStateDisplay, updateStateCollection, updateAuth, updateRegister, updateDisplay } = popupSlice.actions;
+export const { updateWindowCurrent, addNoti, removeNoti, updateStateDisplay, updateStateCollection, updateAuth, updateRegister, updateDisplay } = popupSlice.actions;
 
 export default popupSlice.reducer;

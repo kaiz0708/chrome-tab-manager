@@ -34,6 +34,7 @@ function WindowCollection({ window }) {
                <div
                   onClick={() => {
                      handleDeleteCollection(window.windowTab.id);
+                     
                   }}
                   className='flex items-center justify-center p-1 bg-gray-300 rounded-full cursor-pointer hover:bg-custom-pink transition duration-300 ease-in-out'>
                   <IoCloseOutline className='text-xs text-white transition-transform duration-300 ease-in-out transform rotate-0' />

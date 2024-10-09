@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { axios } from "./common/axios";
 import { updateAuth, updateDisplay } from "./store/features/popupSlices";
 import { CircularProgress } from "@mui/material";
+import Notification from "./components/notification/Notification";
 import utils from "./common/utils";
 const Popup = lazy(() => import("./components/popup/Popup"));
 const Login = lazy(() => import("./components/auth/Login"));
@@ -14,6 +15,7 @@ function App() {
    const isAuth = useSelector((state) => state.current.auth);
    const isRegister = useSelector((state) => state.current.register);
    const isDisplay = useSelector((state) => state.current.display);
+   const notification = useSelector((state) => state.current.notification);
    const dispatch = useDispatch();
 
    useEffect(() => {
@@ -41,8 +43,14 @@ function App() {
          dispatch(updateDisplay(true));
       });
    }, [dispatch]);
+
    return (
       <div>
+         {notification.length !== 0
+            ? notification.map((noti) => {
+                 <Notification open={true} message={noti.message} id={noti.id} />;
+              })
+            : null}
          {!isDisplay ? (
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
                <CircularProgress aria-label='Checking login status...' aria-live='polite' />
