@@ -1,18 +1,19 @@
 /** @format */
 import { useDrag, useDrop } from "react-dnd";
-import serviceChrome from "../../services/ServiceChrome";
+import serviceChrome from "../../../services/ServiceChrome";
 import React, { useEffect, useRef, lazy, Suspense } from "react";
 import { Tooltip, Zoom } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { AnimatePresence } from "framer-motion";
-import { ActionTab } from "../../../enums/action";
+import { ActionTab } from "../../../../enums/action";
 import Masonry from "@mui/lab/Masonry";
 import { Box } from "@mui/material";
 import { HiOutlinePlus } from "react-icons/hi2";
-import servicePopup from "../servicePopup";
-import { deleteCollectionItem } from "../../../store/features/windowSlices";
+import servicePopup from "../../servicePopup";
+import { deleteCollectionItem } from "../../../../store/features/windowSlices";
+import { Grid2 } from "@mui/material";
 
-const MainCollections = lazy(() => import("./MainCollections"));
+const MainCollections = lazy(() => import("../collection/MainCollections"));
 /* global chrome */
 
 const WindowTab = lazy(() => import("./WindowTab"));
@@ -60,6 +61,37 @@ function MainPopup({ windowTabs, typeDisplay, loadingCollection }) {
    return (
       <div className='h-custom'>
          <div ref={combinedRef} className={`p-2 ${stateCollection ? "h-[50%]" : "h-full"} relative bg-gray-100 overflow-y-auto scrollbar-thumb-rounded`}>
+            <div>
+               <Grid2 columns={{ xs: 8, sm: 8, md: 8 }} container spacing={1}>
+                  <Grid2 size={{ xs: 7, sm: 7, md: 7 }}>
+                     <div className='text-base font-medium text-gray-600'>Tab</div>
+                  </Grid2>
+
+                  <Grid2 style={{ display: "flex", justifyContent: "flex-end" }} size={{ xs: 1, sm: 1, md: 1 }}>
+                     <Box>
+                        <Tooltip
+                           onClick={(e) => {
+                              e.stopPropagation();
+                              openNewWindowEmpty();
+                           }}
+                           title={"Open new window"}
+                           TransitionComponent={Zoom}
+                           TransitionProps={{ timeout: 200 }}
+                           disableInteractive>
+                           <div
+                              className=' transition duration-200  ease-in bg-white hover:shadow-custom-hover cursor-pointer rounded shadow-custom flex justify-center items-center'
+                              style={{
+                                 width: "50px",
+                                 height: "30px",
+                              }}>
+                              <HiOutlinePlus className='text-base' />
+                           </div>
+                        </Tooltip>
+                     </Box>
+                  </Grid2>
+               </Grid2>
+            </div>
+
             <Masonry columns={3} spacing={1}>
                {windowTabs.map((windowTab, index) => (
                   <Box key={index} sx={{ height: "auto" }}>
@@ -73,22 +105,6 @@ function MainPopup({ windowTabs, typeDisplay, loadingCollection }) {
                      />
                   </Box>
                ))}
-
-               <Box key={windowTabs.length} sx={{ height: "auto" }}>
-                  <Tooltip
-                     onClick={(e) => {
-                        e.stopPropagation();
-                        openNewWindowEmpty();
-                     }}
-                     title={"Open new window"}
-                     TransitionComponent={Zoom}
-                     TransitionProps={{ timeout: 200 }}
-                     disableInteractive>
-                     <div className='transition h-customBlock duration-200 ease-in space-y-2 hover:-translate-y-1 bg-white p-2 hover:shadow-custom-hover cursor-pointer shadow-custom rounded-md z-10 will-change-transform will-change-shadow flex justify-center items-center'>
-                        <HiOutlinePlus className='size-8' />
-                     </div>
-                  </Tooltip>
-               </Box>
             </Masonry>
          </div>
 

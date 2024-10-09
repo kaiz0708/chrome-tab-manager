@@ -171,8 +171,19 @@ const windowSlice = createSlice({
             }
          });
       },
+
+      createCollection: (state, action) => {
+         const { collection } = action.payload;
+         state.collection.push(collection);
+      },
+
+      deleteCollection: (state, action) => {
+         const { collection } = action.payload;
+         state.collection = state.collection.filter((e) => e.id !== collection.id);
+      },
    },
 });
-export const { deleteWindow, deleteCollectionItem, setValueCollection, addCollectionItem, setValue, deleteTab, addEmptyTab, addWindow, moveTabAroundWindow, moveTabWithoutWindow, activeTab, navigateTab, pinTab } = windowSlice.actions;
+export const { deleteWindow, deleteCollection, deleteCollectionItem, createCollection, setValueCollection, addCollectionItem, setValue, deleteTab, addEmptyTab, addWindow, moveTabAroundWindow, moveTabWithoutWindow, activeTab, navigateTab, pinTab } =
+   windowSlice.actions;
 
 export default windowSlice.reducer;

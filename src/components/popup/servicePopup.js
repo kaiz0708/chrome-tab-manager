@@ -1,11 +1,11 @@
 /** @format */
 
 import { axios } from "../../common/axios";
-import serviceChrome from "../services/ServiceChrome";
+import utils from "../../common/utils";
 
 export default {
    listCollection: async () => {
-      const token = await serviceChrome.getValueLocal("token");
+      const token = await utils.getToken();
       const response = await axios.get("/collection", {
          headers: {
             Authorization: token,
@@ -15,7 +15,7 @@ export default {
    },
 
    addTabToCollection: async (item, collectionId, position) => {
-      const token = await serviceChrome.getValueLocal("token");
+      const token = await utils.getToken();
       const { title, url, favIconUrl } = item;
       const dataRequest = {
          title,
@@ -42,7 +42,7 @@ export default {
    },
 
    deleteTabToCollection: async (item, collectionId) => {
-      const token = await serviceChrome.getValueLocal("token");
+      const token = await utils.getToken();
       const { id, position } = item;
       const dataRequest = {
          tab: {
@@ -64,6 +64,40 @@ export default {
             },
          }
       );
+
+      return response;
+   },
+
+   createCollection: async (title, note) => {
+      const token = await utils.getToken();
+      const dataRequest = {
+         title,
+         note,
+      };
+
+      const response = await axios.post(
+         "/collection",
+         {
+            ...dataRequest,
+         },
+         {
+            headers: {
+               Authorization: "Bearer " + token,
+            },
+         }
+      );
+
+      return response;
+   },
+
+   deleteCollection: async (id) => {
+      const token = await utils.getToken();
+      const response = await axios.delete(`/collection/${id}`, {
+         headers: {
+            Authorization: "Bearer " + token,
+         },
+      });
+      console.log(response.data.data);
 
       return response;
    },

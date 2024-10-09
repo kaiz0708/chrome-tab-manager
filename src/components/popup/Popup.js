@@ -5,13 +5,28 @@ import { useSelector, useDispatch } from "react-redux";
 import { updateWindowCurrent } from "../../store/features/popupSlices";
 import { ActionTab } from "../../enums/action";
 import serviceChrome from "../services/ServiceChrome";
-import { deleteTab, setValueCollection, addCollectionItem, addEmptyTab, deleteWindow, setValue, addWindow, moveTabAroundWindow, moveTabWithoutWindow, activeTab, navigateTab, pinTab, deleteCollectionItem } from "../../store/features/windowSlices";
+import {
+   deleteTab,
+   setValueCollection,
+   addCollectionItem,
+   addEmptyTab,
+   deleteWindow,
+   setValue,
+   addWindow,
+   moveTabAroundWindow,
+   moveTabWithoutWindow,
+   activeTab,
+   navigateTab,
+   pinTab,
+   deleteCollectionItem,
+   createCollection,
+   deleteCollection,
+} from "../../store/features/windowSlices";
 import { updateStateDisplay } from "../../store/features/popupSlices";
-import utils from "../../common/utils";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 const Header = lazy(() => import("./header/Header"));
-const MainPopup = lazy(() => import("./main/MainPopup"));
+const MainPopup = lazy(() => import("./main/popup/MainPopup"));
 const TaskBarPopup = lazy(() => import("./footer/TaskBarPopup"));
 /* global chrome */
 function Popup() {
@@ -75,11 +90,17 @@ function Popup() {
             case ActionTab.typePinTab:
                dispatch(pinTab(msg.data));
                break;
-            case ActionTab.typeAddCollection:
+            case ActionTab.typeAddItemCollection:
                dispatch(addCollectionItem(msg.data));
                break;
-            case ActionTab.typeDeleteCollection:
+            case ActionTab.typeDeleteItemCollection:
                dispatch(deleteCollectionItem(msg.data));
+               break;
+            case ActionTab.typeCreateCollection:
+               dispatch(createCollection(msg.data));
+               break;
+            case ActionTab.typeDeleteCollection:
+               dispatch(deleteCollection(msg.data));
                break;
          }
       };

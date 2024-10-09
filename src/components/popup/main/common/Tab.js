@@ -2,14 +2,14 @@
 import React, { useState, useEffect, useRef, lazy } from "react";
 import { IoIosClose } from "react-icons/io";
 import { IoEarthOutline } from "react-icons/io5";
-import servicesChrome from "../../services/ServiceChrome";
 import { Tooltip, Zoom } from "@mui/material";
 import { useDrag, useDrop } from "react-dnd";
-import { ActionTab } from "../../../enums/action";
+import { ActionTab } from "../../../../enums/action";
 import { useDispatch } from "react-redux";
-import { deleteCollectionItem } from "../../../store/features/windowSlices";
-import servicePopup from "../servicePopup";
-import serviceChrome from "../../services/ServiceChrome";
+import { deleteCollectionItem } from "../../../../store/features/windowSlices";
+import { motion } from "framer-motion";
+import servicePopup from "../../servicePopup";
+import serviceChrome from "../../../services/ServiceChrome";
 
 /* global chrome */
 
@@ -27,7 +27,7 @@ function Tab({ tab, index, typeDisplay, display }) {
    });
 
    const closeTab = (tabId, windowId) => {
-      servicesChrome.closeTab(tabId, windowId);
+      serviceChrome.closeTab(tabId, windowId);
    };
 
    const deleteItemCollection = async (collectionId, tab) => {
@@ -38,7 +38,7 @@ function Tab({ tab, index, typeDisplay, display }) {
    };
 
    const switchToTab = (tabId) => {
-      servicesChrome.switchToTab(tabId);
+      serviceChrome.switchToTab(tabId);
    };
 
    const checkActveTab = (tab, hover) => {
@@ -50,7 +50,7 @@ function Tab({ tab, index, typeDisplay, display }) {
    };
 
    return (
-      <div ref={drag} className={`${isDragging ? "transition-all duration-300 ease-in-out" : ""} `}>
+      <div ref={drag}>
          <Tooltip TransitionComponent={Zoom} TransitionProps={{ timeout: 200 }} onClick={() => switchToTab(tab.id)} disableInteractive title={tab.title}>
             <div
                onMouseEnter={() => {

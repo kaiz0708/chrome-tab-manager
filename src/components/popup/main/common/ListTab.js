@@ -2,14 +2,14 @@
 import Tab from "./Tab";
 import { useDrag, useDrop } from "react-dnd";
 import React, { useRef, lazy } from "react";
-import serviceChrome from "../../services/ServiceChrome";
+import serviceChrome from "../../../services/ServiceChrome";
 import { HiOutlinePlus } from "react-icons/hi2";
 import { Tooltip, Zoom } from "@mui/material";
 import { Grid2 } from "@mui/material";
-import { ActionTab } from "../../../enums/action";
+import { ActionTab } from "../../../../enums/action";
 import { useDispatch } from "react-redux";
-import { addCollectionItem, deleteCollectionItem } from "../../../store/features/windowSlices";
-import servicePopup from "../servicePopup";
+import { addCollectionItem, deleteCollectionItem } from "../../../../store/features/windowSlices";
+import servicePopup from "../../servicePopup";
 import { positions } from "@mui/system";
 
 /* global chrome */
@@ -33,7 +33,7 @@ function ListTab({ window }) {
                const collectionId = window.windowTab.id;
                const response = await servicePopup.addTabToCollection(item.tab, collectionId, hoverIndex);
                const { data } = response.data;
-               serviceChrome.sendMessage({ id: collectionId, tab: data, newPosition: hoverIndex }, ActionTab.typeAddCollection);
+               serviceChrome.sendMessage({ id: collectionId, tab: data, newPosition: hoverIndex }, ActionTab.typeAddItemCollection);
                dispatch(addCollectionItem({ id: collectionId, tab: data, newPosition: hoverIndex }));
                serviceChrome.closeTab(tabId, item.tab.windowId);
             }
@@ -44,7 +44,7 @@ function ListTab({ window }) {
                const response = await servicePopup.deleteTabToCollection(item.tab, collectionId);
                const { data } = response.data;
                serviceChrome.openNewTabEmpty(window.windowTab.id, data.url, false);
-               serviceChrome.sendMessage({ idCollection: collectionId, tab: data }, ActionTab.typeDeleteCollection);
+               serviceChrome.sendMessage({ idCollection: collectionId, tab: data }, ActionTab.typeDeleteItemCollection);
                dispatch(deleteCollectionItem({ idCollection: collectionId, tab: data }));
             }
          }

@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { axios } from "./common/axios";
 import { updateAuth, updateDisplay } from "./store/features/popupSlices";
 import { CircularProgress } from "@mui/material";
-import serviceChrome from "./components/services/ServiceChrome";
+import utils from "./common/utils";
 const Popup = lazy(() => import("./components/popup/Popup"));
 const Login = lazy(() => import("./components/auth/Login"));
 const Register = lazy(() => import("./components/auth/Register"));
@@ -18,7 +18,7 @@ function App() {
 
    useEffect(() => {
       const checkLoginStatus = async () => {
-         const token = await serviceChrome.getValueLocal("token");
+         const token = await utils.getToken();
 
          if (token) {
             const response = await axios.get("/auth/expire", {

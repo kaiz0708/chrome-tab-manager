@@ -45,6 +45,9 @@ module.exports = {
             custom: "480px",
             customBlock: "79.325px",
          },
+         spacing: {
+            "custom-bottom": "230px",
+         },
          keyframes: {
             hoverEffect: {
                "0%": {

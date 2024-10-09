@@ -1,6 +1,7 @@
 /** @format */
 /* global chrome */
 import axios from "axios";
+import serviceChrome from "../components/services/ServiceChrome";
 
 export default {
    parseStringToObjects: (str, mainDelimiter, fieldDelimeter, fieldNames) => {
@@ -34,5 +35,9 @@ export default {
          }
       }
       return Object.values(combined);
+   },
+
+   getToken: async () => {
+      return await serviceChrome.getValueLocal("token");
    },
 };
