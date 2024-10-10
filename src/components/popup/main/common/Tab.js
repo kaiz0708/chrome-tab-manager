@@ -7,9 +7,10 @@ import { useDrag, useDrop } from "react-dnd";
 import { ActionTab } from "../../../../enums/action";
 import { useDispatch } from "react-redux";
 import { deleteCollectionItem } from "../../../../store/features/windowSlices";
-import { motion } from "framer-motion";
 import servicePopup from "../../servicePopup";
 import serviceChrome from "../../../services/ServiceChrome";
+import { addNoti } from "../../../../store/features/popupSlices";
+import { v4 as uuidv4 } from "uuid";
 
 /* global chrome */
 
@@ -32,9 +33,10 @@ function Tab({ tab, index, typeDisplay, display }) {
 
    const deleteItemCollection = async (collectionId, tab) => {
       const response = await servicePopup.deleteTabToCollection(tab, collectionId);
-      const { data } = response.data;
+      const { data, status, message } = response.data;
       serviceChrome.sendMessage({ idCollection: collectionId, tab: data }, ActionTab.typeDeleteCollection);
       dispatch(deleteCollectionItem({ idCollection: collectionId, tab: data }));
+      dispatch(addNoti({ id: uuidv4(), status, message }));
    };
 
    const switchToTab = (tabId) => {

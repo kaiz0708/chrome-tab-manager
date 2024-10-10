@@ -9,8 +9,9 @@ import { Grid2 } from "@mui/material";
 import { ActionTab } from "../../../../enums/action";
 import { useDispatch } from "react-redux";
 import { addCollectionItem, deleteCollectionItem } from "../../../../store/features/windowSlices";
+import { addNoti, removeNoti } from "../../../../store/features/popupSlices";
+import { v4 as uuidv4 } from "uuid";
 import servicePopup from "../../servicePopup";
-import { positions } from "@mui/system";
 
 /* global chrome */
 
@@ -32,20 +33,28 @@ function ListTab({ window }) {
             } else {
                const collectionId = window.windowTab.id;
                const response = await servicePopup.addTabToCollection(item.tab, collectionId, hoverIndex);
-               const { data } = response.data;
+               const { data, status, message } = response.data;
                serviceChrome.sendMessage({ id: collectionId, tab: data, newPosition: hoverIndex }, ActionTab.typeAddItemCollection);
                dispatch(addCollectionItem({ id: collectionId, tab: data, newPosition: hoverIndex }));
+               dispatch(addNoti({ message, id: uuidv4(), status }));
                serviceChrome.closeTab(tabId, item.tab.windowId);
             }
          } else {
             if (window.typeFeature === collectionType) {
+               const collectionId = window.windowTab.id;
+               const response = await servicePopup.moveItemCollectionToOther(item.tab, collectionId, hoverIndex);
+               const { data, status, message } = response.data;
+               dispatch(addCollectionItem({ id: collectionId, tab: data, newPosition: hoverIndex }));
+               dispatch(deleteCollectionItem({ idCollection: collectionId, tab: data }));
+               addNoti({ message, id: uuidv4(), status });
             } else {
                const collectionId = item.tab.collection;
                const response = await servicePopup.deleteTabToCollection(item.tab, collectionId);
-               const { data } = response.data;
+               const { data, status, message } = response.data;
                serviceChrome.openNewTabEmpty(window.windowTab.id, data.url, false);
                serviceChrome.sendMessage({ idCollection: collectionId, tab: data }, ActionTab.typeDeleteItemCollection);
                dispatch(deleteCollectionItem({ idCollection: collectionId, tab: data }));
+               dispatch(addNoti({ message, id: uuidv4(), status }));
             }
          }
       },

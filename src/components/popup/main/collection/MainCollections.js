@@ -15,6 +15,8 @@ import { PiNotePencilThin } from "react-icons/pi";
 import servicePopup from "../../servicePopup";
 import serviceChrome from "../../../services/ServiceChrome";
 import { ActionTab } from "../../../../enums/action";
+import { addNoti } from "../../../../store/features/popupSlices";
+import { v4 as uuidv4 } from "uuid";
 const WindowCollection = lazy(() => import("../collection/WindowCollection"));
 /* global chrome */
 
@@ -60,9 +62,10 @@ function MainCollections() {
 
    const handleCreateCollection = async (title, note) => {
       const response = await servicePopup.createCollection(title, note);
-      const { data } = response.data;
+      const { data, status, message } = response.data;
       serviceChrome.sendMessage({ collection: data }, ActionTab.typeCreateCollection);
       dispatch(createCollection({ collection: data }));
+      dispatch(addNoti({ id: uuidv4(), status, message }));
       setStateCreateCollection(false);
    };
 

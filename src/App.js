@@ -3,10 +3,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { React, lazy, Suspense, useState } from "react";
 import { useEffect } from "react";
 import { axios } from "./common/axios";
-import { updateAuth, updateDisplay } from "./store/features/popupSlices";
+import { removeNoti, updateAuth, updateDisplay } from "./store/features/popupSlices";
 import { CircularProgress } from "@mui/material";
-import Notification from "./components/notification/Notification";
 import utils from "./common/utils";
+import { useSnackbar } from "notistack";
 const Popup = lazy(() => import("./components/popup/Popup"));
 const Login = lazy(() => import("./components/auth/Login"));
 const Register = lazy(() => import("./components/auth/Register"));
@@ -15,8 +15,9 @@ function App() {
    const isAuth = useSelector((state) => state.current.auth);
    const isRegister = useSelector((state) => state.current.register);
    const isDisplay = useSelector((state) => state.current.display);
-   const notification = useSelector((state) => state.current.notification);
+   const notifications = useSelector((state) => state.current.notification);
    const dispatch = useDispatch();
+   const { enqueueSnackbar } = useSnackbar();
 
    useEffect(() => {
       const checkLoginStatus = async () => {
@@ -42,15 +43,20 @@ function App() {
       checkLoginStatus().then(() => {
          dispatch(updateDisplay(true));
       });
-   }, [dispatch]);
+   }, []);
+
+   useEffect(() => {
+      notifications.forEach((noti) => {
+         enqueueSnackbar(noti.message, {
+            variant: "success",
+            autoHideDuration: 2000,
+         });
+         dispatch(removeNoti(noti.id));
+      });
+   }, [notifications, dispatch]);
 
    return (
-      <div>
-         {notification.length !== 0
-            ? notification.map((noti) => {
-                 <Notification open={true} message={noti.message} id={noti.id} />;
-              })
-            : null}
+      <div className='relative'>
          {!isDisplay ? (
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
                <CircularProgress aria-label='Checking login status...' aria-live='polite' />

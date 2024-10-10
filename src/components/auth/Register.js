@@ -5,6 +5,8 @@ import serviceAuth from "./serviceAuth";
 import { updateAuth, updateRegister } from "../../store/features/popupSlices";
 import serviceChrome from "../services/ServiceChrome";
 import { useSelector, useDispatch } from "react-redux";
+import { v4 as uuidv4 } from "uuid";
+import { addNoti } from "../../store/features/popupSlices";
 
 function Register() {
    const [confirmPassword, setConfirmPassword] = useState("");
@@ -30,17 +32,16 @@ function Register() {
          const { status, message } = response.data;
          const { data } = response.data;
          const { token, user } = data;
-         if (status === 200 && message === "OK") {
+         if (status === 200) {
             serviceChrome.setStateLocal("token", token);
             dispatch(updateAuth(true));
             dispatch(updateRegister(false));
          } else {
-            if (status === 400 && message === "user already exist") {
-               dispatch(updateAuth(false));
-            }
+            dispatch(updateAuth(false));
          }
+         dispatch(addNoti({ message, id: uuidv4(), status }));
       } else {
-         console.log(false);
+         dispatch(addNoti({ message: "Wrong confirm password", id: uuidv4(), status: 400 }));
       }
    };
    return (

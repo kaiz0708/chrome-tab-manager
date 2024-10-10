@@ -12,6 +12,7 @@ const popupSlice = createSlice({
       register: false,
       display: false,
       notification: [],
+      timeoutId: null,
    },
    reducers: {
       updateWindowCurrent: (state, action) => {
@@ -39,11 +40,11 @@ const popupSlice = createSlice({
       },
 
       addNoti: (state, action) => {
-         state.notification.push(action.payload);
+         state.notification = [action.payload, ...state.notification];
       },
 
       removeNoti: (state, action) => {
-         state.notification = state.notification.filter((e) => e.id !== action.payload);
+         state.notification = state.notification.filter((noti) => noti.id !== action.payload);
       },
    },
 });

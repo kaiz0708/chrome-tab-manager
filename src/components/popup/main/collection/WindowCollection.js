@@ -10,7 +10,8 @@ import { CiCalendarDate } from "react-icons/ci";
 import { PiNotePencilThin } from "react-icons/pi";
 import { ActionTab } from "../../../../enums/action";
 import { deleteCollection } from "../../../../store/features/windowSlices";
-import Notification from "../../../notification/Notification";
+import { addNoti } from "../../../../store/features/popupSlices";
+import { v4 as uuidv4 } from "uuid";
 const ListTab = lazy(() => import("../common/ListTab"));
 /* global chrome */
 
@@ -18,9 +19,10 @@ function WindowCollection({ window }) {
    const dispatch = useDispatch();
    const handleDeleteCollection = async (id) => {
       const response = await servicePopup.deleteCollection(id);
-      const { data } = response.data;
+      const { data, status, message } = response.data;
       serviceChrome.sendMessage({ collection: data }, ActionTab.typeDeleteCollection);
       dispatch(deleteCollection({ collection: data }));
+      dispatch(addNoti({ id: uuidv4(), status, message }));
    };
    return (
       <div className='transition duration-200 ease-in space-y-2 hover:-translate-y-1 bg-white p-2 hover:shadow-custom-hover cursor-pointer shadow-custom rounded-md z-10 will-change-transform will-change-shadow'>
@@ -34,7 +36,6 @@ function WindowCollection({ window }) {
                <div
                   onClick={() => {
                      handleDeleteCollection(window.windowTab.id);
-                     
                   }}
                   className='flex items-center justify-center p-1 bg-gray-300 rounded-full cursor-pointer hover:bg-custom-pink transition duration-300 ease-in-out'>
                   <IoCloseOutline className='text-xs text-white transition-transform duration-300 ease-in-out transform rotate-0' />

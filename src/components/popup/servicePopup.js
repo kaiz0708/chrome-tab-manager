@@ -97,7 +97,40 @@ export default {
             Authorization: "Bearer " + token,
          },
       });
-      console.log(response.data.data);
+
+      return response;
+   },
+
+   moveItemCollectionToOther: async (item, collectionIdTo, position) => {
+      const token = await utils.getToken();
+      const { title, url, favIconUrl, id, collection } = item;
+      const dataRequest = {
+         title,
+         url,
+         favIconUrl,
+         position,
+         move: {
+            tab: {
+               id,
+            },
+            collectionFrom: {
+               id: collection,
+            },
+            collectionTo: {
+               id: collectionIdTo,
+            },
+         },
+      };
+      console.log(dataRequest);
+      const response = await axios.post(
+         "/tab/move-to-collection-other",
+         { ...dataRequest },
+         {
+            headers: {
+               Authorization: "Bearer " + token,
+            },
+         }
+      );
 
       return response;
    },
