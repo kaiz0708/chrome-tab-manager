@@ -148,15 +148,14 @@ const windowSlice = createSlice({
          });
       },
 
-      moveCollection: (state, action) => {
-         const { indexFrom, indexTo, collectionFrom, collectionTo } = action.payload;
-         let valueMove = state.collection[collectionFrom].tabs[indexFrom];
-         state.collection[collectionFrom].tabs.filter((_, i) => i !== indexFrom);
-         if (indexTo === -1) {
-            state.collection[collectionTo].tabs.push(valueMove);
-         } else {
-            state.collection[collectionTo].tabs.splice(indexTo, 0, valueMove);
-         }
+      updateCollection: (state, action) => {
+         const { data } = action.payload;
+         console.log(action.payload);
+         state.collection.forEach((collection) => {
+            if (collection.id === data.id) {
+               collection = data;
+            }
+         });
       },
 
       addCollectionItem: (state, action) => {
@@ -183,7 +182,23 @@ const windowSlice = createSlice({
       },
    },
 });
-export const { deleteWindow, deleteCollection, deleteCollectionItem, createCollection, setValueCollection, addCollectionItem, setValue, deleteTab, addEmptyTab, addWindow, moveTabAroundWindow, moveTabWithoutWindow, activeTab, navigateTab, pinTab } =
-   windowSlice.actions;
+export const {
+   deleteWindow,
+   deleteCollection,
+   updateCollection,
+   deleteCollectionItem,
+   createCollection,
+   setValueCollection,
+   addCollectionItem,
+   setValue,
+   deleteTab,
+   addEmptyTab,
+   addWindow,
+   moveTabAroundWindow,
+   moveTabWithoutWindow,
+   activeTab,
+   navigateTab,
+   pinTab,
+} = windowSlice.actions;
 
 export default windowSlice.reducer;

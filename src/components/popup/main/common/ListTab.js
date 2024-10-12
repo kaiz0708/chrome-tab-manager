@@ -9,7 +9,7 @@ import { Grid2 } from "@mui/material";
 import { ActionTab } from "../../../../enums/action";
 import { useDispatch } from "react-redux";
 import { addCollectionItem, deleteCollectionItem } from "../../../../store/features/windowSlices";
-import { addNoti, removeNoti } from "../../../../store/features/popupSlices";
+import { addNoti } from "../../../../store/features/popupSlices";
 import { v4 as uuidv4 } from "uuid";
 import servicePopup from "../../servicePopup";
 /* global chrome */
@@ -41,9 +41,11 @@ function ListTab({ window }) {
          } else {
             if (window.typeFeature === collectionType) {
                const collectionId = window.windowTab.id;
-               dispatch(deleteCollectionItem({ idCollection: item.tab.collection, tab: item.tab }));
                const response = await servicePopup.moveItemCollectionToOther(item.tab, collectionId, hoverIndex);
                const { data, status, message } = response.data;
+               serviceChrome.sendMessage({ idCollection: item.tab.collection, tab: item.tab }, ActionTab.typeDeleteItemCollection);
+               serviceChrome.sendMessage({ id: collectionId, tab: data, newPosition: hoverIndex }, ActionTab.typeAddItemCollection);
+               dispatch(deleteCollectionItem({ idCollection: item.tab.collection, tab: item.tab }));
                dispatch(addCollectionItem({ id: collectionId, tab: data, newPosition: hoverIndex }));
                dispatch(addNoti({ message, id: uuidv4(), status }));
             } else {
@@ -110,26 +112,32 @@ function ListTab({ window }) {
 
    return (
       <div ref={combinedRef}>
-         <Grid2 columns={window.typeDisplay === ActionTab.typeTabHori ? { xs: 4, sm: 4, md: 4 } : { xs: 1, sm: 1, md: 1 }} container spacing={1}>
-            {window.windowTab.tabs.map((tab, index) => (
-               <Grid2 size={{ xs: 1, sm: 1, md: 1 }} key={index}>
-                  <Tab tab={tab} index={index} typeDisplay={window.typeDisplay} display={window.typeFeature} key={index} />
+         {window.windowTab.tabs.length === 0 ? (
+            <div className='cursor-pointer border-dashed h-10 border-1 flex justify-center items-center p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
+               <span className='text-xs text-custom-color-title'>Drag tabs here.</span>
+            </div>
+         ) : (
+            <Grid2 columns={window.typeDisplay === ActionTab.typeTabHori ? { xs: 4, sm: 4, md: 4 } : { xs: 1, sm: 1, md: 1 }} container spacing={1}>
+               {window.windowTab.tabs.map((tab, index) => (
+                  <Grid2 size={{ xs: 1, sm: 1, md: 1 }} key={index}>
+                     <Tab tab={tab} index={index} typeDisplay={window.typeDisplay} display={window.typeFeature} key={index} />
+                  </Grid2>
+               ))}
+               <Grid2 size={{ xs: 1, sm: 1, md: 1 }}>
+                  <Tooltip disableInteractive title={"Open new tab"} TransitionComponent={Zoom} TransitionProps={{ timeout: 200 }}>
+                     <div
+                        onClick={(e) => {
+                           e.stopPropagation();
+                           addNewEmptyTab(window.windowTab.id);
+                        }}
+                        style={window.typeDisplay === ActionTab.typeBlock ? { height: "40px", padding: "8px" } : {}}
+                        className='cursor-pointer border-1 flex justify-center items-center p-1.5 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
+                        <HiOutlinePlus className={`${window.typeDisplay === ActionTab.typeTabHori ? "w-full h-full" : ""}`} />
+                     </div>
+                  </Tooltip>
                </Grid2>
-            ))}
-            <Grid2 size={{ xs: 1, sm: 1, md: 1 }}>
-               <Tooltip disableInteractive title={"Open new tab"} TransitionComponent={Zoom} TransitionProps={{ timeout: 200 }}>
-                  <div
-                     onClick={(e) => {
-                        e.stopPropagation();
-                        addNewEmptyTab(window.windowTab.id);
-                     }}
-                     style={window.typeDisplay === ActionTab.typeBlock ? { height: "40px", padding: "8px" } : {}}
-                     className='cursor-pointer border-1 flex justify-center items-center p-1.5 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
-                     <HiOutlinePlus className={`${window.typeDisplay === ActionTab.typeTabHori ? "w-full h-full" : ""}`} />
-                  </div>
-               </Tooltip>
             </Grid2>
-         </Grid2>
+         )}
       </div>
    );
 }

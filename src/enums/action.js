@@ -30,4 +30,6 @@ export const ActionTab = Object.freeze({
    typeCreateCollection: process.env.REACT_APP_TYPE_ADD_COLLECTION,
 
    typeDeleteCollection: process.env.REACT_APP_TYPE_DELETE_COLLECTION,
+
+   typeUpdateCollection: process.env.REACT_APP_TYPE_UPDATE_COLLECTION,
 });

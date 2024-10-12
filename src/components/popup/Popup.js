@@ -21,6 +21,7 @@ import {
    deleteCollectionItem,
    createCollection,
    deleteCollection,
+   updateCollection,
 } from "../../store/features/windowSlices";
 import { updateStateDisplay } from "../../store/features/popupSlices";
 import { DndProvider } from "react-dnd";
@@ -101,6 +102,9 @@ function Popup() {
                break;
             case ActionTab.typeDeleteCollection:
                dispatch(deleteCollection(msg.data));
+               break;
+            case ActionTab.typeUpdateCollection:
+               dispatch(updateCollection(msg.data));
                break;
          }
       };
