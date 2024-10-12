@@ -24,15 +24,18 @@ function App() {
          const token = await utils.getToken();
 
          if (token) {
-            const response = await axios.get("/auth/expire", {
-               headers: {
-                  Authorization: "Bearer " + token,
-               },
-            });
-
-            if (response.data.status === 200 && response.data.message === "OK") {
-               dispatch(updateAuth(true));
-            } else if (response.data.status === 401 && response.data.message === "Unauthorized") {
+            try {
+               const response = await axios.get("/auth/expire", {
+                  headers: {
+                     Authorization: "Bearer " + token,
+                  },
+               });
+               if (response.data.status === 200 && response.data.message === "OK") {
+                  dispatch(updateAuth(true));
+               } else if (response.data.status === 401 && response.data.message === "Unauthorized") {
+                  dispatch(updateAuth(false));
+               }
+            } catch (err) {
                dispatch(updateAuth(false));
             }
          } else {

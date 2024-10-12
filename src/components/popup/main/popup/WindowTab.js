@@ -21,7 +21,7 @@ function WindowTab({ window }) {
          onClick={(e) => {
             services.switchToWindow(window.windowTab.id);
          }}
-         className='transition duration-200 ease-in space-y-2 hover:-translate-y-1 bg-white p-2 hover:shadow-custom-hover cursor-pointer shadow-custom rounded-md z-10 will-change-transform will-change-shadow'>
+         className='transition duration-100 ease-in space-y-2 hover:-translate-y-1 bg-white p-2 hover:shadow-custom-hover cursor-pointer shadow-custom rounded-md z-10 will-change-transform will-change-shadow'>
          <div className='flex justify-between items-center'>
             <span>
                {window.typeFeature === process.env.REACT_APP_TYPE_TAB ? (

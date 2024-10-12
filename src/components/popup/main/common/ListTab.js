@@ -12,7 +12,6 @@ import { addCollectionItem, deleteCollectionItem } from "../../../../store/featu
 import { addNoti, removeNoti } from "../../../../store/features/popupSlices";
 import { v4 as uuidv4 } from "uuid";
 import servicePopup from "../../servicePopup";
-
 /* global chrome */
 
 function ListTab({ window }) {
@@ -42,11 +41,11 @@ function ListTab({ window }) {
          } else {
             if (window.typeFeature === collectionType) {
                const collectionId = window.windowTab.id;
+               dispatch(deleteCollectionItem({ idCollection: item.tab.collection, tab: item.tab }));
                const response = await servicePopup.moveItemCollectionToOther(item.tab, collectionId, hoverIndex);
                const { data, status, message } = response.data;
                dispatch(addCollectionItem({ id: collectionId, tab: data, newPosition: hoverIndex }));
-               dispatch(deleteCollectionItem({ idCollection: collectionId, tab: data }));
-               addNoti({ message, id: uuidv4(), status });
+               dispatch(addNoti({ message, id: uuidv4(), status }));
             } else {
                const collectionId = item.tab.collection;
                const response = await servicePopup.deleteTabToCollection(item.tab, collectionId);

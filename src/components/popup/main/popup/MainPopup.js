@@ -6,7 +6,7 @@ import { Tooltip, Zoom } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { AnimatePresence } from "framer-motion";
 import { ActionTab } from "../../../../enums/action";
-import Masonry from "@mui/lab/Masonry";
+import Masonry from "react-masonry-css";
 import { Box } from "@mui/material";
 import { HiOutlinePlus } from "react-icons/hi2";
 import servicePopup from "../../servicePopup";
@@ -92,7 +92,12 @@ function MainPopup({ windowTabs, typeDisplay, loadingCollection }) {
                </Grid2>
             </div>
 
-            <Masonry columns={3} spacing={1}>
+            <Masonry
+               breakpointCols={{
+                  default: 3,
+               }}
+               className='flex -ml-2'
+               columnClassName='pl-2 space-y-2'>
                {windowTabs.map((windowTab, index) => (
                   <Box key={index} sx={{ height: "auto" }}>
                      <WindowTab

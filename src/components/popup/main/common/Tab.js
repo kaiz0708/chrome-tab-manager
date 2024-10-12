@@ -66,7 +66,9 @@ function Tab({ tab, index, typeDisplay, display }) {
                className={` relative ${
                   typeDisplay === process.env.REACT_APP_TYPE_TAB_HORIZONTAL ? "p-1.5 aspect-square" : "p-1.5 h-10"
                } w-full flex justify-center items-center hover:bg-gray-100 transition-all duration-300 ease-in-out border-1 border-opacity-5 z-10 space-x-1 cursor-pointer border-solid rounded`}>
-               <div className='h-5 w-5'>{tab.favIconUrl === "" || tab.favIconUrl === undefined ? <IoEarthOutline className='w-full h-full' /> : <img className='rounded-sm object-contain w-full h-full' src={tab.favIconUrl} />}</div>
+               <div className='h-5 w-5'>
+                  {tab.favIconUrl === "" || tab.favIconUrl === undefined || tab.favIconUrl === null ? <IoEarthOutline className='w-full h-full' /> : <img className='rounded-sm object-contain w-full h-full' src={tab.favIconUrl} />}
+               </div>
                {typeDisplay === ActionTab.typeBlock ? <p className='truncate flex-1 mr-2'>{tab.title}</p> : null}
                {tab.active && activeTab && display === process.env.REACT_APP_TYPE_TAB ? (
                   typeDisplay === ActionTab.typeBlock ? (

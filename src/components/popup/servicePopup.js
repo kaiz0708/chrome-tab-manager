@@ -68,11 +68,10 @@ export default {
       return response;
    },
 
-   createCollection: async (title, note) => {
+   createCollection: async (title) => {
       const token = await utils.getToken();
       const dataRequest = {
          title,
-         note,
       };
 
       const response = await axios.post(
@@ -98,6 +97,26 @@ export default {
          },
       });
 
+      return response;
+   },
+
+   updateCollection: async (title, collectionId) => {
+      const token = await utils.getToken();
+      const dataRequest = {
+         title,
+         collection: {
+            id: collectionId,
+         },
+      };
+      const response = await axios.put(
+         "/collection",
+         { ...dataRequest },
+         {
+            headers: {
+               Authorization: "Bearer " + token,
+            },
+         }
+      );
       return response;
    },
 

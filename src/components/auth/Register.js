@@ -14,7 +14,6 @@ function Register() {
       username: "",
       email: "",
       password: "",
-      phoneNumber: "",
    });
    const dispatch = useDispatch();
 
@@ -60,12 +59,6 @@ function Register() {
             <input type='email' name='email' className='w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500' value={formData.email} onChange={handleChange} placeholder='Enter your email' />
          </div>
 
-         {/* Phone Number */}
-         <div className='mb-2'>
-            <label className='block text-gray-600 mb-2'>Phone Number (Optional)</label>
-            <input type='tel' name='phoneNumber' className='w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500' value={formData.phoneNumber} onChange={handleChange} placeholder='Enter your phone number' />
-         </div>
-
          {/* Password */}
          <div className='mb-2'>
             <label className='block text-gray-600 mb-2'>Password</label>
@@ -97,7 +90,11 @@ function Register() {
          </button>
 
          <div className='mt-4 text-center'>
-            <span href='/login' className='text-custom-color-title text-sm hover:underline ursor-pointer'>
+            <span
+               onClick={() => {
+                  dispatch(updateRegister(false));
+               }}
+               className='text-custom-color-title text-sm hover:underline ursor-pointer'>
                Already have an account? Login
             </span>
          </div>

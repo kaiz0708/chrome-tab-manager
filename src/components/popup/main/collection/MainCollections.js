@@ -11,7 +11,6 @@ import Masonry from "react-masonry-css";
 import { Tooltip, Zoom } from "@mui/material";
 import { HiOutlinePlus } from "react-icons/hi2";
 import { CircularProgress } from "@mui/material";
-import { PiNotePencilThin } from "react-icons/pi";
 import servicePopup from "../../servicePopup";
 import serviceChrome from "../../../services/ServiceChrome";
 import { ActionTab } from "../../../../enums/action";
@@ -27,12 +26,6 @@ function MainCollections() {
    const windowTabs = useSelector((state) => state.window.collection);
    const type = process.env.REACT_APP_TYPE_COLLECTION;
    const typeDisplay = useSelector((state) => state.current.displayState);
-   const tabType = process.env.REACT_APP_TYPE_TAB;
-   const collectionType = process.env.REACT_APP_TYPE_COLLECTION;
-   const [stateCreateCollection, setStateCreateCollection] = useState(false);
-   const [title, setTitle] = useState("");
-   const [note, setNote] = useState("");
-
    useEffect(() => {
       const getListCollection = async () => {
          const response = await servicePopup.listCollection();
@@ -60,13 +53,13 @@ function MainCollections() {
       drop(el);
    };
 
-   const handleCreateCollection = async (title, note) => {
-      const response = await servicePopup.createCollection(title, note);
+   const handleCreateCollection = async (windowCollectionLength) => {
+      const title = process.env.REACT_APP_TYPE_DEFAULT_NAME_COLLECTION + "_" + windowCollectionLength;
+      const response = await servicePopup.createCollection(title);
       const { data, status, message } = response.data;
       serviceChrome.sendMessage({ collection: data }, ActionTab.typeCreateCollection);
       dispatch(createCollection({ collection: data }));
       dispatch(addNoti({ id: uuidv4(), status, message }));
-      setStateCreateCollection(false);
    };
 
    return (
@@ -88,7 +81,7 @@ function MainCollections() {
                            <Tooltip
                               onClick={(e) => {
                                  e.stopPropagation();
-                                 setStateCreateCollection(true);
+                                 handleCreateCollection(windowTabs.length);
                               }}
                               title={"New collection"}
                               TransitionComponent={Zoom}
@@ -126,65 +119,6 @@ function MainCollections() {
                         />
                      </Box>
                   ))}
-
-                  <AnimatePresence>
-                     {!stateCreateCollection ? null : (
-                        <motion.div key={windowTabs.length} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} transition={{ duration: 0.3 }}>
-                           <Box sx={{ height: "auto" }}>
-                              <div className='transition duration-200 ease-in space-y-2 hover:-translate-y-1 bg-white p-4 hover:shadow-custom-hover cursor-pointer shadow-custom rounded-md z-10 will-change-transform will-change-shadow'>
-                                 <div className='space-y-4'>
-                                    <div>
-                                       <div className='flex items-center space-x-1'>
-                                          <span className='text-custom-color-title text-xs font-semibold'># </span>
-                                          <span className='text-xs font-medium text-center'>Collection name :</span>
-                                       </div>
-                                       <input
-                                          type='text'
-                                          onChange={(e) => {
-                                             setTitle(e.target.value);
-                                          }}
-                                          className='mt-1 block w-full p-2 border border-gray-200 rounded shadow-sm outline-none focus:ring-0'
-                                          placeholder='Collection name'
-                                       />
-                                    </div>
-
-                                    <div>
-                                       <div className='flex items-center space-x-1'>
-                                          <PiNotePencilThin className='text-base text-custom-color-title font-bold' /> <span className='text-xs font-medium text-center'>note</span>
-                                       </div>
-                                       <input
-                                          type='text'
-                                          onChange={(e) => {
-                                             setNote(e.target.value);
-                                          }}
-                                          className='mt-1 block p-2 w-full border border-gray-200 shadow-sm rounded outline-none focus:ring-0'
-                                          placeholder='Note'
-                                       />
-                                    </div>
-
-                                    <div className='flex space-x-2 justify-end'>
-                                       <button
-                                          onClick={(e) => {
-                                             handleCreateCollection(title, note);
-                                          }}
-                                          className='inline-flex justify-center p-2 bg-custom-color-title border border-transparent shadow-sm text-xs font-medium text-center rounded text-white focus:outline-none'>
-                                          Create
-                                       </button>
-
-                                       <button
-                                          className='inline-flex justify-center p-2 border border-gray-200 border-transparent shadow-sm text-xs font-medium text-center text-black rounded focus:outline-none'
-                                          onClick={() => {
-                                             setStateCreateCollection(false);
-                                          }}>
-                                          Close
-                                       </button>
-                                    </div>
-                                 </div>
-                              </div>
-                           </Box>
-                        </motion.div>
-                     )}
-                  </AnimatePresence>
                </Masonry>
             </motion.div>
          )}
