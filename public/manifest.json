@@ -3,17 +3,15 @@
    "name": "My Extension",
    "version": "1.0",
    "description": "A description of your extension",
-   "permissions": ["windows", "tabs", "activeTab", "webNavigation", "storage"],
+   "permissions": ["windows", "tabs", "activeTab", "webNavigation", "storage", "identity"],
    "background": {
       "service_worker": "background.js"
    },
    "action": {
       "default_popup": "index.html"
    },
-   "web_accessible_resources": [
-      {
-         "resources": ["main-page.html", "main-page.bundle.js"],
-         "matches": ["<all_urls>"]
-      }
-   ]
+   "oauth2": {
+      "client_id": "689746610060-l96svr6s9gtgs2513eqqm9eg5bptgjq7.apps.googleusercontent.com",
+      "scopes": ["https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"]
+   }
 }
