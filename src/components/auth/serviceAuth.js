@@ -21,4 +21,21 @@ export default {
       const response = await axios.post("/auth/google/login", { ...dataRequest });
       return response;
    },
+
+   forgotPassword: async (email) => {
+      const dataRequest = {
+         email,
+      };
+      const response = await axios.post("/auth/forgot-password", { ...dataRequest });
+      return response;
+   },
+
+   verifyOtp: async (code, email) => {
+      const dataRequest = {
+         email,
+         code,
+      };
+      const response = await axios.post("/auth/verify-otp", { ...dataRequest });
+      return response;
+   },
 };

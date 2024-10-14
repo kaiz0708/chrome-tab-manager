@@ -1,8 +1,8 @@
 /** @format */
 
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { updateAuth, updateRegister } from "../../store/features/popupSlices";
+import { useDispatch, useSelector } from "react-redux";
+import { updateAuth, updateRegister, updateForgotPassword } from "../../store/features/popupSlices";
 import serviceAuth from "./serviceAuth";
 import serviceChrome from "../services/ServiceChrome";
 import { v4 as uuidv4 } from "uuid";
@@ -96,7 +96,13 @@ const Login = () => {
             </button>
 
             <div className='mt-4 text-end'>
-               <span className='text-custom-color-title hover:underline cursor-pointer'>Forgot Password?</span>
+               <span
+                  onClick={() => {
+                     dispatch(updateForgotPassword(true));
+                  }}
+                  className='text-custom-color-title hover:underline cursor-pointer'>
+                  Forgot Password?
+               </span>
             </div>
 
             <div className='flex items-center my-4'>

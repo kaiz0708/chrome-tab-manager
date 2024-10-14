@@ -10,12 +10,14 @@ import { useSnackbar } from "notistack";
 const Popup = lazy(() => import("./components/popup/Popup"));
 const Login = lazy(() => import("./components/auth/Login"));
 const Register = lazy(() => import("./components/auth/Register"));
+const ForgotPassword = lazy(() => import("./components/auth/ForgotPassword"));
 /* global chrome */
 function App() {
    const isAuth = useSelector((state) => state.current.auth);
    const isRegister = useSelector((state) => state.current.register);
    const isDisplay = useSelector((state) => state.current.display);
    const notifications = useSelector((state) => state.current.notification);
+   const isforgotPassword = useSelector((state) => state.current.forgotPassword);
    const dispatch = useDispatch();
    const { enqueueSnackbar } = useSnackbar();
 
@@ -70,7 +72,11 @@ function App() {
             </Suspense>
          ) : (
             <div className='bg-gray-50 flex items-center justify-center h-screen'>
-               {isRegister ? (
+               {isforgotPassword ? (
+                  <Suspense>
+                     <ForgotPassword />
+                  </Suspense>
+               ) : isRegister ? (
                   <Suspense>
                      <Register />
                   </Suspense>
