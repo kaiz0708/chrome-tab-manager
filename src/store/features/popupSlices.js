@@ -14,6 +14,7 @@ const popupSlice = createSlice({
       notification: [],
       timeoutId: null,
       forgotPassword: false,
+      otp: false,
    },
    reducers: {
       updateWindowCurrent: (state, action) => {
@@ -51,9 +52,13 @@ const popupSlice = createSlice({
       updateForgotPassword: (state, action) => {
          state.forgotPassword = action.payload;
       },
+
+      updateOtp: (state, action) => {
+         state.otp = action.payload;
+      },
    },
 });
 
-export const { updateWindowCurrent, updateForgotPassword, addNoti, removeNoti, updateStateDisplay, updateStateCollection, updateAuth, updateRegister, updateDisplay } = popupSlice.actions;
+export const { updateWindowCurrent, updateOtp, updateForgotPassword, addNoti, removeNoti, updateStateDisplay, updateStateCollection, updateAuth, updateRegister, updateDisplay } = popupSlice.actions;
 
 export default popupSlice.reducer;

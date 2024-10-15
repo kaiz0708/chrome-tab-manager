@@ -117,6 +117,24 @@ const serviceChrome = {
             });
          }
       });
+
+      chrome.storage.local.get(process.env.REACT_APP_TYPE_NAME_STATE_OTP_VARIABLE, (result) => {
+         console.log(result[process.env.REACT_APP_TYPE_NAME_STATE_OTP_VARIABLE]);
+         if (result[process.env.REACT_APP_TYPE_NAME_STATE_OTP_VARIABLE] === undefined) {
+            chrome.storage.local.set({ [process.env.REACT_APP_TYPE_NAME_STATE_OTP_VARIABLE]: false }, () => {
+               console.log("Đối tượng đã được lưu.");
+            });
+         }
+      });
+
+      chrome.storage.local.get(process.env.REACT_APP_TYPE_NAME_EMAIL, (result) => {
+         console.log(result[process.env.REACT_APP_TYPE_NAME_EMAIL]);
+         if (result[process.env.REACT_APP_TYPE_NAME_EMAIL] === undefined) {
+            chrome.storage.local.set({ [process.env.REACT_APP_TYPE_NAME_EMAIL]: "" }, () => {
+               console.log("Đối tượng đã được lưu.");
+            });
+         }
+      });
    },
 
    setStateLocal: (field, value) => {
@@ -140,7 +158,7 @@ const serviceChrome = {
    getValueLocal: (key) => {
       return new Promise((resolve) => {
          chrome.storage.local.get([key], (value) => {
-            resolve(value.token);
+            resolve(value[key]);
          });
       });
    },

@@ -3,10 +3,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { React, lazy, Suspense, useState } from "react";
 import { useEffect } from "react";
 import { axios } from "./common/axios";
-import { removeNoti, updateAuth, updateDisplay } from "./store/features/popupSlices";
+import { removeNoti, updateAuth, updateDisplay, updateOtp } from "./store/features/popupSlices";
 import { CircularProgress } from "@mui/material";
 import utils from "./common/utils";
 import { useSnackbar } from "notistack";
+import serviceChrome from "./components/services/ServiceChrome";
 const Popup = lazy(() => import("./components/popup/Popup"));
 const Login = lazy(() => import("./components/auth/Login"));
 const Register = lazy(() => import("./components/auth/Register"));
@@ -18,14 +19,19 @@ function App() {
    const isDisplay = useSelector((state) => state.current.display);
    const notifications = useSelector((state) => state.current.notification);
    const isforgotPassword = useSelector((state) => state.current.forgotPassword);
+   const isOtp = useSelector((state) => state.current.otp);
    const dispatch = useDispatch();
    const { enqueueSnackbar } = useSnackbar();
 
    useEffect(() => {
       const checkLoginStatus = async () => {
          const token = await utils.getToken();
+         const otp = await utils.getStateOtp();
+
+         dispatch(updateOtp(otp));
 
          if (token) {
+            console.log(token);
             try {
                const response = await axios.get("/auth/expire", {
                   headers: {
@@ -53,7 +59,7 @@ function App() {
    useEffect(() => {
       notifications.forEach((noti) => {
          enqueueSnackbar(noti.message, {
-            variant: "success",
+            variant: noti.status == 200 ? "success" : "error",
             autoHideDuration: 2000,
          });
          dispatch(removeNoti(noti.id));
@@ -72,9 +78,9 @@ function App() {
             </Suspense>
          ) : (
             <div className='bg-gray-50 flex items-center justify-center h-screen'>
-               {isforgotPassword ? (
+               {isforgotPassword || isOtp ? (
                   <Suspense>
-                     <ForgotPassword />
+                     <ForgotPassword isOtp={isOtp} />
                   </Suspense>
                ) : isRegister ? (
                   <Suspense>

@@ -40,4 +40,12 @@ export default {
    getToken: async () => {
       return await serviceChrome.getValueLocal("token");
    },
+
+   getStateOtp: async () => {
+      return await serviceChrome.getValueLocal(process.env.REACT_APP_TYPE_NAME_STATE_OTP_VARIABLE);
+   },
+
+   getEmail: async () => {
+      return await serviceChrome.getValueLocal(process.env.REACT_APP_TYPE_NAME_EMAIL);
+   },
 };

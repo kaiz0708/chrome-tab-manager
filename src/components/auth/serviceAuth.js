@@ -38,4 +38,13 @@ export default {
       const response = await axios.post("/auth/verify-otp", { ...dataRequest });
       return response;
    },
+
+   changePassword: async (email, password) => {
+      const dataRequest = {
+         email,
+         password,
+      };
+      const response = await axios.post("/auth/change-password", { ...dataRequest });
+      return response;
+   },
 };
