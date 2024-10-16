@@ -150,12 +150,7 @@ const windowSlice = createSlice({
 
       updateCollection: (state, action) => {
          const { data } = action.payload;
-         console.log(action.payload);
-         state.collection.forEach((collection) => {
-            if (collection.id === data.id) {
-               collection = data;
-            }
-         });
+         state.collection = state.collection.map((collection) => (collection.id === data.id ? { ...collection, ...data } : collection));
       },
 
       addCollectionItem: (state, action) => {
@@ -173,6 +168,7 @@ const windowSlice = createSlice({
 
       createCollection: (state, action) => {
          const { collection } = action.payload;
+         console.log(collection);
          state.collection.push(collection);
       },
 

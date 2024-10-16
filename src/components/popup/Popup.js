@@ -76,7 +76,6 @@ function Popup() {
                dispatch(addWindow(msg.data.window));
                break;
             case ActionTab.typeMoveTabAroundWindow:
-               console.log(msg.data);
                dispatch(moveTabAroundWindow(msg.data));
                break;
             case ActionTab.typeMoveTabWithOutWindow:
@@ -92,6 +91,7 @@ function Popup() {
                dispatch(pinTab(msg.data));
                break;
             case ActionTab.typeAddItemCollection:
+               console.log(msg.data);
                dispatch(addCollectionItem(msg.data));
                break;
             case ActionTab.typeDeleteItemCollection:

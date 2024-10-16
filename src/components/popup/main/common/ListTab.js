@@ -123,19 +123,21 @@ function ListTab({ window }) {
                      <Tab tab={tab} index={index} typeDisplay={window.typeDisplay} display={window.typeFeature} key={index} />
                   </Grid2>
                ))}
-               <Grid2 size={{ xs: 1, sm: 1, md: 1 }}>
-                  <Tooltip disableInteractive title={"Open new tab"} TransitionComponent={Zoom} TransitionProps={{ timeout: 200 }}>
-                     <div
-                        onClick={(e) => {
-                           e.stopPropagation();
-                           addNewEmptyTab(window.windowTab.id);
-                        }}
-                        style={window.typeDisplay === ActionTab.typeBlock ? { height: "40px", padding: "8px" } : {}}
-                        className='cursor-pointer border-1 flex justify-center items-center p-1.5 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
-                        <HiOutlinePlus className={`${window.typeDisplay === ActionTab.typeTabHori ? "w-full h-full" : ""}`} />
-                     </div>
-                  </Tooltip>
-               </Grid2>
+               {window.typeFeature === tabType ? (
+                  <Grid2 size={{ xs: 1, sm: 1, md: 1 }}>
+                     <Tooltip disableInteractive title={"Open new tab"} TransitionComponent={Zoom} TransitionProps={{ timeout: 200 }}>
+                        <div
+                           onClick={(e) => {
+                              e.stopPropagation();
+                              addNewEmptyTab(window.windowTab.id);
+                           }}
+                           style={window.typeDisplay === ActionTab.typeBlock ? { height: "40px", padding: "8px" } : {}}
+                           className='cursor-pointer border-1 flex justify-center items-center p-1.5 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
+                           <HiOutlinePlus className={`${window.typeDisplay === ActionTab.typeTabHori ? "w-full h-full" : ""}`} />
+                        </div>
+                     </Tooltip>
+                  </Grid2>
+               ) : null}
             </Grid2>
          )}
       </div>

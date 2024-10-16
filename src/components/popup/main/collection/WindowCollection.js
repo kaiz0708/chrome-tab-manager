@@ -17,8 +17,11 @@ const ListTab = lazy(() => import("../common/ListTab"));
 function WindowCollection({ window }) {
    const dispatch = useDispatch();
    const [updateCollectionState, setUpdateCollectionState] = useState(false);
-   const [disableParentTooltip, setDisableParentTooltip] = useState(false);
    const [title, setTitle] = useState(window.windowTab.title);
+
+   useEffect(() => {
+      setTitle(window.windowTab.title);
+   }, [window.windowTab.title]);
 
    const updateCollectionName = async (title, collectionId) => {
       const response = await servicePopup.updateCollection(title, collectionId);
@@ -40,7 +43,15 @@ function WindowCollection({ window }) {
       <div className='transition duration-200 ease-in space-y-2 hover:-translate-y-1 bg-white p-2 hover:shadow-custom-hover cursor-pointer shadow-custom rounded-md z-10 will-change-transform will-change-shadow'>
          <div className='flex justify-between items-center'>
             <div className='h-8 flex items-center space-x-2'>
-               <span onMouseEnter={() => setUpdateCollectionState(true)} onMouseLeave={() => setUpdateCollectionState(false)} className='relative flex items-center'>
+               <span
+                  onMouseEnter={() => setUpdateCollectionState(true)}
+                  onMouseLeave={(e) => {
+                     if (window.windowTab.title !== title) {
+                        updateCollectionName(title, window.windowTab.id);
+                     }
+                     setUpdateCollectionState(false);
+                  }}
+                  className='relative flex items-center'>
                   <AnimatePresence mode='wait'>
                      {!updateCollectionState ? (
                         <motion.span
@@ -51,7 +62,7 @@ function WindowCollection({ window }) {
                            animate={{ opacity: 1, scale: 1, x: 0 }}
                            exit={{ opacity: 0, scale: 0.8 }}
                            transition={{ duration: 0.3, ease: "easeInOut" }}>
-                           #{title}
+                           #{window.windowTab.title}
                         </motion.span>
                      ) : (
                         <Tooltip disableInteractive TransitionComponent={Zoom} TransitionProps={{ timeout: 200 }} title={title}>
@@ -86,6 +97,7 @@ function WindowCollection({ window }) {
                      )}
                   </AnimatePresence>
                </span>
+
                <span className='text-xs font-medium text-center'>{window.windowTab.length > 1 ? `(${window.windowTab.length} tabs)` : "(1 tab)"}</span>
             </div>
             <Tooltip disableInteractive TransitionComponent={Zoom} TransitionProps={{ timeout: 200 }} title={"Close collection"}>
