@@ -1,6 +1,8 @@
 /** @format */
 
 export const ActionTab = Object.freeze({
+   typeChangeState: process.env.REACT_APP_TYPE_CHANGE_STATE,
+
    typeAddTabChrome: process.env.REACT_APP_TYPE_MESSAGE_ADD_TAB_CHROME,
 
    typeDeleteTabChrome: process.env.REACT_APP_TYPE_MESSAGE_DELETE_TAB_CHROME,

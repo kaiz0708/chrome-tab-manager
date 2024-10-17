@@ -8,7 +8,7 @@ import { IoCloseOutline } from "react-icons/io5";
 import { Tooltip, Zoom } from "@mui/material";
 import { ActionTab } from "../../../../enums/action";
 import { deleteCollection, updateCollection } from "../../../../store/features/windowSlices";
-import { addNoti } from "../../../../store/features/popupSlices";
+import { addNoti, updateAuth } from "../../../../store/features/popupSlices";
 import { AnimatePresence, motion } from "framer-motion";
 import { v4 as uuidv4 } from "uuid";
 const ListTab = lazy(() => import("../common/ListTab"));
@@ -25,18 +25,28 @@ function WindowCollection({ window }) {
 
    const updateCollectionName = async (title, collectionId) => {
       const response = await servicePopup.updateCollection(title, collectionId);
-      const { data, status, message } = response.data;
-      serviceChrome.sendMessage({ data: data }, ActionTab.typeUpdateCollection);
-      dispatch(updateCollection({ data: data }));
-      dispatch(addNoti({ id: uuidv4(), status, message }));
+      if (response === null) {
+         dispatch(updateAuth(false));
+         dispatch(addNoti({ message: "session expire, please login again", id: uuidv4(), status: 401 }));
+      } else {
+         const { data, status, message } = response.data;
+         serviceChrome.sendMessage({ data: data }, ActionTab.typeUpdateCollection);
+         dispatch(updateCollection({ data: data }));
+         dispatch(addNoti({ id: uuidv4(), status, message }));
+      }
    };
 
    const handleDeleteCollection = async (id) => {
       const response = await servicePopup.deleteCollection(id);
-      const { data, status, message } = response.data;
-      serviceChrome.sendMessage({ collection: data }, ActionTab.typeDeleteCollection);
-      dispatch(deleteCollection({ collection: data }));
-      dispatch(addNoti({ id: uuidv4(), status, message }));
+      if (response === null) {
+         dispatch(updateAuth(false));
+         dispatch(addNoti({ message: "session expire, please login again", id: uuidv4(), status: 401 }));
+      } else {
+         const { data, status, message } = response.data;
+         serviceChrome.sendMessage({ collection: data }, ActionTab.typeDeleteCollection);
+         dispatch(deleteCollection({ collection: data }));
+         dispatch(addNoti({ id: uuidv4(), status, message }));
+      }
    };
 
    return (

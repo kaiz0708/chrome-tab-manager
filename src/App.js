@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { React, lazy, Suspense, useState } from "react";
 import { useEffect } from "react";
 import { axios } from "./common/axios";
-import { removeNoti, updateAuth, updateDisplay, updateOtp } from "./store/features/popupSlices";
+import { removeNoti, updateAuth, updateDisplay, updateOtp, updateUsename } from "./store/features/popupSlices";
 import { CircularProgress } from "@mui/material";
 import utils from "./common/utils";
 import { useSnackbar } from "notistack";
@@ -27,8 +27,10 @@ function App() {
       const checkLoginStatus = async () => {
          const token = await utils.getToken();
          const otp = await utils.getStateOtp();
+         const user = await utils.getUsername();
 
          dispatch(updateOtp(otp));
+         dispatch(updateUsename(user));
 
          if (token) {
             console.log(token);

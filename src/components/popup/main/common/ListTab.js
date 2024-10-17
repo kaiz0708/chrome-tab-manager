@@ -7,9 +7,9 @@ import { HiOutlinePlus } from "react-icons/hi2";
 import { Tooltip, Zoom } from "@mui/material";
 import { Grid2 } from "@mui/material";
 import { ActionTab } from "../../../../enums/action";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addCollectionItem, deleteCollectionItem } from "../../../../store/features/windowSlices";
-import { addNoti } from "../../../../store/features/popupSlices";
+import { addNoti, updateAuth } from "../../../../store/features/popupSlices";
 import { v4 as uuidv4 } from "uuid";
 import servicePopup from "../../servicePopup";
 /* global chrome */
@@ -32,30 +32,45 @@ function ListTab({ window }) {
             } else {
                const collectionId = window.windowTab.id;
                const response = await servicePopup.addTabToCollection(item.tab, collectionId, hoverIndex);
-               const { data, status, message } = response.data;
-               serviceChrome.sendMessage({ id: collectionId, tab: data, newPosition: hoverIndex }, ActionTab.typeAddItemCollection);
-               dispatch(addCollectionItem({ id: collectionId, tab: data, newPosition: hoverIndex }));
-               dispatch(addNoti({ message, id: uuidv4(), status }));
-               serviceChrome.closeTab(tabId, item.tab.windowId);
+               if (response === null) {
+                  dispatch(updateAuth(false));
+                  dispatch(addNoti({ message: "session expire, please login again", id: uuidv4(), status: 401 }));
+               } else {
+                  const { data, status, message } = response.data;
+                  serviceChrome.sendMessage({ id: collectionId, tab: data, newPosition: hoverIndex }, ActionTab.typeAddItemCollection);
+                  dispatch(addCollectionItem({ id: collectionId, tab: data, newPosition: hoverIndex }));
+                  dispatch(addNoti({ message, id: uuidv4(), status }));
+                  serviceChrome.closeTab(tabId, item.tab.windowId);
+               }
             }
          } else {
             if (window.typeFeature === collectionType) {
                const collectionId = window.windowTab.id;
                const response = await servicePopup.moveItemCollectionToOther(item.tab, collectionId, hoverIndex);
-               const { data, status, message } = response.data;
-               serviceChrome.sendMessage({ idCollection: item.tab.collection, tab: item.tab }, ActionTab.typeDeleteItemCollection);
-               serviceChrome.sendMessage({ id: collectionId, tab: data, newPosition: hoverIndex }, ActionTab.typeAddItemCollection);
-               dispatch(deleteCollectionItem({ idCollection: item.tab.collection, tab: item.tab }));
-               dispatch(addCollectionItem({ id: collectionId, tab: data, newPosition: hoverIndex }));
-               dispatch(addNoti({ message, id: uuidv4(), status }));
+               if (response === null) {
+                  dispatch(updateAuth(false));
+                  dispatch(addNoti({ message: "session expire, please login again", id: uuidv4(), status: 401 }));
+               } else {
+                  const { data, status, message } = response.data;
+                  serviceChrome.sendMessage({ idCollection: item.tab.collection, tab: item.tab }, ActionTab.typeDeleteItemCollection);
+                  serviceChrome.sendMessage({ id: collectionId, tab: data, newPosition: hoverIndex }, ActionTab.typeAddItemCollection);
+                  dispatch(deleteCollectionItem({ idCollection: item.tab.collection, tab: item.tab }));
+                  dispatch(addCollectionItem({ id: collectionId, tab: data, newPosition: hoverIndex }));
+                  dispatch(addNoti({ message, id: uuidv4(), status }));
+               }
             } else {
                const collectionId = item.tab.collection;
                const response = await servicePopup.deleteTabToCollection(item.tab, collectionId);
-               const { data, status, message } = response.data;
-               serviceChrome.openNewTabEmpty(window.windowTab.id, data.url, false);
-               serviceChrome.sendMessage({ idCollection: collectionId, tab: data }, ActionTab.typeDeleteItemCollection);
-               dispatch(deleteCollectionItem({ idCollection: collectionId, tab: data }));
-               dispatch(addNoti({ message, id: uuidv4(), status }));
+               if (response === null) {
+                  dispatch(updateAuth(false));
+                  dispatch(addNoti({ message: "session expire, please login again", id: uuidv4(), status: 401 }));
+               } else {
+                  const { data, status, message } = response.data;
+                  serviceChrome.openNewTabEmpty(window.windowTab.id, data.url, false);
+                  serviceChrome.sendMessage({ idCollection: collectionId, tab: data }, ActionTab.typeDeleteItemCollection);
+                  dispatch(deleteCollectionItem({ idCollection: collectionId, tab: data }));
+                  dispatch(addNoti({ message, id: uuidv4(), status }));
+               }
             }
          }
       },
@@ -137,7 +152,16 @@ function ListTab({ window }) {
                         </div>
                      </Tooltip>
                   </Grid2>
-               ) : null}
+               ) : (
+                  <Grid2 size={{ xs: 1, sm: 1, md: 1 }}>
+                     <div
+                        className={`cursor-pointer border-dashed flex justify-center items-center border-1 ${
+                           window.typeDisplay === ActionTab.typeBlock ? "p-2 h-10" : "p-0.5 h-custom-tab"
+                        } rounded hover:bg-gray-100 transition duration-300 ease-in-out`}>
+                        <span className='text-xxs text-center text-custom-color-title'>Drag here.</span>
+                     </div>
+                  </Grid2>
+               )}
             </Grid2>
          )}
       </div>

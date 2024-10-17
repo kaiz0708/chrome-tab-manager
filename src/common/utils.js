@@ -48,4 +48,8 @@ export default {
    getEmail: async () => {
       return await serviceChrome.getValueLocal(process.env.REACT_APP_TYPE_NAME_EMAIL);
    },
+
+   getUsername: async () => {
+      return await serviceChrome.getValueLocal("user");
+   },
 };

@@ -12,6 +12,7 @@ import { updateStateDisplay } from "../../../store/features/popupSlices";
 import { GoPin } from "react-icons/go";
 import React from "react";
 import { updateStateCollection } from "../../../store/features/popupSlices";
+import { ActionTab } from "../../../enums/action";
 
 /* global chrome */
 
@@ -33,15 +34,19 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
       servicesChrome.pinTab();
    };
 
+   const updateStatePopup = (display) => {
+      dispatch(updateStateDisplay(display));
+      servicesChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE, display);
+      servicesChrome.sendMessage({ display }, ActionTab.typeChangeState);
+   };
+
    const changeState = () => {
       switch (typeDisplay) {
          case process.env.REACT_APP_TYPE_TAB_BLOCK:
-            dispatch(updateStateDisplay(process.env.REACT_APP_TYPE_TAB_HORIZONTAL));
-            servicesChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE, process.env.REACT_APP_TYPE_TAB_HORIZONTAL);
+            updateStatePopup(process.env.REACT_APP_TYPE_TAB_HORIZONTAL);
             break;
          case process.env.REACT_APP_TYPE_TAB_HORIZONTAL:
-            dispatch(updateStateDisplay(process.env.REACT_APP_TYPE_TAB_BLOCK));
-            servicesChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE, process.env.REACT_APP_TYPE_TAB_BLOCK);
+            updateStatePopup(process.env.REACT_APP_TYPE_TAB_BLOCK);
             break;
       }
    };

@@ -106,6 +106,12 @@ function Popup() {
             case ActionTab.typeUpdateCollection:
                dispatch(updateCollection(msg.data));
                break;
+            case ActionTab.typeChangeState:
+               const { display } = msg.data;
+               console.log(display);
+               serviceChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE, display);
+               dispatch(updateStateDisplay(display));
+               break;
          }
       };
 

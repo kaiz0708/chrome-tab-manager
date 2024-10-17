@@ -21,6 +21,9 @@ module.exports = {
             "custom-color-title": "rgb(246, 80, 119)",
             "custom-title": "#70708C",
          },
+         fontSize: {
+            xxs: "0.625rem",
+         },
          boxShadow: {
             custom: "1px 2px 4px rgba(112, 112, 140, 0.15)",
             "custom-hover": "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
@@ -44,6 +47,7 @@ module.exports = {
          height: {
             custom: "480px",
             customBlock: "79.325px",
+            "custom-tab": "37.2px",
          },
          spacing: {
             "custom-bottom": "230px",

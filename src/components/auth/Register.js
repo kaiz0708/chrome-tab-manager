@@ -2,7 +2,7 @@
 import React from "react";
 import { useState } from "react";
 import serviceAuth from "./serviceAuth";
-import { updateAuth, updateRegister } from "../../store/features/popupSlices";
+import { updateAuth, updateRegister, updateUsename } from "../../store/features/popupSlices";
 import serviceChrome from "../services/ServiceChrome";
 import { useDispatch } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
@@ -28,18 +28,25 @@ function Register() {
 
    const handleSubmit = async (formData) => {
       if (confirmPassword === formData.password) {
-         const response = await serviceAuth.register(formData);
-         const { status, message } = response.data;
-         const { data } = response.data;
-         const { token, user } = data;
-         if (status === 200) {
-            serviceChrome.setStateLocal("token", token);
-            dispatch(updateAuth(true));
-            dispatch(updateRegister(false));
-         } else {
-            dispatch(updateAuth(false));
+         try {
+            const response = await serviceAuth.register(formData);
+            const { status, message } = response.data;
+            const { data } = response.data;
+            const { token, user } = data;
+            if (status === 200) {
+               serviceChrome.setStateLocal("token", token);
+               serviceChrome.setStateLocal("user", user);
+               dispatch(updateAuth(true));
+               dispatch(updateRegister(false));
+               dispatch(updateUsename(user));
+            } else {
+               dispatch(updateAuth(false));
+            }
+            dispatch(addNoti({ message, id: uuidv4(), status }));
+         } catch (error) {
+            const { status, message } = error.response.data;
+            dispatch(addNoti({ message, id: uuidv4(), status }));
          }
-         dispatch(addNoti({ message, id: uuidv4(), status }));
       } else {
          dispatch(addNoti({ message: "Wrong confirm password", id: uuidv4(), status: 400 }));
       }

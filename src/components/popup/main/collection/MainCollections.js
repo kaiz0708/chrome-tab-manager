@@ -14,7 +14,7 @@ import { CircularProgress } from "@mui/material";
 import servicePopup from "../../servicePopup";
 import serviceChrome from "../../../services/ServiceChrome";
 import { ActionTab } from "../../../../enums/action";
-import { addNoti } from "../../../../store/features/popupSlices";
+import { addNoti, updateAuth } from "../../../../store/features/popupSlices";
 import { v4 as uuidv4 } from "uuid";
 const WindowCollection = lazy(() => import("../collection/WindowCollection"));
 /* global chrome */
@@ -56,10 +56,15 @@ function MainCollections() {
    const handleCreateCollection = async (windowCollectionLength) => {
       const title = process.env.REACT_APP_TYPE_DEFAULT_NAME_COLLECTION + "_" + windowCollectionLength;
       const response = await servicePopup.createCollection(title);
-      const { data, status, message } = response.data;
-      serviceChrome.sendMessage({ collection: data }, ActionTab.typeCreateCollection);
-      dispatch(createCollection({ collection: data }));
-      dispatch(addNoti({ id: uuidv4(), status, message }));
+      if (response === null) {
+         dispatch(updateAuth(false));
+         dispatch(addNoti({ message: "session expire, please login again", id: uuidv4(), status: 401 }));
+      } else {
+         const { data, status, message } = response.data;
+         serviceChrome.sendMessage({ collection: data }, ActionTab.typeCreateCollection);
+         dispatch(createCollection({ collection: data }));
+         dispatch(addNoti({ id: uuidv4(), status, message }));
+      }
    };
 
    return (

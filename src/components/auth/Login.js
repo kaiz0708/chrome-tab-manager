@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateAuth, updateRegister, updateForgotPassword } from "../../store/features/popupSlices";
+import { updateAuth, updateRegister, updateForgotPassword, updateUsename } from "../../store/features/popupSlices";
 import serviceAuth from "./serviceAuth";
 import serviceChrome from "../services/ServiceChrome";
 import { v4 as uuidv4 } from "uuid";
@@ -17,17 +17,24 @@ const Login = () => {
    const dispatch = useDispatch();
 
    const handleSubmit = async (email, password) => {
-      const response = await serviceAuth.login(email, password);
-      const { status, message } = response.data;
-      const { data } = response.data;
-      const { token, user } = data;
-      if (status === 200) {
-         serviceChrome.setStateLocal("token", token);
-         dispatch(updateAuth(true));
-      } else {
-         dispatch(updateAuth(false));
+      try {
+         const response = await serviceAuth.login(email, password);
+         const { status, message } = response.data;
+         const { data } = response.data;
+         const { token, user } = data;
+         if (status === 200) {
+            serviceChrome.setStateLocal("token", token);
+            serviceChrome.setStateLocal("user", user);
+            dispatch(updateUsename(user));
+            dispatch(updateAuth(true));
+         } else {
+            dispatch(updateAuth(false));
+         }
+         dispatch(addNoti({ message, id: uuidv4(), status }));
+      } catch (error) {
+         const { status, message } = error.response.data;
+         dispatch(addNoti({ message, id: uuidv4(), status }));
       }
-      dispatch(addNoti({ message, id: uuidv4(), status }));
    };
 
    const googleLogin = async () => {
@@ -48,7 +55,9 @@ const Login = () => {
                   const { token, user } = data;
                   if (status === 200) {
                      serviceChrome.setStateLocal("token", token);
+                     serviceChrome.setStateLocal("user", user);
                      dispatch(updateAuth(true));
+                     dispatch(updateUsename(user));
                   } else {
                      dispatch(updateAuth(false));
                   }
