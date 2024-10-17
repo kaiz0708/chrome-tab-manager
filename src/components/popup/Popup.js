@@ -109,7 +109,6 @@ function Popup() {
                break;
             case ActionTab.typeChangeState:
                const { display } = msg.data;
-               console.log(display);
                serviceChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE, display);
                dispatch(updateStateDisplay(display));
                break;
@@ -132,32 +131,39 @@ function Popup() {
 
    const filterGroupTab = (value) => {
       const normalizedInput = normalizeSearchValue(value);
-
       if (normalizedInput === "") {
          setWindowList(windowTabs);
       } else {
          const normalizedValue = removeVietnameseTones(normalizedInput.toLowerCase());
-         console.log(normalizedValue);
          const windowGroup = windowTabs.map((window) => {
-            const filteredTabs = window.tabs.filter((e) => removeVietnameseTones(e.title.toLowerCase()).includes(normalizedValue));
+            const filteredTabs = window.tabs.filter((e) => {
+               const normalizedTitle = removeVietnameseTones(e.title.toLowerCase());
+               const normalizedUrl = removeVietnameseTones(e.url.toLowerCase());
+               return normalizedTitle.includes(normalizedValue) || normalizedUrl.includes(normalizedValue);
+            });
             return { ...window, tabs: filteredTabs };
          });
          setWindowList(windowGroup);
       }
    };
 
-   const groupTab = () => {
-      let urls = [];
-      if (windowList.length === 0) {
+   const groupTab = (value) => {
+      if (value === "") {
          dispatch(addNoti({ message: "Nothing title match", id: uuidv4(), status: 400 }));
       } else {
-         windowList.forEach((window) => {
-            window.tabs.forEach((tab) => {
-               urls.push(tab);
+         let urls = [];
+         const hasTabs = windowList.some((window) => window.tabs.length > 0);
+         if (!hasTabs) {
+            dispatch(addNoti({ message: "Nothing title match", id: uuidv4(), status: 400 }));
+         } else {
+            windowList.forEach((window) => {
+               window.tabs.forEach((tab) => {
+                  urls.push(tab);
+               });
             });
-         });
-         serviceChrome.openWindowGroup(urls);
-         dispatch(addNoti({ message: "Group tab success", id: uuidv4(), status: 200 }));
+            serviceChrome.openWindowGroup(urls);
+            dispatch(addNoti({ message: "Group tab success", id: uuidv4(), status: 200 }));
+         }
       }
    };
 

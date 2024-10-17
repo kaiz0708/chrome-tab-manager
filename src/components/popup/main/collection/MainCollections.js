@@ -79,7 +79,7 @@ function MainCollections() {
                   <Grid2 columns={{ xs: 8, sm: 8, md: 8 }} container spacing={1}>
                      <Grid2 className='flex items-center' size={{ xs: 7, sm: 7, md: 7 }}>
                         <Box className='flex justify-start items-center'>
-                           <div className='text-base font-medium text-gray-600'>Collection</div>
+                           <div className='text-base font-medium text-gray-600'>Collections</div>
                         </Box>
                      </Grid2>
 

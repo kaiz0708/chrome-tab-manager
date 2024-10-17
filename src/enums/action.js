@@ -34,4 +34,8 @@ export const ActionTab = Object.freeze({
    typeDeleteCollection: process.env.REACT_APP_TYPE_DELETE_COLLECTION,
 
    typeUpdateCollection: process.env.REACT_APP_TYPE_UPDATE_COLLECTION,
+
+   typeStateOpenCollection: process.env.REACT_APP_TYPE_STATE_COLLECTION_OPEN,
+
+   typeStateCloseCollection: process.env.REACT_APP_TYPE_STATE_COLLECTION_CLOSE,
 });

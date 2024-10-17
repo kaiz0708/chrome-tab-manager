@@ -16,6 +16,7 @@ const popupSlice = createSlice({
       forgotPassword: false,
       otp: false,
       user: null,
+      pinTab: false,
    },
    reducers: {
       updateWindowCurrent: (state, action) => {
@@ -60,6 +61,10 @@ const popupSlice = createSlice({
 
       updateUsename: (state, action) => {
          state.user = action.payload;
+      },
+
+      updatePinTab: (state, action) => {
+         state.pinTab = action.payload;
       },
    },
 });

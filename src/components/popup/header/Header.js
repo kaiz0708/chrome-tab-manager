@@ -27,7 +27,7 @@ function Header() {
    };
 
    return (
-      <div className='p-1'>
+      <div className='p-2'>
          <Grid2 columns={{ xs: 8, sm: 8, md: 8 }} container spacing={1}>
             <Grid2 size={{ xs: 5, sm: 5, md: 5 }}>
                <div className='text-lg font-medium leading-10 text-gray-600'>Antinotion Tab Manager</div>

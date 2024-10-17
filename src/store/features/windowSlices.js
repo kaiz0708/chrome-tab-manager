@@ -55,7 +55,7 @@ const windowSlice = createSlice({
             let fromIndex = null;
             let toIndex = tab.index;
             state.value.forEach((window) => {
-               if (window.id === tab.id) {
+               if (window.id === tab.windowId) {
                   window.tabs.forEach((item, index) => {
                      item.id === tab.id ? (fromIndex = index) : (fromIndex = 0);
                   });
@@ -66,7 +66,24 @@ const windowSlice = createSlice({
                toIndex: toIndex,
                windowId: tab.windowId,
             };
-            moveTabAroundWindow(state.value, payload);
+            state.value.forEach((window) => {
+               if (window.id === payload.windowId) {
+                  const [element] = window.tabs.splice(payload.fromIndex, 1);
+                  element.pinned = true;
+                  window.tabs.splice(toIndex, 0, element);
+               }
+            });
+         } else {
+            state.value.forEach((window) => {
+               if (window.id === tab.windowId) {
+                  return window.tabs.map((e) => {
+                     if (e.id === tab.id) {
+                        e.pinned = false;
+                     }
+                     return e;
+                  });
+               }
+            });
          }
       },
       navigateTab: (state, action) => {
@@ -120,14 +137,10 @@ const windowSlice = createSlice({
             if (window.id !== action.payload.windowId) {
                return window;
             }
-
-            // Thêm tab mới vào mảng tabs
             window.tabs.push({
                ...action.payload.newTab,
                active: false,
             });
-
-            // Trả về window với mảng tabs mới
             return {
                ...window,
                tabs: window.tabs,
