@@ -50,7 +50,7 @@ function WindowCollection({ window }) {
    };
 
    return (
-      <div className='transition duration-200 ease-in space-y-2 hover:-translate-y-1 bg-white p-2 hover:shadow-custom-hover cursor-pointer shadow-custom rounded-md z-10 will-change-transform will-change-shadow'>
+      <div className='transition duration-200 bg-white ease-in space-y-2 hover:-translate-y-1 p-2 hover:shadow-custom-hover cursor-pointer shadow-custom rounded-md z-10 will-change-transform will-change-shadow'>
          <div className='flex justify-between items-center'>
             <div className='h-8 flex items-center space-x-2'>
                <span

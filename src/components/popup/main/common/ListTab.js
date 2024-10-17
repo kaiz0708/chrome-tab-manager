@@ -129,7 +129,7 @@ function ListTab({ window }) {
       <div ref={combinedRef}>
          {window.windowTab.tabs.length === 0 ? (
             <div className='cursor-pointer border-dashed h-10 border-1 flex justify-center items-center p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
-               <span className='text-xs text-custom-color-title'>Drag tabs here.</span>
+               {window.typeFeature === collectionType ? <span className='text-xs text-custom-color-title'>Drag tabs here.</span> : <span className='text-xs text-custom-color-title'>Empty.</span>}
             </div>
          ) : (
             <Grid2 columns={window.typeDisplay === ActionTab.typeTabHori ? { xs: 4, sm: 4, md: 4 } : { xs: 1, sm: 1, md: 1 }} container spacing={1}>

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState, lazy } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { updateWindowCurrent } from "../../store/features/popupSlices";
+import { addNoti, updateWindowCurrent } from "../../store/features/popupSlices";
 import { ActionTab } from "../../enums/action";
 import serviceChrome from "../services/ServiceChrome";
 import {
@@ -26,6 +26,7 @@ import {
 import { updateStateDisplay } from "../../store/features/popupSlices";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { v4 as uuidv4 } from "uuid";
 const Header = lazy(() => import("./header/Header"));
 const MainPopup = lazy(() => import("./main/popup/MainPopup"));
 const TaskBarPopup = lazy(() => import("./footer/TaskBarPopup"));
@@ -121,12 +122,24 @@ function Popup() {
       };
    }, []);
 
+   const removeVietnameseTones = (str) => {
+      return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+   };
+
+   const normalizeSearchValue = (value) => {
+      return value.trim().replace(/\s+/g, " ");
+   };
+
    const filterGroupTab = (value) => {
-      if (value === "") {
+      const normalizedInput = normalizeSearchValue(value);
+
+      if (normalizedInput === "") {
          setWindowList(windowTabs);
       } else {
+         const normalizedValue = removeVietnameseTones(normalizedInput.toLowerCase());
+         console.log(normalizedValue);
          const windowGroup = windowTabs.map((window) => {
-            const filteredTabs = window.tabs.filter((e) => e.title.toLowerCase().includes(value.toLowerCase()));
+            const filteredTabs = window.tabs.filter((e) => removeVietnameseTones(e.title.toLowerCase()).includes(normalizedValue));
             return { ...window, tabs: filteredTabs };
          });
          setWindowList(windowGroup);
@@ -135,12 +148,17 @@ function Popup() {
 
    const groupTab = () => {
       let urls = [];
-      windowList.forEach((window) => {
-         window.tabs.forEach((tab) => {
-            urls.push(tab);
+      if (windowList.length === 0) {
+         dispatch(addNoti({ message: "Nothing title match", id: uuidv4(), status: 400 }));
+      } else {
+         windowList.forEach((window) => {
+            window.tabs.forEach((tab) => {
+               urls.push(tab);
+            });
          });
-      });
-      serviceChrome.openWindowGroup(urls);
+         serviceChrome.openWindowGroup(urls);
+         dispatch(addNoti({ message: "Group tab success", id: uuidv4(), status: 200 }));
+      }
    };
 
    return (

@@ -43,6 +43,7 @@ module.exports = {
          },
          width: {
             custom: "189px",
+            customTruncate: "150px",
          },
          height: {
             custom: "480px",

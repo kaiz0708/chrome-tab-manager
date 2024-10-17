@@ -62,7 +62,7 @@ function App() {
       notifications.forEach((noti) => {
          enqueueSnackbar(noti.message, {
             variant: noti.status == 200 ? "success" : "error",
-            autoHideDuration: 2000,
+            autoHideDuration: 1500,
          });
          dispatch(removeNoti(noti.id));
       });

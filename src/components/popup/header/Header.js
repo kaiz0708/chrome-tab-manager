@@ -27,15 +27,15 @@ function Header() {
    };
 
    return (
-      <div className='p-2'>
+      <div className='p-1'>
          <Grid2 columns={{ xs: 8, sm: 8, md: 8 }} container spacing={1}>
-            <Grid2 size={{ xs: 6, sm: 6, md: 6 }}>
-               <div className='text-lg font-medium text-gray-600'>Antinotion Tab Manager</div>
+            <Grid2 size={{ xs: 5, sm: 5, md: 5 }}>
+               <div className='text-lg font-medium leading-10 text-gray-600'>Antinotion Tab Manager</div>
             </Grid2>
 
-            <Grid2 size={{ xs: 2, sm: 2, md: 2 }}>
-               <Box className='flex justify-end items-end space-x-2 '>
-                  <Box className='w-full'>
+            <Grid2 size={{ xs: 3, sm: 3, md: 3 }}>
+               <Box className='flex justify-end items-center space-x-2 '>
+                  <Box className='w-customTruncate'>
                      <div className='text-xs overflow-hidden text-ellipsis whitespace-nowrap text-gray-400'>{user.username}</div>
                      <div className='text-xs overflow-hidden text-ellipsis whitespace-nowrap text-gray-400'>{user.email}</div>
                   </Box>
@@ -45,7 +45,14 @@ function Header() {
                </Box>
 
                <Menu
-                  className=''
+                  sx={{
+                     "& .MuiMenu-paper": {
+                        width: "120px",
+                     },
+                     "& .css-1c1ttle": {
+                        padding: "4px !important",
+                     },
+                  }}
                   anchorEl={anchorEl}
                   open={open}
                   onClose={handleClose}
@@ -57,7 +64,20 @@ function Header() {
                      vertical: "top",
                      horizontal: "right",
                   }}>
-                  <MenuItem className='p-2 text-xs text-gray-400' onClick={logout}>
+                  <MenuItem
+                     sx={{
+                        fontSize: "12px",
+                        color: "gray",
+                        lineHeight: "1.2",
+                        justifyContent: "center",
+                        textAlign: "center",
+                        backgroundColor: "white !important",
+                        cursor: "pointer",
+                        "&:hover": {
+                           backgroundColor: "#f5f5f5 !important",
+                        },
+                     }}
+                     onClick={logout}>
                      Log out
                   </MenuItem>
                </Menu>

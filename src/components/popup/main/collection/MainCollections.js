@@ -75,10 +75,12 @@ function MainCollections() {
             </div>
          ) : (
             <motion.div ref={combinedRef} initial={{ y: "100%", opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 0, opacity: 20 }} transition={{ duration: 0.3 }}>
-               <div>
+               <div className='mb-2'>
                   <Grid2 columns={{ xs: 8, sm: 8, md: 8 }} container spacing={1}>
-                     <Grid2 size={{ xs: 7, sm: 7, md: 7 }}>
-                        <div className='text-base font-medium text-gray-600'>Collection</div>
+                     <Grid2 className='flex items-center' size={{ xs: 7, sm: 7, md: 7 }}>
+                        <Box className='flex justify-start items-center'>
+                           <div className='text-base font-medium text-gray-600'>Collection</div>
+                        </Box>
                      </Grid2>
 
                      <Grid2 style={{ display: "flex", justifyContent: "flex-end" }} size={{ xs: 1, sm: 1, md: 1 }}>
@@ -93,9 +95,9 @@ function MainCollections() {
                               TransitionProps={{ timeout: 200 }}
                               disableInteractive>
                               <div
-                                 className=' transition duration-200  ease-in bg-white hover:shadow-custom-hover cursor-pointer rounded shadow-custom flex justify-center items-center'
+                                 className=' transition duration-200 hover:shadow-custom-hover shadow-custom ease-in bg-white cursor-pointer rounded flex justify-center items-center'
                                  style={{
-                                    width: "50px",
+                                    width: "30px",
                                     height: "30px",
                                  }}>
                                  <HiOutlinePlus className='text-base' />
