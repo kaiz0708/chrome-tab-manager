@@ -9,7 +9,7 @@ import { Provider } from "react-redux";
 import store from "./store";
 import { SnackbarProvider } from "notistack";
 import { MaterialDesignContent } from "notistack";
-import { styled } from "@mui/system";
+import { styled, width } from "@mui/system";
 
 const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
    "&.notistack-MuiContent-success": {

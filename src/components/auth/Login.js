@@ -1,22 +1,23 @@
 /** @format */
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateAuth, updateRegister, updateForgotPassword, updateUsename } from "../../store/features/popupSlices";
+import { updateAuth, updateRegister, updateForgotPassword, updateUsename, updateDisplay } from "../../store/features/popupSlices";
 import serviceAuth from "./serviceAuth";
 import serviceChrome from "../services/ServiceChrome";
 import { v4 as uuidv4 } from "uuid";
-import { addNoti } from "../../store/features/popupSlices";
+import { addNoti, updateLoginGoogle } from "../../store/features/popupSlices";
 import { FcGoogle } from "react-icons/fc";
 import { AnimatePresence, motion } from "framer-motion";
 /* global chrome */
-
 const Login = () => {
    const [email, setEmail] = useState("");
    const [password, setPassword] = useState("");
    const dispatch = useDispatch();
 
    const handleSubmit = async (email, password) => {
+      if (password.length <= 6) {
+      }
       try {
          const response = await serviceAuth.login(email, password);
          const { status, message } = response.data;
@@ -38,6 +39,7 @@ const Login = () => {
    };
 
    const googleLogin = async () => {
+      dispatch(updateLoginGoogle(true));
       chrome.identity.launchWebAuthFlow(
          {
             url: `https://accounts.google.com/o/oauth2/auth?client_id=${process.env.REACT_APP_TYPE_CLIENT_ID_GOOGLE}&response_type=token&redirect_uri=https://${chrome.runtime.id}.chromiumapp.org&scope=https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email&prompt=consent`,
@@ -62,6 +64,7 @@ const Login = () => {
                      dispatch(updateAuth(false));
                   }
                   dispatch(addNoti({ message, id: uuidv4(), status }));
+                  dispatch(updateLoginGoogle(false));
                })
                .catch((error) => console.error("Error fetching user info:", error));
          }
@@ -72,37 +75,40 @@ const Login = () => {
       <AnimatePresence>
          <motion.div className='bg-white p-4 rounded-lg shadow-lg w-80' initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 20, opacity: 0 }} transition={{ duration: 0.5 }}>
             <h2 className='text-2xl font-bold text-center mb-6 text-gray-800'>Login</h2>
-            <div className='mb-3'>
-               <label className='block text-gray-600 mb-1'>Email</label>
-               <input
-                  type='email'
-                  name='email'
-                  className='w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500'
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  placeholder='Enter your email'
-               />
-            </div>
-            <div className='mb-3'>
-               <label className='block text-gray-600 mb-1'>Password</label>
-               <input
-                  type='password'
-                  name='password'
-                  className='w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500'
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  placeholder='Enter your password'
-               />
-            </div>
-            <button
-               onClick={() => {
+            <form
+               onSubmit={(e) => {
+                  e.preventDefault();
                   handleSubmit(email, password);
-               }}
-               className='w-full mt-4 bg-custom-color-title text-white py-2 rounded-md  transition duration-300'>
-               Login
-            </button>
+               }}>
+               <div className='mb-3'>
+                  <label className='block text-gray-600 mb-1'>Email</label>
+                  <input
+                     type='email'
+                     name='email'
+                     className='w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500'
+                     value={email}
+                     onChange={(e) => setEmail(e.target.value)}
+                     required
+                     placeholder='Enter your email'
+                  />
+               </div>
+               <div className='mb-3'>
+                  <label className='block text-gray-600 mb-1'>Password</label>
+                  <input
+                     type='password'
+                     name='password'
+                     className='w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500'
+                     value={password}
+                     onChange={(e) => setPassword(e.target.value)}
+                     required
+                     placeholder='Enter your password'
+                  />
+               </div>
+
+               <button type='submit' className='w-full mt-4 bg-custom-color-title text-white py-2 rounded-md  transition duration-300'>
+                  Login
+               </button>
+            </form>
 
             <div className='mt-4 text-end'>
                <span
@@ -129,7 +135,7 @@ const Login = () => {
 
             <div className='mt-4 text-center'>
                <span>
-                  <span className=' text-gray-400'>Are you new?</span>
+                  <span className=' text-gray-400'>Are you new? </span>
                   <span
                      onClick={() => {
                         dispatch(updateRegister(true));

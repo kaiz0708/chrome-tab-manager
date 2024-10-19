@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState, lazy } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addNoti, updateWindowCurrent } from "../../store/features/popupSlices";
+import { addNoti, updateWindowCurrent, updatePinTab } from "../../store/features/popupSlices";
 import { ActionTab } from "../../enums/action";
 import serviceChrome from "../services/ServiceChrome";
 import {
@@ -36,7 +36,6 @@ function Popup() {
    const [windowList, setWindowList] = useState([]);
    const typeDisplay = useSelector((state) => state.current.displayState);
    const dispatch = useDispatch();
-   const [loading, setLoading] = useState(true);
 
    useEffect(() => {
       setWindowList(windowTabs);
@@ -55,9 +54,10 @@ function Popup() {
          });
       });
 
-      serviceChrome.createState();
-      chrome.storage.local.get([process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE], (result) => {
-         dispatch(updateStateDisplay(result[process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE]));
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+         let currentTab = tabs[0];
+         let pinnedStatus = currentTab.pinned;
+         dispatch(updatePinTab(pinnedStatus));
       });
    }, []);
 
@@ -172,7 +172,7 @@ function Popup() {
          <Header />
 
          <DndProvider backend={HTML5Backend}>
-            <MainPopup windowTabs={windowList} typeDisplay={typeDisplay} loadingCollection={loading} />
+            <MainPopup windowTabs={windowList} typeDisplay={typeDisplay} />
          </DndProvider>
 
          <TaskBarPopup filterGroupTab={filterGroupTab} groupTab={groupTab} />

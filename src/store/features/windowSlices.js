@@ -50,41 +50,17 @@ const windowSlice = createSlice({
          });
       },
       pinTab: (state, action) => {
-         const { tab, pinned } = action.payload;
-         if (pinned) {
-            let fromIndex = null;
-            let toIndex = tab.index;
-            state.value.forEach((window) => {
-               if (window.id === tab.windowId) {
-                  window.tabs.forEach((item, index) => {
-                     item.id === tab.id ? (fromIndex = index) : (fromIndex = 0);
-                  });
-               }
-            });
-            const payload = {
-               fromIndex: fromIndex,
-               toIndex: toIndex,
-               windowId: tab.windowId,
-            };
-            state.value.forEach((window) => {
-               if (window.id === payload.windowId) {
-                  const [element] = window.tabs.splice(payload.fromIndex, 1);
-                  element.pinned = true;
-                  window.tabs.splice(toIndex, 0, element);
-               }
-            });
-         } else {
-            state.value.forEach((window) => {
-               if (window.id === tab.windowId) {
-                  return window.tabs.map((e) => {
-                     if (e.id === tab.id) {
-                        e.pinned = false;
-                     }
-                     return e;
-                  });
-               }
-            });
-         }
+         const { tab, pinned, tabId } = action.payload;
+         state.value.forEach((window) => {
+            if (window.id === tab.windowId) {
+               return window.tabs.map((e) => {
+                  if (e.id === tab.id) {
+                     pinned ? (e.pinned = true) : (e.pinned = false);
+                  }
+                  return e;
+               });
+            }
+         });
       },
       navigateTab: (state, action) => {
          const { tabNavigate } = action.payload;

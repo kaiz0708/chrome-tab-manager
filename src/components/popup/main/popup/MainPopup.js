@@ -18,7 +18,7 @@ const MainCollections = lazy(() => import("../collection/MainCollections"));
 
 const WindowTab = lazy(() => import("./WindowTab"));
 
-function MainPopup({ windowTabs, typeDisplay, loadingCollection }) {
+function MainPopup({ windowTabs, typeDisplay }) {
    const dropRef = useRef(null);
    const type = process.env.REACT_APP_TYPE_TAB;
    const stateCollection = useSelector((state) => state.current.displayCollection);

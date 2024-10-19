@@ -12,11 +12,11 @@ const popupSlice = createSlice({
       register: false,
       display: false,
       notification: [],
-      timeoutId: null,
       forgotPassword: false,
       otp: false,
       user: null,
       pinTab: false,
+      loginGoogle: false,
    },
    reducers: {
       updateWindowCurrent: (state, action) => {
@@ -66,9 +66,13 @@ const popupSlice = createSlice({
       updatePinTab: (state, action) => {
          state.pinTab = action.payload;
       },
+
+      updateLoginGoogle: (state, action) => {
+         state.loginGoogle = action.payload;
+      },
    },
 });
 
-export const { updateWindowCurrent, updateOtp, updateUsename, updateForgotPassword, addNoti, removeNoti, updateStateDisplay, updateStateCollection, updateAuth, updateRegister, updateDisplay } = popupSlice.actions;
+export const { updateWindowCurrent, updateOtp, updatePinTab, updateLoginGoogle, updateUsename, updateForgotPassword, addNoti, removeNoti, updateStateDisplay, updateStateCollection, updateAuth, updateRegister, updateDisplay } = popupSlice.actions;
 
 export default popupSlice.reducer;

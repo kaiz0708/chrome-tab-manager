@@ -52,4 +52,8 @@ export default {
    getUsername: async () => {
       return await serviceChrome.getValueLocal("user");
    },
+
+   getDisplayState: async () => {
+      return await serviceChrome.getValueLocal(process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE);
+   },
 };

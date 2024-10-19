@@ -8,12 +8,13 @@ import { Tooltip, Zoom } from "@mui/material";
 import { Grid2 } from "@mui/material";
 import { CiGrid2H } from "react-icons/ci";
 import { CiGrid41 } from "react-icons/ci";
-import { updateStateDisplay } from "../../../store/features/popupSlices";
+import { updatePinTab, updateStateDisplay } from "../../../store/features/popupSlices";
 import { GoPin } from "react-icons/go";
 import React, { useState } from "react";
 import { updateStateCollection } from "../../../store/features/popupSlices";
 import { ActionTab } from "../../../enums/action";
 import { BsCollection } from "react-icons/bs";
+import { AnimatePresence, motion } from "framer-motion";
 
 /* global chrome */
 
@@ -22,8 +23,9 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
    const windowCurrent = useSelector((state) => state.current.value);
    const typeDisplay = useSelector((state) => state.current.displayState);
    const typeDisplayCollection = useSelector((state) => state.current.displayCollection);
+   const pinState = useSelector((state) => state.current.pinTab);
    const [valueFilter, setValueFilter] = useState("");
-   const pinTab = useSelector((state) => state.current.pinTab);
+   const [isFocused, setIsFocused] = useState(false);
    const [titleDisplayCollection, setTitleDisplayCollection] = useState(ActionTab.typeStateOpenCollection);
 
    const minimizeWindow = (windowCurrentId) => {
@@ -61,27 +63,40 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
          <Grid2 columns={{ xs: 6, sm: 6, md: 6 }} container spacing={1}>
             <Grid2 size={{ xs: 4, sm: 4, md: 4 }}>
                <div className='flex h-full items-center space-x-2'>
-                  <input
-                     onChange={(e) => {
-                        filterGroupTab(e.target.value);
-                        setValueFilter(e.target.value);
-                     }}
-                     onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                           groupTab(e.target.value);
-                           setValueFilter("");
-                        }
-                     }}
-                     value={valueFilter}
-                     className='w-full outline-none focus:ring-0 border-none rounded p-1.5 text-sm placeholder:text-sm'
-                     placeholder='Filtering follow title or url....'
-                  />
+                  <div className='relative w-full'>
+                     <input
+                        onChange={(e) => {
+                           filterGroupTab(e.target.value);
+                           setValueFilter(e.target.value);
+                        }}
+                        onKeyDown={(e) => {
+                           if (e.key === "Enter") {
+                              groupTab(e.target.value);
+                           }
+                        }}
+                        onFocus={() => setIsFocused(true)}
+                        onBlur={() => setIsFocused(false)}
+                        value={valueFilter}
+                        className={`w-full outline-none border-none p-1.5 text-sm placeholder:text-sm`}
+                        placeholder='Filtering follow title or url....'
+                     />
+                     <motion.span
+                        className='absolute left-0 bottom-0 w-full h-[1.5px] bg-gray-300'
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: isFocused ? 1 : 0 }}
+                        transition={{
+                           duration: 0.5,
+                           ease: [0.25, 0.46, 0.45, 0.94],
+                           delay: isFocused ? 0.05 : 0,
+                        }}
+                        style={{ transformOrigin: "left" }}
+                     />
+                  </div>
                   <button
                      onClick={(e) => {
                         groupTab(e.target.value);
-                        setValueFilter("");
                      }}
-                     className='h-full bg-gray-100 text-black rounded p-2 text-xs'>
+                     className='h-full bg-gray-100 text-black rounded p-2 text-xs hover:opacity-75 transition duration-300'>
                      Filter
                   </button>
                </div>
@@ -142,8 +157,9 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         onClick={(e) => {
                            e.stopPropagation();
                            pinTabWindowCurrent();
+                           dispatch(updatePinTab(!pinState));
                         }}
-                        title={"Pin current tab this window"}
+                        title={pinState ? "Unpin tab current" : "Pin tab current"}
                         TransitionComponent={Zoom}
                         TransitionProps={{ timeout: 200 }}
                         disableInteractive>

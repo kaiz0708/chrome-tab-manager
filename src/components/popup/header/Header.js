@@ -3,9 +3,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import serviceChrome from "../../services/ServiceChrome";
-import { updateAuth } from "../../../store/features/popupSlices";
+import { updateAuth, addNoti, updateStateCollection } from "../../../store/features/popupSlices";
 import { CiUser } from "react-icons/ci";
 import { Menu, MenuItem, Box, Grid2 } from "@mui/material";
+import { v4 as uuidv4 } from "uuid";
 
 function Header() {
    const user = useSelector((state) => state.current.user);
@@ -24,16 +25,18 @@ function Header() {
    const logout = () => {
       serviceChrome.removeValueLocal(["token"]);
       dispatch(updateAuth(false));
+      dispatch(addNoti({ message: "Log out success", id: uuidv4(), status: 200 }));
+      dispatch(updateStateCollection(false));
    };
 
    return (
       <div className='p-2'>
          <Grid2 columns={{ xs: 8, sm: 8, md: 8 }} container spacing={1}>
-            <Grid2 size={{ xs: 5, sm: 5, md: 5 }}>
+            <Grid2 size={{ xs: 6, sm: 6, md: 6 }}>
                <div className='text-lg font-medium leading-10 text-gray-600'>Antinotion Tab Manager</div>
             </Grid2>
 
-            <Grid2 size={{ xs: 3, sm: 3, md: 3 }}>
+            <Grid2 size={{ xs: 2, sm: 2, md: 2 }}>
                <Box className='flex justify-end items-center space-x-2 '>
                   <Box className='w-customTruncate'>
                      <div className='text-xs overflow-hidden text-ellipsis whitespace-nowrap text-gray-400'>{user.username}</div>

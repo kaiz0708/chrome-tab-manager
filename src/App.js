@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { React, lazy, Suspense, useState } from "react";
 import { useEffect } from "react";
 import { axios } from "./common/axios";
-import { removeNoti, updateAuth, updateDisplay, updateOtp, updateUsename } from "./store/features/popupSlices";
+import { removeNoti, updateAuth, updateDisplay, updateOtp, updateUsename, updateStateDisplay } from "./store/features/popupSlices";
 import { CircularProgress } from "@mui/material";
 import utils from "./common/utils";
 import { useSnackbar } from "notistack";
@@ -19,6 +19,7 @@ function App() {
    const isDisplay = useSelector((state) => state.current.display);
    const notifications = useSelector((state) => state.current.notification);
    const isforgotPassword = useSelector((state) => state.current.forgotPassword);
+   const loginGoogle = useSelector((state) => state.current.loginGoogle);
    const isOtp = useSelector((state) => state.current.otp);
    const dispatch = useDispatch();
    const { enqueueSnackbar } = useSnackbar();
@@ -29,11 +30,18 @@ function App() {
          const otp = await utils.getStateOtp();
          const user = await utils.getUsername();
 
+         const state = await utils.getDisplayState();
+         if (state === undefined) {
+            serviceChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE, process.env.REACT_APP_TYPE_TAB_HORIZONTAL);
+            dispatch(updateStateDisplay(process.env.REACT_APP_TYPE_TAB_HORIZONTAL));
+         } else {
+            dispatch(updateStateDisplay(state));
+         }
+
          dispatch(updateOtp(otp));
          dispatch(updateUsename(user));
 
          if (token) {
-            console.log(token);
             try {
                const response = await axios.get("/auth/expire", {
                   headers: {
@@ -68,8 +76,29 @@ function App() {
       });
    }, [notifications, dispatch]);
 
+   function LoadingOverlay() {
+      return (
+         <div
+            style={{
+               position: "fixed",
+               top: 0,
+               left: 0,
+               width: "100vw",
+               height: "100vh",
+               backgroundColor: "rgba(0, 0, 0, 0.2)",
+               display: "flex",
+               justifyContent: "center",
+               alignItems: "center",
+               zIndex: 9999,
+            }}>
+            <CircularProgress aria-label='Checking login status...' aria-live='polite' style={{ color: "#fff" }} />
+         </div>
+      );
+   }
+
    return (
       <div className='relative'>
+         {loginGoogle ? <LoadingOverlay /> : null}
          {!isDisplay ? (
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
                <CircularProgress aria-label='Checking login status...' aria-live='polite' />
