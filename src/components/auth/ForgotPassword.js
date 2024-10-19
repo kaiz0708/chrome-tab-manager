@@ -98,7 +98,7 @@ const ForgotPassword = ({ isOtp }) => {
                         e.preventDefault();
                         handleSubmitResetPassword(email);
                      }}>
-                     <input onChange={(e) => setEmail(e.target.value)} type='email' placeholder='Enter your email' className='w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none' required />
+                     <input onChange={(e) => setEmail(e.target.value)} type='email' name='email' placeholder='Enter your email' className='w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none' required />
                      <button type='submit' className='w-full bg-custom-color-title text-white p-3 rounded-lg font-semibold transition duration-300'>
                         Reset password
                      </button>
@@ -161,7 +161,7 @@ const ForgotPassword = ({ isOtp }) => {
                            setForgotPassword(true);
                         }}
                         className='block text-custom-color-title hover:underline cursor-pointer'>
-                        Back to reset password to give new otp
+                        Back to reset password to give new otp ocde
                      </span>
                   </div>
                </motion.div>
@@ -182,7 +182,7 @@ const ForgotPassword = ({ isOtp }) => {
                         <div className='relative'>
                            <input
                               type={display.password ? "text" : "password"}
-                              name='email'
+                              name='password'
                               className={`w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none ${password.length < 8 ? "focus:border-red-500" : "focus:border-green-500"}`}
                               value={password}
                               onChange={(e) => setPassword(e.target.value)}
@@ -199,11 +199,11 @@ const ForgotPassword = ({ isOtp }) => {
                               }}>
                               {display.password ? <VscEye className='text-base' /> : <VscEyeClosed className='text-base' />}
                            </div>
-                           {password !== "" && (
+                           {password !== "" && password.length < 8 ? (
                               <motion.div className='text-xs mt-1.5 text-gray-400' initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
                                  Enter at least 8 characters
                               </motion.div>
-                           )}
+                           ) : null}
                         </div>
                      </div>
                      <div className='mb-3'>
@@ -211,7 +211,7 @@ const ForgotPassword = ({ isOtp }) => {
                         <div className='relative'>
                            <input
                               type={display.confirmPassword ? "text" : "password"}
-                              name='password'
+                              name='confirmPassword'
                               className={`w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none ${confirmPassword.length < 8 ? "focus:border-red-500" : "focus:border-green-500"}`}
                               value={confirmPassword}
                               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -228,11 +228,11 @@ const ForgotPassword = ({ isOtp }) => {
                               }}>
                               {display.confirmPassword ? <VscEye className='text-base' /> : <VscEyeClosed className='text-base' />}
                            </div>
-                           {confirmPassword !== "" && (
+                           {confirmPassword !== "" && confirmPassword.length < 8 ? (
                               <motion.div className='text-xs mt-1.5 text-gray-400' initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
                                  Enter at least 8 characters
                               </motion.div>
-                           )}
+                           ) : null}
                         </div>
                      </div>
 
@@ -253,7 +253,7 @@ const ForgotPassword = ({ isOtp }) => {
                            setForgotPassword(true);
                         }}
                         className='block text-custom-color-title hover:underline cursor-pointer'>
-                        Back to reset password to give new otp
+                        Back to reset password to give new otp code
                      </span>
                   </div>
                </motion.div>

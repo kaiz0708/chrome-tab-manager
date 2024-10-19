@@ -9,7 +9,7 @@ import { useDispatch } from "react-redux";
 import { deleteCollectionItem } from "../../../../store/features/windowSlices";
 import servicePopup from "../../servicePopup";
 import serviceChrome from "../../../services/ServiceChrome";
-import { addNoti } from "../../../../store/features/popupSlices";
+import { addNoti, updateAuth } from "../../../../store/features/popupSlices";
 import { v4 as uuidv4 } from "uuid";
 
 /* global chrome */
@@ -33,10 +33,15 @@ function Tab({ tab, index, typeDisplay, display }) {
 
    const deleteItemCollection = async (collectionId, tab) => {
       const response = await servicePopup.deleteTabToCollection(tab, collectionId);
-      const { data, status, message } = response.data;
-      serviceChrome.sendMessage({ idCollection: collectionId, tab: data }, ActionTab.typeDeleteCollection);
-      dispatch(deleteCollectionItem({ idCollection: collectionId, tab: data }));
-      dispatch(addNoti({ id: uuidv4(), status, message }));
+      if (response === null) {
+         dispatch(updateAuth(false));
+         dispatch(addNoti({ message: "Session expire, please login again", id: uuidv4(), status: 401 }));
+      } else {
+         const { data, status, message } = response.data;
+         serviceChrome.sendMessage({ idCollection: collectionId, tab: data }, ActionTab.typeDeleteCollection);
+         dispatch(deleteCollectionItem({ idCollection: collectionId, tab: data }));
+         dispatch(addNoti({ id: uuidv4(), status, message }));
+      }
    };
 
    const switchToTab = (tabId) => {
@@ -84,7 +89,7 @@ function Tab({ tab, index, typeDisplay, display }) {
                         if (display === process.env.REACT_APP_TYPE_TAB) {
                            closeTab(tab.id, tab.windowId);
                         } else {
-                           deleteItemCollection(tab.collection, tab).then();
+                           deleteItemCollection(tab.collection, tab);
                         }
                      }}
                      className={`${

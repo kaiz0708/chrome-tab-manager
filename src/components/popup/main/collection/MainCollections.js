@@ -56,6 +56,7 @@ function MainCollections() {
    const handleCreateCollection = async (windowCollectionLength) => {
       const title = process.env.REACT_APP_TYPE_DEFAULT_NAME_COLLECTION + "_" + windowCollectionLength;
       const response = await servicePopup.createCollection(title);
+      console.log(response);
       if (response === null) {
          dispatch(updateAuth(false));
          dispatch(addNoti({ message: "session expire, please login again", id: uuidv4(), status: 401 }));

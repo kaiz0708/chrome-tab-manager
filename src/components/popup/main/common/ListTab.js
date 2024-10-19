@@ -34,7 +34,7 @@ function ListTab({ window }) {
                const response = await servicePopup.addTabToCollection(item.tab, collectionId, hoverIndex);
                if (response === null) {
                   dispatch(updateAuth(false));
-                  dispatch(addNoti({ message: "session expire, please login again", id: uuidv4(), status: 401 }));
+                  dispatch(addNoti({ message: "Session expire, please login again", id: uuidv4(), status: 401 }));
                } else {
                   const { data, status, message } = response.data;
                   serviceChrome.sendMessage({ id: collectionId, tab: data, newPosition: hoverIndex }, ActionTab.typeAddItemCollection);
@@ -49,7 +49,7 @@ function ListTab({ window }) {
                const response = await servicePopup.moveItemCollectionToOther(item.tab, collectionId, hoverIndex);
                if (response === null) {
                   dispatch(updateAuth(false));
-                  dispatch(addNoti({ message: "session expire, please login again", id: uuidv4(), status: 401 }));
+                  dispatch(addNoti({ message: "Session expire, please login again", id: uuidv4(), status: 401 }));
                } else {
                   const { data, status, message } = response.data;
                   serviceChrome.sendMessage({ idCollection: item.tab.collection, tab: item.tab }, ActionTab.typeDeleteItemCollection);
@@ -63,7 +63,7 @@ function ListTab({ window }) {
                const response = await servicePopup.deleteTabToCollection(item.tab, collectionId);
                if (response === null) {
                   dispatch(updateAuth(false));
-                  dispatch(addNoti({ message: "session expire, please login again", id: uuidv4(), status: 401 }));
+                  dispatch(addNoti({ message: "Session expire, please login again", id: uuidv4(), status: 401 }));
                } else {
                   const { data, status, message } = response.data;
                   serviceChrome.openNewTabEmpty(window.windowTab.id, data.url, false);

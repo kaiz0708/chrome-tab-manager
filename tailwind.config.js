@@ -20,6 +20,7 @@ module.exports = {
             "custom-color-tooltip": "rgb(255, 240, 241)",
             "custom-color-title": "rgb(246, 80, 119)",
             "custom-title": "#70708C",
+            "custom-antinotion": "#f1efe7",
          },
          fontSize: {
             xxs: "0.625rem",
