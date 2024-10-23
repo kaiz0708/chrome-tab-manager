@@ -8,10 +8,13 @@ import { Tooltip, Zoom } from "@mui/material";
 import { Grid2 } from "@mui/material";
 import { CiGrid2H } from "react-icons/ci";
 import { CiGrid41 } from "react-icons/ci";
-import { updateStateDisplay } from "../../../store/features/popupSlices";
+import { updatePinTab, updateStateDisplay } from "../../../store/features/popupSlices";
 import { GoPin } from "react-icons/go";
-import React from "react";
+import React, { useState } from "react";
 import { updateStateCollection } from "../../../store/features/popupSlices";
+import { ActionTab } from "../../../enums/action";
+import { BsCollection } from "react-icons/bs";
+import { AnimatePresence, motion } from "framer-motion";
 
 /* global chrome */
 
@@ -20,66 +23,99 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
    const windowCurrent = useSelector((state) => state.current.value);
    const typeDisplay = useSelector((state) => state.current.displayState);
    const typeDisplayCollection = useSelector((state) => state.current.displayCollection);
+   const pinState = useSelector((state) => state.current.pinTab);
+   const [valueFilter, setValueFilter] = useState("");
+   const [isFocused, setIsFocused] = useState(false);
+   const [titleDisplayCollection, setTitleDisplayCollection] = useState(ActionTab.typeStateOpenCollection);
 
    const minimizeWindow = (windowCurrentId) => {
       servicesChrome.minimizeWindow(windowCurrentId);
    };
 
-   const openCollection = () => {
-      typeDisplayCollection ? dispatch(updateStateCollection(false)) : dispatch(updateStateCollection(true));
+   const openCollection = (value, state) => {
+      dispatch(updateStateCollection(!value));
+      setTitleDisplayCollection(state);
    };
 
    const pinTabWindowCurrent = () => {
       servicesChrome.pinTab();
    };
 
+   const updateStatePopup = (display) => {
+      dispatch(updateStateDisplay(display));
+      servicesChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE, display);
+      servicesChrome.sendMessage({ display }, ActionTab.typeChangeState);
+   };
+
    const changeState = () => {
       switch (typeDisplay) {
          case process.env.REACT_APP_TYPE_TAB_BLOCK:
-            dispatch(updateStateDisplay(process.env.REACT_APP_TYPE_TAB_HORIZONTAL));
-            servicesChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE, process.env.REACT_APP_TYPE_TAB_HORIZONTAL);
+            updateStatePopup(process.env.REACT_APP_TYPE_TAB_HORIZONTAL);
             break;
          case process.env.REACT_APP_TYPE_TAB_HORIZONTAL:
-            dispatch(updateStateDisplay(process.env.REACT_APP_TYPE_TAB_BLOCK));
-            servicesChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE, process.env.REACT_APP_TYPE_TAB_BLOCK);
+            updateStatePopup(process.env.REACT_APP_TYPE_TAB_BLOCK);
             break;
       }
    };
 
    return (
       <div className='p-1'>
-         <Grid2 columns={{ xs: 6, sm: 6, md: 6 }} container spacing={0.5}>
-            <Grid2 size={{ xs: 3, sm: 3, md: 3 }}>
-               <div className=''>
-                  <input
-                     onChange={(e) => {
-                        filterGroupTab(e.target.value);
+         <Grid2 columns={{ xs: 6, sm: 6, md: 6 }} container spacing={1}>
+            <Grid2 size={{ xs: 4, sm: 4, md: 4 }}>
+               <div className='flex h-full items-center space-x-2'>
+                  <div className='relative w-full'>
+                     <input
+                        onChange={(e) => {
+                           filterGroupTab(e.target.value);
+                           setValueFilter(e.target.value);
+                        }}
+                        onKeyDown={(e) => {
+                           if (e.key === "Enter") {
+                              groupTab(e.target.value);
+                           }
+                        }}
+                        onFocus={() => setIsFocused(true)}
+                        onBlur={() => setIsFocused(false)}
+                        value={valueFilter}
+                        className={`w-full outline-none border-none p-1.5 text-sm placeholder:text-sm`}
+                        placeholder='Filtering follow title or url....'
+                     />
+                     <motion.span
+                        className='absolute left-0 bottom-0 w-full h-[1.5px] bg-gray-300'
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: isFocused ? 1 : 0 }}
+                        transition={{
+                           duration: 0.5,
+                           ease: [0.25, 0.46, 0.45, 0.94],
+                           delay: isFocused ? 0.05 : 0,
+                        }}
+                        style={{ transformOrigin: "left" }}
+                     />
+                  </div>
+                  <button
+                     onClick={(e) => {
+                        groupTab(e.target.value);
                      }}
-                     onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                           groupTab();
-                        }
-                     }}
-                     className='w-full outline-none focus:ring-0 border-none rounded p-1.5 text-sm placeholder:text-sm'
-                     placeholder='Start typing to search tabs....'
-                  />
+                     className='h-full bg-gray-100 text-black rounded p-2 text-xs hover:opacity-75 transition duration-300'>
+                     Filter
+                  </button>
                </div>
             </Grid2>
 
-            <Grid2 size={{ xs: 3, sm: 3, md: 3 }}>
-               <Grid2 columns={{ xs: 4, sm: 4, md: 4 }} container spacing={0.5}>
+            <Grid2 size={{ xs: 2, sm: 2, md: 2 }}>
+               <Grid2 columns={{ xs: 4, sm: 4, md: 4 }} container spacing={1}>
                   <Grid2 size={{ xs: 1, sm: 1, md: 1 }}>
                      <Tooltip
                         onClick={(e) => {
                            e.stopPropagation();
-                           openCollection();
+                           openCollection(typeDisplayCollection, typeDisplayCollection ? ActionTab.typeStateOpenCollection : ActionTab.typeStateCloseCollection);
                         }}
-                        title={"Close this popup"}
+                        title={titleDisplayCollection}
                         TransitionComponent={Zoom}
                         TransitionProps={{ timeout: 200 }}
                         disableInteractive>
-                        <div className='cursor-pointer border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
-                           <SlClose className='w-full' />
+                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
+                           <BsCollection className='w-full' />
                         </div>
                      </Tooltip>
                   </Grid2>
@@ -94,7 +130,7 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         TransitionComponent={Zoom}
                         TransitionProps={{ timeout: 200 }}
                         disableInteractive>
-                        <div className='cursor-pointer border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
+                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
                            <CiSaveDown1 className='w-full' />
                         </div>
                      </Tooltip>
@@ -110,7 +146,7 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         TransitionComponent={Zoom}
                         TransitionProps={{ timeout: 200 }}
                         disableInteractive>
-                        <div className='cursor-pointer border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
+                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
                            {typeDisplay === process.env.REACT_APP_TYPE_TAB_HORIZONTAL ? <CiGrid41 className='w-full' /> : <CiGrid2H className='w-full' />}
                         </div>
                      </Tooltip>
@@ -121,12 +157,13 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         onClick={(e) => {
                            e.stopPropagation();
                            pinTabWindowCurrent();
+                           dispatch(updatePinTab(!pinState));
                         }}
-                        title={"Pin current tab this window"}
+                        title={pinState ? "Unpin tab current" : "Pin tab current"}
                         TransitionComponent={Zoom}
                         TransitionProps={{ timeout: 200 }}
                         disableInteractive>
-                        <div className='cursor-pointer border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
+                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
                            <GoPin className='w-full' />
                         </div>
                      </Tooltip>

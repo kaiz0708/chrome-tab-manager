@@ -1,6 +1,8 @@
 /** @format */
 
 export const ActionTab = Object.freeze({
+   typeChangeState: process.env.REACT_APP_TYPE_CHANGE_STATE,
+
    typeAddTabChrome: process.env.REACT_APP_TYPE_MESSAGE_ADD_TAB_CHROME,
 
    typeDeleteTabChrome: process.env.REACT_APP_TYPE_MESSAGE_DELETE_TAB_CHROME,
@@ -23,7 +25,17 @@ export const ActionTab = Object.freeze({
 
    typeTabHori: process.env.REACT_APP_TYPE_TAB_HORIZONTAL,
 
-   typeAddCollection: process.env.REACT_APP_TYPE_ADD_COLLECTION,
+   typeAddItemCollection: process.env.REACT_APP_TYPE_ADD_ITEM_COLLECTION,
+
+   typeDeleteItemCollection: process.env.REACT_APP_TYPE_DELETE_ITEM_COLLECTION,
+
+   typeCreateCollection: process.env.REACT_APP_TYPE_ADD_COLLECTION,
 
    typeDeleteCollection: process.env.REACT_APP_TYPE_DELETE_COLLECTION,
+
+   typeUpdateCollection: process.env.REACT_APP_TYPE_UPDATE_COLLECTION,
+
+   typeStateOpenCollection: process.env.REACT_APP_TYPE_STATE_COLLECTION_OPEN,
+
+   typeStateCloseCollection: process.env.REACT_APP_TYPE_STATE_COLLECTION_CLOSE,
 });

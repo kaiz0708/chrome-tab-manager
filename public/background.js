@@ -91,6 +91,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
          type: "PIN_STATUS_CHANGED",
          data: {
             tab: tab,
+            tabId: tabId,
             pinned: changeInfo.pinned,
          },
       });

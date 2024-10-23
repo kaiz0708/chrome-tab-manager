@@ -2,16 +2,33 @@
 
 import React, { useEffect, useRef, useState, lazy } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { updateWindowCurrent } from "../../store/features/popupSlices";
+import { addNoti, updateWindowCurrent, updatePinTab } from "../../store/features/popupSlices";
 import { ActionTab } from "../../enums/action";
 import serviceChrome from "../services/ServiceChrome";
-import { deleteTab, setValueCollection, addCollectionItem, addEmptyTab, deleteWindow, setValue, addWindow, moveTabAroundWindow, moveTabWithoutWindow, activeTab, navigateTab, pinTab, deleteCollectionItem } from "../../store/features/windowSlices";
+import {
+   deleteTab,
+   setValueCollection,
+   addCollectionItem,
+   addEmptyTab,
+   deleteWindow,
+   setValue,
+   addWindow,
+   moveTabAroundWindow,
+   moveTabWithoutWindow,
+   activeTab,
+   navigateTab,
+   pinTab,
+   deleteCollectionItem,
+   createCollection,
+   deleteCollection,
+   updateCollection,
+} from "../../store/features/windowSlices";
 import { updateStateDisplay } from "../../store/features/popupSlices";
-import utils from "../../common/utils";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { v4 as uuidv4 } from "uuid";
 const Header = lazy(() => import("./header/Header"));
-const MainPopup = lazy(() => import("./main/MainPopup"));
+const MainPopup = lazy(() => import("./main/popup/MainPopup"));
 const TaskBarPopup = lazy(() => import("./footer/TaskBarPopup"));
 /* global chrome */
 function Popup() {
@@ -19,7 +36,6 @@ function Popup() {
    const [windowList, setWindowList] = useState([]);
    const typeDisplay = useSelector((state) => state.current.displayState);
    const dispatch = useDispatch();
-   const [loading, setLoading] = useState(true);
 
    useEffect(() => {
       setWindowList(windowTabs);
@@ -38,9 +54,10 @@ function Popup() {
          });
       });
 
-      serviceChrome.createState();
-      chrome.storage.local.get([process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE], (result) => {
-         dispatch(updateStateDisplay(result[process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE]));
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+         let currentTab = tabs[0];
+         let pinnedStatus = currentTab.pinned;
+         dispatch(updatePinTab(pinnedStatus));
       });
    }, []);
 
@@ -60,7 +77,6 @@ function Popup() {
                dispatch(addWindow(msg.data.window));
                break;
             case ActionTab.typeMoveTabAroundWindow:
-               console.log(msg.data);
                dispatch(moveTabAroundWindow(msg.data));
                break;
             case ActionTab.typeMoveTabWithOutWindow:
@@ -75,11 +91,26 @@ function Popup() {
             case ActionTab.typePinTab:
                dispatch(pinTab(msg.data));
                break;
-            case ActionTab.typeAddCollection:
+            case ActionTab.typeAddItemCollection:
+               console.log(msg.data);
                dispatch(addCollectionItem(msg.data));
                break;
-            case ActionTab.typeDeleteCollection:
+            case ActionTab.typeDeleteItemCollection:
                dispatch(deleteCollectionItem(msg.data));
+               break;
+            case ActionTab.typeCreateCollection:
+               dispatch(createCollection(msg.data));
+               break;
+            case ActionTab.typeDeleteCollection:
+               dispatch(deleteCollection(msg.data));
+               break;
+            case ActionTab.typeUpdateCollection:
+               dispatch(updateCollection(msg.data));
+               break;
+            case ActionTab.typeChangeState:
+               const { display } = msg.data;
+               serviceChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE, display);
+               dispatch(updateStateDisplay(display));
                break;
          }
       };
@@ -90,26 +121,50 @@ function Popup() {
       };
    }, []);
 
+   const removeVietnameseTones = (str) => {
+      return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+   };
+
+   const normalizeSearchValue = (value) => {
+      return value.trim().replace(/\s+/g, " ");
+   };
+
    const filterGroupTab = (value) => {
-      if (value === "") {
+      const normalizedInput = normalizeSearchValue(value);
+      if (normalizedInput === "") {
          setWindowList(windowTabs);
       } else {
+         const normalizedValue = removeVietnameseTones(normalizedInput.toLowerCase());
          const windowGroup = windowTabs.map((window) => {
-            const filteredTabs = window.tabs.filter((e) => e.title.toLowerCase().includes(value.toLowerCase()));
+            const filteredTabs = window.tabs.filter((e) => {
+               const normalizedTitle = removeVietnameseTones(e.title.toLowerCase());
+               const normalizedUrl = removeVietnameseTones(e.url.toLowerCase());
+               return normalizedTitle.includes(normalizedValue) || normalizedUrl.includes(normalizedValue);
+            });
             return { ...window, tabs: filteredTabs };
          });
          setWindowList(windowGroup);
       }
    };
 
-   const groupTab = () => {
-      let urls = [];
-      windowList.forEach((window) => {
-         window.tabs.forEach((tab) => {
-            urls.push(tab);
-         });
-      });
-      serviceChrome.openWindowGroup(urls);
+   const groupTab = (value) => {
+      if (value === "") {
+         dispatch(addNoti({ message: "Nothing title match", id: uuidv4(), status: 400 }));
+      } else {
+         let urls = [];
+         const hasTabs = windowList.some((window) => window.tabs.length > 0);
+         if (!hasTabs) {
+            dispatch(addNoti({ message: "Nothing title match", id: uuidv4(), status: 400 }));
+         } else {
+            windowList.forEach((window) => {
+               window.tabs.forEach((tab) => {
+                  urls.push(tab);
+               });
+            });
+            serviceChrome.openWindowGroup(urls);
+            dispatch(addNoti({ message: "Group tab success", id: uuidv4(), status: 200 }));
+         }
+      }
    };
 
    return (
@@ -117,7 +172,7 @@ function Popup() {
          <Header />
 
          <DndProvider backend={HTML5Backend}>
-            <MainPopup windowTabs={windowList} typeDisplay={typeDisplay} loadingCollection={loading} />
+            <MainPopup windowTabs={windowList} typeDisplay={typeDisplay} />
          </DndProvider>
 
          <TaskBarPopup filterGroupTab={filterGroupTab} groupTab={groupTab} />

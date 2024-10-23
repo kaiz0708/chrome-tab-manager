@@ -1,6 +1,7 @@
 /** @format */
 /* global chrome */
 import axios from "axios";
+import serviceChrome from "../components/services/ServiceChrome";
 
 export default {
    parseStringToObjects: (str, mainDelimiter, fieldDelimeter, fieldNames) => {
@@ -34,5 +35,25 @@ export default {
          }
       }
       return Object.values(combined);
+   },
+
+   getToken: async () => {
+      return await serviceChrome.getValueLocal("token");
+   },
+
+   getStateOtp: async () => {
+      return await serviceChrome.getValueLocal(process.env.REACT_APP_TYPE_NAME_STATE_OTP_VARIABLE);
+   },
+
+   getEmail: async () => {
+      return await serviceChrome.getValueLocal(process.env.REACT_APP_TYPE_NAME_EMAIL);
+   },
+
+   getUsername: async () => {
+      return await serviceChrome.getValueLocal("user");
+   },
+
+   getDisplayState: async () => {
+      return await serviceChrome.getValueLocal(process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE);
    },
 };

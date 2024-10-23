@@ -20,6 +20,10 @@ module.exports = {
             "custom-color-tooltip": "rgb(255, 240, 241)",
             "custom-color-title": "rgb(246, 80, 119)",
             "custom-title": "#70708C",
+            "custom-antinotion": "#f1efe7",
+         },
+         fontSize: {
+            xxs: "0.625rem",
          },
          boxShadow: {
             custom: "1px 2px 4px rgba(112, 112, 140, 0.15)",
@@ -40,10 +44,15 @@ module.exports = {
          },
          width: {
             custom: "189px",
+            customTruncate: "100px",
          },
          height: {
             custom: "480px",
             customBlock: "79.325px",
+            "custom-tab": "37.2px",
+         },
+         spacing: {
+            "custom-bottom": "230px",
          },
          keyframes: {
             hoverEffect: {

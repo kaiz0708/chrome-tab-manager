@@ -1,23 +1,24 @@
 /** @format */
 import { useDrag, useDrop } from "react-dnd";
-import serviceChrome from "../../services/ServiceChrome";
+import serviceChrome from "../../../services/ServiceChrome";
 import React, { useEffect, useRef, lazy, Suspense } from "react";
 import { Tooltip, Zoom } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { AnimatePresence } from "framer-motion";
-import { ActionTab } from "../../../enums/action";
-import Masonry from "@mui/lab/Masonry";
+import { ActionTab } from "../../../../enums/action";
+import Masonry from "react-masonry-css";
 import { Box } from "@mui/material";
 import { HiOutlinePlus } from "react-icons/hi2";
-import servicePopup from "../servicePopup";
-import { deleteCollectionItem } from "../../../store/features/windowSlices";
+import servicePopup from "../../servicePopup";
+import { deleteCollectionItem } from "../../../../store/features/windowSlices";
+import { Grid2 } from "@mui/material";
 
-const MainCollections = lazy(() => import("./MainCollections"));
+const MainCollections = lazy(() => import("../collection/MainCollections"));
 /* global chrome */
 
 const WindowTab = lazy(() => import("./WindowTab"));
 
-function MainPopup({ windowTabs, typeDisplay, loadingCollection }) {
+function MainPopup({ windowTabs, typeDisplay }) {
    const dropRef = useRef(null);
    const type = process.env.REACT_APP_TYPE_TAB;
    const stateCollection = useSelector((state) => state.current.displayCollection);
@@ -60,7 +61,45 @@ function MainPopup({ windowTabs, typeDisplay, loadingCollection }) {
    return (
       <div className='h-custom'>
          <div ref={combinedRef} className={`p-2 ${stateCollection ? "h-[50%]" : "h-full"} relative bg-gray-100 overflow-y-auto scrollbar-thumb-rounded`}>
-            <Masonry columns={3} spacing={1}>
+            <div className='mb-2'>
+               <Grid2 columns={{ xs: 8, sm: 8, md: 8 }} container spacing={1}>
+                  <Grid2 className='flex items-center' size={{ xs: 7, sm: 7, md: 7 }}>
+                     <Box className='flex justify-start items-center'>
+                        <div className='text-base font-medium text-gray-600'>Tabs</div>
+                     </Box>
+                  </Grid2>
+
+                  <Grid2 style={{ display: "flex", justifyContent: "flex-end" }} size={{ xs: 1, sm: 1, md: 1 }}>
+                     <Box>
+                        <Tooltip
+                           onClick={(e) => {
+                              e.stopPropagation();
+                              openNewWindowEmpty();
+                           }}
+                           title={"Open new window"}
+                           TransitionComponent={Zoom}
+                           TransitionProps={{ timeout: 200 }}
+                           disableInteractive>
+                           <div
+                              className=' transition duration-200 ease-in bg-white hover:shadow-custom-hover cursor-pointer rounded shadow-custom flex justify-center items-center'
+                              style={{
+                                 width: "30px",
+                                 height: "30px",
+                              }}>
+                              <HiOutlinePlus className='text-base' />
+                           </div>
+                        </Tooltip>
+                     </Box>
+                  </Grid2>
+               </Grid2>
+            </div>
+
+            <Masonry
+               breakpointCols={{
+                  default: 3,
+               }}
+               className='flex -ml-2'
+               columnClassName='pl-2 space-y-2'>
                {windowTabs.map((windowTab, index) => (
                   <Box key={index} sx={{ height: "auto" }}>
                      <WindowTab
@@ -73,26 +112,10 @@ function MainPopup({ windowTabs, typeDisplay, loadingCollection }) {
                      />
                   </Box>
                ))}
-
-               <Box key={windowTabs.length} sx={{ height: "auto" }}>
-                  <Tooltip
-                     onClick={(e) => {
-                        e.stopPropagation();
-                        openNewWindowEmpty();
-                     }}
-                     title={"Open new window"}
-                     TransitionComponent={Zoom}
-                     TransitionProps={{ timeout: 200 }}
-                     disableInteractive>
-                     <div className='transition h-customBlock duration-200 ease-in space-y-2 hover:-translate-y-1 bg-white p-2 hover:shadow-custom-hover cursor-pointer shadow-custom rounded-md z-10 will-change-transform will-change-shadow flex justify-center items-center'>
-                        <HiOutlinePlus className='size-8' />
-                     </div>
-                  </Tooltip>
-               </Box>
             </Masonry>
          </div>
 
-         <div className={`relative border-1 p-2 text-black overflow-y-auto scrollbar-thumb-rounded ${stateCollection ? "h-[50%]" : "overflow hidden"}`}>
+         <div className={`relative bg-gray-100 border-1 p-2 text-black overflow-y-auto scrollbar-thumb-rounded ${stateCollection ? "h-[50%]" : "overflow hidden"}`}>
             {stateCollection ? (
                <Suspense>
                   <AnimatePresence>

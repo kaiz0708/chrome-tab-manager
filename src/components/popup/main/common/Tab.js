@@ -2,14 +2,15 @@
 import React, { useState, useEffect, useRef, lazy } from "react";
 import { IoIosClose } from "react-icons/io";
 import { IoEarthOutline } from "react-icons/io5";
-import servicesChrome from "../../services/ServiceChrome";
 import { Tooltip, Zoom } from "@mui/material";
 import { useDrag, useDrop } from "react-dnd";
-import { ActionTab } from "../../../enums/action";
+import { ActionTab } from "../../../../enums/action";
 import { useDispatch } from "react-redux";
-import { deleteCollectionItem } from "../../../store/features/windowSlices";
-import servicePopup from "../servicePopup";
-import serviceChrome from "../../services/ServiceChrome";
+import { deleteCollectionItem } from "../../../../store/features/windowSlices";
+import servicePopup from "../../servicePopup";
+import serviceChrome from "../../../services/ServiceChrome";
+import { addNoti, updateAuth } from "../../../../store/features/popupSlices";
+import { v4 as uuidv4 } from "uuid";
 
 /* global chrome */
 
@@ -27,18 +28,24 @@ function Tab({ tab, index, typeDisplay, display }) {
    });
 
    const closeTab = (tabId, windowId) => {
-      servicesChrome.closeTab(tabId, windowId);
+      serviceChrome.closeTab(tabId, windowId);
    };
 
    const deleteItemCollection = async (collectionId, tab) => {
       const response = await servicePopup.deleteTabToCollection(tab, collectionId);
-      const { data } = response.data;
-      serviceChrome.sendMessage({ idCollection: collectionId, tab: data }, ActionTab.typeDeleteCollection);
-      dispatch(deleteCollectionItem({ idCollection: collectionId, tab: data }));
+      if (response === null) {
+         dispatch(updateAuth(false));
+         dispatch(addNoti({ message: "Session expire, please login again", id: uuidv4(), status: 401 }));
+      } else {
+         const { data, status, message } = response.data;
+         serviceChrome.sendMessage({ idCollection: collectionId, tab: data }, ActionTab.typeDeleteCollection);
+         dispatch(deleteCollectionItem({ idCollection: collectionId, tab: data }));
+         dispatch(addNoti({ id: uuidv4(), status, message }));
+      }
    };
 
    const switchToTab = (tabId) => {
-      servicesChrome.switchToTab(tabId);
+      serviceChrome.switchToTab(tabId);
    };
 
    const checkActveTab = (tab, hover) => {
@@ -50,7 +57,7 @@ function Tab({ tab, index, typeDisplay, display }) {
    };
 
    return (
-      <div ref={drag} className={`${isDragging ? "transition-all duration-300 ease-in-out" : ""} `}>
+      <div ref={drag}>
          <Tooltip TransitionComponent={Zoom} TransitionProps={{ timeout: 200 }} onClick={() => switchToTab(tab.id)} disableInteractive title={tab.title}>
             <div
                onMouseEnter={() => {
@@ -61,10 +68,12 @@ function Tab({ tab, index, typeDisplay, display }) {
                   setShowCloseTab(false);
                   checkActveTab(tab.active, false);
                }}
-               className={` relative ${
-                  typeDisplay === process.env.REACT_APP_TYPE_TAB_HORIZONTAL ? "p-1.5 aspect-square" : "p-1.5 h-10"
-               } w-full flex justify-center items-center hover:bg-gray-100 transition-all duration-300 ease-in-out border-1 border-opacity-5 z-10 space-x-1 cursor-pointer border-solid rounded`}>
-               <div className='h-5 w-5'>{tab.favIconUrl === "" || tab.favIconUrl === undefined ? <IoEarthOutline className='w-full h-full' /> : <img className='rounded-sm object-contain w-full h-full' src={tab.favIconUrl} />}</div>
+               className={` relative ${typeDisplay === process.env.REACT_APP_TYPE_TAB_HORIZONTAL ? "p-1.5 aspect-square" : "p-1.5 h-10"} w-full ${
+                  tab.pinned ? "bg-custom-color-tooltip" : ""
+               } flex justify-center items-center hover:bg-gray-100 transition-all duration-300 ease-in-out border-1 border-opacity-5 z-10 space-x-1 cursor-pointer border-solid rounded`}>
+               <div className='h-5 w-5'>
+                  {tab.favIconUrl === "" || tab.favIconUrl === undefined || tab.favIconUrl === null ? <IoEarthOutline className='w-full h-full' /> : <img className='rounded-sm object-contain w-full h-full' src={tab.favIconUrl} />}
+               </div>
                {typeDisplay === ActionTab.typeBlock ? <p className='truncate flex-1 mr-2'>{tab.title}</p> : null}
                {tab.active && activeTab && display === process.env.REACT_APP_TYPE_TAB ? (
                   typeDisplay === ActionTab.typeBlock ? (
@@ -80,7 +89,7 @@ function Tab({ tab, index, typeDisplay, display }) {
                         if (display === process.env.REACT_APP_TYPE_TAB) {
                            closeTab(tab.id, tab.windowId);
                         } else {
-                           deleteItemCollection(tab.collection, tab).then();
+                           deleteItemCollection(tab.collection, tab);
                         }
                      }}
                      className={`${

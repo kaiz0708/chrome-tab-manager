@@ -1,7 +1,6 @@
 /** @format */
 
 import { createSlice } from "@reduxjs/toolkit";
-/* global chrome */
 
 const popupSlice = createSlice({
    name: "current",
@@ -12,6 +11,12 @@ const popupSlice = createSlice({
       auth: false,
       register: false,
       display: false,
+      notification: [],
+      forgotPassword: false,
+      otp: false,
+      user: null,
+      pinTab: false,
+      loginGoogle: false,
    },
    reducers: {
       updateWindowCurrent: (state, action) => {
@@ -37,9 +42,37 @@ const popupSlice = createSlice({
       updateDisplay: (state, action) => {
          state.display = action.payload;
       },
+
+      addNoti: (state, action) => {
+         state.notification = [action.payload, ...state.notification];
+      },
+
+      removeNoti: (state, action) => {
+         state.notification = state.notification.filter((noti) => noti.id !== action.payload);
+      },
+
+      updateForgotPassword: (state, action) => {
+         state.forgotPassword = action.payload;
+      },
+
+      updateOtp: (state, action) => {
+         state.otp = action.payload;
+      },
+
+      updateUsename: (state, action) => {
+         state.user = action.payload;
+      },
+
+      updatePinTab: (state, action) => {
+         state.pinTab = action.payload;
+      },
+
+      updateLoginGoogle: (state, action) => {
+         state.loginGoogle = action.payload;
+      },
    },
 });
 
-export const { updateWindowCurrent, updateStateDisplay, updateStateCollection, updateAuth, updateRegister, updateDisplay } = popupSlice.actions;
+export const { updateWindowCurrent, updateOtp, updatePinTab, updateLoginGoogle, updateUsename, updateForgotPassword, addNoti, removeNoti, updateStateDisplay, updateStateCollection, updateAuth, updateRegister, updateDisplay } = popupSlice.actions;
 
 export default popupSlice.reducer;

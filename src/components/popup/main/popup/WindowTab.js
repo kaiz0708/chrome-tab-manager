@@ -2,13 +2,13 @@
 
 import React, { useRef, useState, lazy, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import services from "../../services/ServiceChrome";
+import services from "../../../services/ServiceChrome";
 import { IoCloseOutline } from "react-icons/io5";
-import serviceChrome from "../../services/ServiceChrome";
+import serviceChrome from "../../../services/ServiceChrome";
 import { Tooltip, Zoom } from "@mui/material";
 import { CiCalendarDate } from "react-icons/ci";
 import { PiNotePencilThin } from "react-icons/pi";
-const ListTab = lazy(() => import("./ListTab"));
+const ListTab = lazy(() => import("../common/ListTab"));
 /* global chrome */
 
 function WindowTab({ window }) {
@@ -43,18 +43,6 @@ function WindowTab({ window }) {
                </div>
             </Tooltip>
          </div>
-
-         {window.typeFeature === process.env.REACT_APP_TYPE_TAB ? null : (
-            <div className='flex items-center space-x-1'>
-               <CiCalendarDate className='text-base text-custom-color-title font-bold' /> <span className='text-xs font-medium text-center'>{window.windowTab.createdAt.split("T")[0]}</span>
-            </div>
-         )}
-
-         {window.typeFeature === process.env.REACT_APP_TYPE_TAB ? null : (
-            <div className='flex items-center space-x-1'>
-               <PiNotePencilThin className='text-base text-custom-color-title font-bold' /> <span className='text-xs font-medium text-center'>{window.windowTab.note}</span>
-            </div>
-         )}
 
          <ListTab window={window} />
       </div>
