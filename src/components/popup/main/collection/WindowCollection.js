@@ -11,6 +11,7 @@ import { deleteCollection, updateCollection } from "../../../../store/features/w
 import { addNoti, updateAuth } from "../../../../store/features/popupSlices";
 import { AnimatePresence, motion } from "framer-motion";
 import { v4 as uuidv4 } from "uuid";
+import { useDrag, useDrop } from "react-dnd";
 const ListTab = lazy(() => import("../common/ListTab"));
 /* global chrome */
 
@@ -18,10 +19,29 @@ function WindowCollection({ window }) {
    const dispatch = useDispatch();
    const [updateCollectionState, setUpdateCollectionState] = useState(false);
    const [title, setTitle] = useState(window.windowTab.title);
+   const collectionType = process.env.REACT_APP_TYPE_COLLECTION_LIST;
+   const [dragging, setIsDragging] = useState(false);
+
+   const handleDragStart = (e) => {
+      setIsDragging(true);
+      e.dataTransfer.effectAllowed = "move";
+   };
+
+   const handleDragEnd = () => {
+      setIsDragging(false);
+   };
 
    useEffect(() => {
       setTitle(window.windowTab.title);
    }, [window.windowTab.title]);
+
+   const [{ isDragging }, drag] = useDrag({
+      type: "ITEM",
+      item: { id: window.windowTab.id, url: window.windowTab.tabs.map((tab) => tab.url), display: collectionType },
+      collect: (monitor) => ({
+         isDragging: !!monitor.isDragging(),
+      }),
+   });
 
    const updateCollectionName = async (title, collectionId) => {
       const response = await servicePopup.updateCollection(title, collectionId);
@@ -50,7 +70,15 @@ function WindowCollection({ window }) {
    };
 
    return (
-      <div className='transition duration-200 bg-white ease-in space-y-2 hover:-translate-y-1 p-2 hover:shadow-custom-hover cursor-pointer shadow-custom rounded-md z-10 will-change-transform will-change-shadow'>
+      <div
+         ref={drag}
+         onDragStart={handleDragStart}
+         onDragEnd={handleDragEnd}
+         className={`transition duration-200 bg-white ease-in space-y-2 p-2 shadow-custom rounded-md z-10 will-change-transform will-change-shadow cursor-grab ${isDragging ? "cursor-grabbing" : ""} hover:-translate-y-1`}
+         style={{
+            transform: isDragging ? "scale(1.05)" : "scale(1)",
+            transition: "transform 0.2s ease-in-out",
+         }}>
          <div className='flex justify-between items-center'>
             <div className='h-8 flex items-center space-x-2'>
                <span

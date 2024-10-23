@@ -2,9 +2,10 @@
 
 import React, { useEffect, useRef, useState, lazy } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addNoti, updateWindowCurrent, updatePinTab } from "../../store/features/popupSlices";
+import { addNoti, updateWindowCurrent, updatePinTab, updateAuth } from "../../store/features/popupSlices";
 import { ActionTab } from "../../enums/action";
 import serviceChrome from "../services/ServiceChrome";
+import servicePopup from "./servicePopup";
 import {
    deleteTab,
    setValueCollection,
@@ -59,6 +60,14 @@ function Popup() {
          let pinnedStatus = currentTab.pinned;
          dispatch(updatePinTab(pinnedStatus));
       });
+
+      const getListCollection = async () => {
+         const response = await servicePopup.listCollection();
+         const { data } = response.data;
+         dispatch(setValueCollection(data));
+      };
+
+      getListCollection().then();
    }, []);
 
    useEffect(() => {
@@ -106,6 +115,11 @@ function Popup() {
                break;
             case ActionTab.typeUpdateCollection:
                dispatch(updateCollection(msg.data));
+               break;
+            case ActionTab.typeLogout:
+               serviceChrome.removeValueLocal(["token"]);
+               dispatch(updateAuth(false));
+               dispatch(addNoti({ message: "Log out success", id: uuidv4(), status: 200 }));
                break;
             case ActionTab.typeChangeState:
                const { display } = msg.data;

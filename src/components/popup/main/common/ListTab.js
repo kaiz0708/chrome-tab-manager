@@ -46,17 +46,22 @@ function ListTab({ window }) {
          } else {
             if (window.typeFeature === collectionType) {
                const collectionId = window.windowTab.id;
-               const response = await servicePopup.moveItemCollectionToOther(item.tab, collectionId, hoverIndex);
-               if (response === null) {
-                  dispatch(updateAuth(false));
-                  dispatch(addNoti({ message: "Session expire, please login again", id: uuidv4(), status: 401 }));
-               } else {
-                  const { data, status, message } = response.data;
-                  serviceChrome.sendMessage({ idCollection: item.tab.collection, tab: item.tab }, ActionTab.typeDeleteItemCollection);
-                  serviceChrome.sendMessage({ id: collectionId, tab: data, newPosition: hoverIndex }, ActionTab.typeAddItemCollection);
-                  dispatch(deleteCollectionItem({ idCollection: item.tab.collection, tab: item.tab }));
-                  dispatch(addCollectionItem({ id: collectionId, tab: data, newPosition: hoverIndex }));
-                  dispatch(addNoti({ message, id: uuidv4(), status }));
+               if (item.index !== hoverIndex) {
+                  const response = await servicePopup.moveItemCollectionToOther(item.tab, collectionId, hoverIndex);
+                  if (response === null) {
+                     dispatch(updateAuth(false));
+                     dispatch(addNoti({ message: "Session expire, please login again", id: uuidv4(), status: 401 }));
+                  } else {
+                     console.log(item.index);
+                     console.log(hoverIndex);
+
+                     const { data, status, message } = response.data;
+                     serviceChrome.sendMessage({ idCollection: item.tab.collection, tab: item.tab }, ActionTab.typeDeleteItemCollection);
+                     serviceChrome.sendMessage({ id: collectionId, tab: data, newPosition: hoverIndex }, ActionTab.typeAddItemCollection);
+                     dispatch(deleteCollectionItem({ idCollection: item.tab.collection, tab: item.tab }));
+                     dispatch(addCollectionItem({ id: collectionId, tab: data, newPosition: hoverIndex }));
+                     dispatch(addNoti({ message, id: uuidv4(), status }));
+                  }
                }
             } else {
                const collectionId = item.tab.collection;

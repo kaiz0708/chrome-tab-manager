@@ -53,7 +53,7 @@ const ForgotPassword = ({ isOtp }) => {
          }
          dispatch(addNoti({ message, id: uuidv4(), status }));
       } catch (error) {
-         dispatch(addNoti({ message: "verify token fail", id: uuidv4(), status: 400 }));
+         dispatch(addNoti({ message: "Verify otp fail", id: uuidv4(), status: 400 }));
       }
    };
 

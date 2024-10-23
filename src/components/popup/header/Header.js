@@ -8,6 +8,7 @@ import { CiUser } from "react-icons/ci";
 import antinotionLogo from "../../../img/antinotion_logo.png";
 import { Menu, MenuItem, Box, Grid2 } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
+import { ActionTab } from "../../../enums/action";
 
 function Header() {
    const user = useSelector((state) => state.current.user);
@@ -26,6 +27,7 @@ function Header() {
    const logout = () => {
       serviceChrome.removeValueLocal(["token"]);
       dispatch(updateAuth(false));
+      serviceChrome.sendMessage({ data: "success" }, ActionTab.typeLogout);
       dispatch(addNoti({ message: "Log out success", id: uuidv4(), status: 200 }));
       dispatch(updateStateCollection(false));
    };

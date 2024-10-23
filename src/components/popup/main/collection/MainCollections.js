@@ -26,15 +26,15 @@ function MainCollections() {
    const windowTabs = useSelector((state) => state.window.collection);
    const type = process.env.REACT_APP_TYPE_COLLECTION;
    const typeDisplay = useSelector((state) => state.current.displayState);
-   useEffect(() => {
-      const getListCollection = async () => {
-         const response = await servicePopup.listCollection();
-         const { data } = response.data;
-         dispatch(setValueCollection(data));
-      };
+   // useEffect(() => {
+   //    const getListCollection = async () => {
+   //       const response = await servicePopup.listCollection();
+   //       const { data } = response.data;
+   //       dispatch(setValueCollection(data));
+   //    };
 
-      getListCollection().then(() => setLoading(false));
-   }, []);
+   //    getListCollection().then(() => setLoading(false));
+   // }, []);
 
    const [{ isOver }, drop] = useDrop({
       accept: "ITEM",
@@ -70,66 +70,60 @@ function MainCollections() {
 
    return (
       <div>
-         {loading ? (
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-               <CircularProgress aria-label='Loading....' aria-busy={loading ? "true" : "false"} aria-live='polite' />
-            </div>
-         ) : (
-            <motion.div ref={combinedRef} initial={{ y: "100%", opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 0, opacity: 20 }} transition={{ duration: 0.3 }}>
-               <div className='mb-2'>
-                  <Grid2 columns={{ xs: 8, sm: 8, md: 8 }} container spacing={1}>
-                     <Grid2 className='flex items-center' size={{ xs: 7, sm: 7, md: 7 }}>
-                        <Box className='flex justify-start items-center'>
-                           <div className='text-base font-medium text-gray-600'>Collections</div>
-                        </Box>
-                     </Grid2>
-
-                     <Grid2 style={{ display: "flex", justifyContent: "flex-end" }} size={{ xs: 1, sm: 1, md: 1 }}>
-                        <Box>
-                           <Tooltip
-                              onClick={(e) => {
-                                 e.stopPropagation();
-                                 handleCreateCollection(windowTabs.length);
-                              }}
-                              title={"New collection"}
-                              TransitionComponent={Zoom}
-                              TransitionProps={{ timeout: 200 }}
-                              disableInteractive>
-                              <div
-                                 className=' transition duration-200 hover:shadow-custom-hover shadow-custom ease-in bg-white cursor-pointer rounded flex justify-center items-center'
-                                 style={{
-                                    width: "30px",
-                                    height: "30px",
-                                 }}>
-                                 <HiOutlinePlus className='text-base' />
-                              </div>
-                           </Tooltip>
-                        </Box>
-                     </Grid2>
-                  </Grid2>
-               </div>
-
-               <Masonry
-                  breakpointCols={{
-                     default: 3,
-                  }}
-                  className='flex -ml-2'
-                  columnClassName='pl-2 space-y-2'>
-                  {windowTabs.map((windowTab, index) => (
-                     <Box sx={{ height: "auto" }}>
-                        <WindowCollection
-                           window={{
-                              windowTab,
-                              index,
-                              typeDisplay: typeDisplay,
-                              typeFeature: type,
-                           }}
-                        />
+         <motion.div ref={combinedRef} initial={{ y: "100%", opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 0, opacity: 20 }} transition={{ duration: 0.3 }}>
+            <div className='mb-2'>
+               <Grid2 columns={{ xs: 8, sm: 8, md: 8 }} container spacing={1}>
+                  <Grid2 className='flex items-center' size={{ xs: 7, sm: 7, md: 7 }}>
+                     <Box className='flex justify-start items-center'>
+                        <div className='text-base font-medium text-gray-600'>Collections</div>
                      </Box>
-                  ))}
-               </Masonry>
-            </motion.div>
-         )}
+                  </Grid2>
+
+                  <Grid2 style={{ display: "flex", justifyContent: "flex-end" }} size={{ xs: 1, sm: 1, md: 1 }}>
+                     <Box>
+                        <Tooltip
+                           onClick={(e) => {
+                              e.stopPropagation();
+                              handleCreateCollection(windowTabs.length);
+                           }}
+                           title={"New collection"}
+                           TransitionComponent={Zoom}
+                           TransitionProps={{ timeout: 200 }}
+                           disableInteractive>
+                           <div
+                              className=' transition duration-200 hover:shadow-custom-hover shadow-custom ease-in bg-white cursor-pointer rounded flex justify-center items-center'
+                              style={{
+                                 width: "30px",
+                                 height: "30px",
+                              }}>
+                              <HiOutlinePlus className='text-base' />
+                           </div>
+                        </Tooltip>
+                     </Box>
+                  </Grid2>
+               </Grid2>
+            </div>
+
+            <Masonry
+               breakpointCols={{
+                  default: 3,
+               }}
+               className='flex -ml-2'
+               columnClassName='pl-2 space-y-2'>
+               {windowTabs.map((windowTab, index) => (
+                  <Box sx={{ height: "auto" }}>
+                     <WindowCollection
+                        window={{
+                           windowTab,
+                           index,
+                           typeDisplay: typeDisplay,
+                           typeFeature: type,
+                        }}
+                     />
+                  </Box>
+               ))}
+            </Masonry>
+         </motion.div>
       </div>
    );
 }
