@@ -173,7 +173,7 @@ function MainPopup({ windowTabs, typeDisplay }) {
                            TransitionProps={{ timeout: 250 }}
                            disableInteractive>
                            <div
-                              className=' transition duration-200 ease-in bg-white hover:shadow-custom-hover cursor-pointer rounded shadow-custom flex justify-center items-center'
+                              className=' transition duration-200 ease-in bg-white hover:bg-custom-color-title hover:text-white cursor-pointer rounded shadow-custom flex justify-center items-center'
                               style={{
                                  width: "30px",
                                  height: "30px",

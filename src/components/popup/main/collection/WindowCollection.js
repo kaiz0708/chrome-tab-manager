@@ -36,8 +36,6 @@ function WindowCollection({ window }) {
       },
    });
 
-   console.log(isDragging);
-
    const updateCollectionName = async (title, collectionId) => {
       const response = await servicePopup.updateCollection(title, collectionId);
       if (response === null) {
@@ -70,8 +68,8 @@ function WindowCollection({ window }) {
          draggable
          className={`transition cursor-pointer duration-200 bg-white ease-in hover:shadow-custom-hover space-y-2 p-2 shadow-custom rounded-md z-10 will-change-transform will-change-shadow ${isDragging ? "scale-105" : "hover:-translate-y-1"} `}>
          <div className='flex justify-between items-center'>
-            <div className='h-8 flex items-center space-x-2'>
-               <span
+            <div className='h-8 flex items-center space-x-1'>
+               <div
                   onMouseEnter={() => setUpdateCollectionState(true)}
                   onMouseLeave={(e) => {
                      if (window.windowTab.title !== title) {
@@ -84,7 +82,7 @@ function WindowCollection({ window }) {
                      {!updateCollectionState ? (
                         <motion.span
                            key='span'
-                           style={{ maxWidth: "100px" }}
+                           style={{ maxWidth: "90px" }}
                            className='text-custom-color-title overflow-hidden text-xs font-semibold cursor-pointer text-ellipsis whitespace-nowrap'
                            initial={{ opacity: 0, scale: 0.8, x: -20 }}
                            animate={{ opacity: 1, scale: 1, x: 0 }}
@@ -98,7 +96,7 @@ function WindowCollection({ window }) {
                               key='input-container'
                               className='relative'
                               initial={{ width: 0 }}
-                              animate={{ width: "100px" }}
+                              animate={{ width: "90px" }}
                               exit={{ width: 0 }}
                               transition={{ duration: 0.2, ease: "easeInOut" }}
                               style={{ overflow: "hidden", display: "flex", alignItems: "center" }}>
@@ -115,7 +113,7 @@ function WindowCollection({ window }) {
                                  }}
                                  className='border cursor-pointer transition-all text-xs pb-1 border-gray-200 rounded-sm focus:outline-none h-full'
                                  initial={{ opacity: 0 }}
-                                 animate={{ width: "100px", opacity: 1 }}
+                                 animate={{ width: "90px", opacity: 1 }}
                                  exit={{ width: "30px", opacity: 0 }}
                                  transition={{ duration: 0.2 }}
                                  style={{ boxSizing: "border-box", lineHeight: "1.5", borderTop: "none", borderLeft: "none", borderRight: "none" }}
@@ -124,9 +122,9 @@ function WindowCollection({ window }) {
                         </Tooltip>
                      )}
                   </AnimatePresence>
-               </span>
+               </div>
 
-               <span className='text-xs font-medium text-center'>{window.windowTab.length > 1 ? `(${window.windowTab.length} tabs)` : "(1 tab)"}</span>
+               <span className='text-xs font-medium text-center'>{window.windowTab.tabs.length > 1 ? `(${window.windowTab.tabs.length} items)` : `(${window.windowTab.tabs.length} item)`}</span>
             </div>
             <Tooltip disableInteractive TransitionComponent={Zoom} TransitionProps={{ timeout: 250 }} title={"Close collection"}>
                <div

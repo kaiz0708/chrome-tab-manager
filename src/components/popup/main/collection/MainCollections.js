@@ -67,7 +67,7 @@ function MainCollections() {
                            TransitionProps={{ timeout: 250 }}
                            disableInteractive>
                            <div
-                              className=' transition duration-200 hover:shadow-custom-hover shadow-custom ease-in bg-white cursor-pointer rounded flex justify-center items-center'
+                              className=' transition duration-200 hover:bg-custom-color-title hover:text-white shadow-custom ease-in bg-white cursor-pointer rounded flex justify-center items-center'
                               style={{
                                  width: "30px",
                                  height: "30px",
