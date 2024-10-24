@@ -20,8 +20,11 @@ function ListTab({ window }) {
    const collectionType = process.env.REACT_APP_TYPE_COLLECTION;
    const dispatch = useDispatch();
    const [{ isOver }, drop] = useDrop({
-      accept: "ITEM",
+      accept: ["ITEM", "SUB_ITEM"],
       drop: async (item, monitor) => {
+         if (monitor.didDrop()) {
+            return;
+         }
          const tabId = item.tab.id;
          const clientOffset = monitor.getClientOffset();
          const hoverIndex = calculateHoverIndex(clientOffset, dropRef, window.windowTab.tabs, process.env.REACT_APP_TYPE_AMOUNT_COLUMNS_TAB, window.typeDisplay);

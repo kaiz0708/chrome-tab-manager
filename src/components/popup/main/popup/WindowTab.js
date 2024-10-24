@@ -6,8 +6,7 @@ import services from "../../../services/ServiceChrome";
 import { IoCloseOutline } from "react-icons/io5";
 import serviceChrome from "../../../services/ServiceChrome";
 import { Tooltip, Zoom } from "@mui/material";
-import { CiCalendarDate } from "react-icons/ci";
-import { PiNotePencilThin } from "react-icons/pi";
+import { useDrag, useDrop } from "react-dnd";
 const ListTab = lazy(() => import("../common/ListTab"));
 /* global chrome */
 
@@ -16,8 +15,17 @@ function WindowTab({ window }) {
       serviceChrome.closeWindow(windowCurrentId);
    };
 
+   const [{ isDragging }, drag] = useDrag({
+      type: "ITEM_COLLECTION",
+      item: { window, type: "window" },
+      collect: (monitor) => ({
+         isDragging: !!monitor.isDragging(),
+      }),
+   });
+
    return (
       <div
+         ref={drag}
          onClick={(e) => {
             services.switchToWindow(window.windowTab.id);
          }}
@@ -32,7 +40,7 @@ function WindowTab({ window }) {
 
                <span className='text-xs font-medium text-center'>{window.windowTab.tabs.length > 1 ? <span> ({window.windowTab.tabs.length} tabs)</span> : <span> ({1} tab)</span>}</span>
             </span>
-            <Tooltip disableInteractive TransitionComponent={Zoom} TransitionProps={{ timeout: 200 }} title={"Close window"}>
+            <Tooltip disableInteractive TransitionComponent={Zoom} TransitionProps={{ timeout: 250 }} title={"Close window"}>
                <div
                   onClick={(e) => {
                      e.stopPropagation();

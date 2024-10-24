@@ -96,7 +96,7 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                      onClick={(e) => {
                         groupTab(e.target.value);
                      }}
-                     className='h-full bg-gray-100 text-black rounded p-2 text-xs hover:opacity-75 transition duration-300'>
+                     className='h-full bg-gray-100 text-black rounded p-2 text-xs hover:bg-gray-200 transition duration-300'>
                      Filter
                   </button>
                </div>
@@ -112,9 +112,9 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         }}
                         title={titleDisplayCollection}
                         TransitionComponent={Zoom}
-                        TransitionProps={{ timeout: 200 }}
+                        TransitionProps={{ timeout: 250 }}
                         disableInteractive>
-                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
+                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-200 text-base transition duration-300 ease-in-out'>
                            <BsCollection className='w-full' />
                         </div>
                      </Tooltip>
@@ -128,9 +128,9 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         }}
                         title={"Minimize this window"}
                         TransitionComponent={Zoom}
-                        TransitionProps={{ timeout: 200 }}
+                        TransitionProps={{ timeout: 250 }}
                         disableInteractive>
-                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
+                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-200 text-base transition duration-300 ease-in-out'>
                            <CiSaveDown1 className='w-full' />
                         </div>
                      </Tooltip>
@@ -144,9 +144,9 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         }}
                         title={"Change block view"}
                         TransitionComponent={Zoom}
-                        TransitionProps={{ timeout: 200 }}
+                        TransitionProps={{ timeout: 250 }}
                         disableInteractive>
-                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
+                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-200 text-base transition duration-300 ease-in-out'>
                            {typeDisplay === process.env.REACT_APP_TYPE_TAB_HORIZONTAL ? <CiGrid41 className='w-full' /> : <CiGrid2H className='w-full' />}
                         </div>
                      </Tooltip>
@@ -161,9 +161,9 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         }}
                         title={pinState ? "Unpin tab current" : "Pin tab current"}
                         TransitionComponent={Zoom}
-                        TransitionProps={{ timeout: 200 }}
+                        TransitionProps={{ timeout: 250 }}
                         disableInteractive>
-                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
+                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-200 text-base transition duration-300 ease-in-out'>
                            <GoPin className='w-full' />
                         </div>
                      </Tooltip>

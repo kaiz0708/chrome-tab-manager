@@ -6,7 +6,7 @@ import serviceChrome from "../../services/ServiceChrome";
 import { updateAuth, addNoti, updateStateCollection } from "../../../store/features/popupSlices";
 import { CiUser } from "react-icons/ci";
 import antinotionLogo from "../../../img/antinotion_logo.png";
-import { Menu, MenuItem, Box, Grid2 } from "@mui/material";
+import { Menu, MenuItem, Box, Grid2, Tooltip, Zoom } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
 import { ActionTab } from "../../../enums/action";
 
@@ -43,11 +43,13 @@ function Header() {
             </Grid2>
 
             <Grid2 size={{ xs: 1, sm: 1, md: 1 }}>
-               <Box className='flex justify-end items-center'>
-                  <Box onClick={handleClick} className='cursor-pointer border-1 border-dashed h-10 w-10 flex justify-center items-center p-2 rounded-full hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
-                     <CiUser className='text-base' />
+               <Tooltip TransitionComponent={Zoom} TransitionProps={{ timeout: 250 }} disableInteractive title={user.username}>
+                  <Box className='flex justify-end items-center'>
+                     <Box onClick={handleClick} className='cursor-pointer border-1 border-dashed h-10 w-10 flex justify-center items-center p-2 rounded-full hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
+                        <CiUser className='text-base' />
+                     </Box>
                   </Box>
-               </Box>
+               </Tooltip>
 
                <Menu
                   sx={{

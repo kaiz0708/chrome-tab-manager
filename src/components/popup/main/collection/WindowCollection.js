@@ -20,16 +20,6 @@ function WindowCollection({ window }) {
    const [updateCollectionState, setUpdateCollectionState] = useState(false);
    const [title, setTitle] = useState(window.windowTab.title);
    const collectionType = process.env.REACT_APP_TYPE_COLLECTION_LIST;
-   const [dragging, setIsDragging] = useState(false);
-
-   const handleDragStart = (e) => {
-      setIsDragging(true);
-      e.dataTransfer.effectAllowed = "move";
-   };
-
-   const handleDragEnd = () => {
-      setIsDragging(false);
-   };
 
    useEffect(() => {
       setTitle(window.windowTab.title);
@@ -38,10 +28,15 @@ function WindowCollection({ window }) {
    const [{ isDragging }, drag] = useDrag({
       type: "ITEM",
       item: { id: window.windowTab.id, url: window.windowTab.tabs.map((tab) => tab.url), display: collectionType },
-      collect: (monitor) => ({
-         isDragging: !!monitor.isDragging(),
-      }),
+      collect: (monitor) => {
+         const dragging = !!monitor.isDragging();
+         return {
+            isDragging: dragging,
+         };
+      },
    });
+
+   console.log(isDragging);
 
    const updateCollectionName = async (title, collectionId) => {
       const response = await servicePopup.updateCollection(title, collectionId);
@@ -72,13 +67,8 @@ function WindowCollection({ window }) {
    return (
       <div
          ref={drag}
-         onDragStart={handleDragStart}
-         onDragEnd={handleDragEnd}
-         className={`transition duration-200 bg-white ease-in space-y-2 p-2 shadow-custom rounded-md z-10 will-change-transform will-change-shadow cursor-grab ${isDragging ? "cursor-grabbing" : ""} hover:-translate-y-1`}
-         style={{
-            transform: isDragging ? "scale(1.05)" : "scale(1)",
-            transition: "transform 0.2s ease-in-out",
-         }}>
+         draggable
+         className={`transition cursor-pointer duration-200 bg-white ease-in hover:shadow-custom-hover space-y-2 p-2 shadow-custom rounded-md z-10 will-change-transform will-change-shadow ${isDragging ? "scale-105" : "hover:-translate-y-1"} `}>
          <div className='flex justify-between items-center'>
             <div className='h-8 flex items-center space-x-2'>
                <span
@@ -103,7 +93,7 @@ function WindowCollection({ window }) {
                            #{window.windowTab.title}
                         </motion.span>
                      ) : (
-                        <Tooltip disableInteractive TransitionComponent={Zoom} TransitionProps={{ timeout: 200 }} title={title}>
+                        <Tooltip disableInteractive TransitionComponent={Zoom} TransitionProps={{ timeout: 250 }} title={title}>
                            <motion.div
                               key='input-container'
                               className='relative'
@@ -138,7 +128,7 @@ function WindowCollection({ window }) {
 
                <span className='text-xs font-medium text-center'>{window.windowTab.length > 1 ? `(${window.windowTab.length} tabs)` : "(1 tab)"}</span>
             </div>
-            <Tooltip disableInteractive TransitionComponent={Zoom} TransitionProps={{ timeout: 200 }} title={"Close collection"}>
+            <Tooltip disableInteractive TransitionComponent={Zoom} TransitionProps={{ timeout: 250 }} title={"Close collection"}>
                <div
                   onClick={() => {
                      handleDeleteCollection(window.windowTab.id);
