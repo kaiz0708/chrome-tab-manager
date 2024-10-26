@@ -1,5 +1,15 @@
 /** @format */
+function updateBadge() {
+   chrome.tabs.query({}, function (tabs) {
+      const tabCount = tabs.length;
+      chrome.action.setBadgeText({ text: tabCount.toString() });
+      chrome.action.setBadgeBackgroundColor({ color: "rgb(246, 80, 119)" });
+      chrome.action.setBadgeTextColor({ color: "white" });
+   });
+}
+
 chrome.tabs.onCreated.addListener(function (tab) {
+   updateBadge();
    chrome.runtime.sendMessage({
       type: "ADD_TAB_CHROME",
       data: {
@@ -10,6 +20,7 @@ chrome.tabs.onCreated.addListener(function (tab) {
 });
 
 chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
+   updateBadge();
    chrome.runtime.sendMessage({
       type: "DELETE_TAB_CHROME",
       data: {

@@ -81,7 +81,7 @@ module.exports = {
          animation: {
             hoverEffect: "hoverEffect 0.1s ease-in-out forwards",
             hoverEffectBlock: "hoverEffectBlock 0.1s ease-in-out forwards",
-            blink: "blink 1.5s linear infinite",
+            blink: "blink 1s linear infinite",
          },
       },
    },
