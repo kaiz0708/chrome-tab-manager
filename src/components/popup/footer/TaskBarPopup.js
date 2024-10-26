@@ -77,8 +77,8 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         onFocus={() => setIsFocused(true)}
                         onBlur={() => setIsFocused(false)}
                         value={valueFilter}
-                        className={`w-full outline-none border-none p-1.5 text-sm placeholder:text-sm`}
-                        placeholder='Filtering follow title or url....'
+                        className={`w-full outline-none border-none p-1 text-sm placeholder:text-sm`}
+                        placeholder='Type tabs by title or url'
                      />
                      <motion.span
                         className='absolute left-0 bottom-0 w-full h-[1.5px] bg-gray-300'
@@ -96,7 +96,7 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                      onClick={(e) => {
                         groupTab(e.target.value);
                      }}
-                     className='h-full bg-gray-100 text-black rounded p-2 text-xs hover:bg-gray-200 transition duration-300'>
+                     className='h-full bg-gray-100 text-black rounded p-2 text-xs hover:bg-gray-200 transition duration-200'>
                      Filter
                   </button>
                </div>
@@ -114,7 +114,7 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         TransitionComponent={Zoom}
                         TransitionProps={{ timeout: 250 }}
                         disableInteractive>
-                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-200 text-base transition duration-300 ease-in-out'>
+                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-200 text-base transition duration-200 ease-in-out'>
                            <BsCollection className='w-full' />
                         </div>
                      </Tooltip>
@@ -130,7 +130,7 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         TransitionComponent={Zoom}
                         TransitionProps={{ timeout: 250 }}
                         disableInteractive>
-                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-200 text-base transition duration-300 ease-in-out'>
+                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-200 text-base transition duration-200 ease-in-out'>
                            <CiSaveDown1 className='w-full' />
                         </div>
                      </Tooltip>
@@ -146,7 +146,7 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         TransitionComponent={Zoom}
                         TransitionProps={{ timeout: 250 }}
                         disableInteractive>
-                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-200 text-base transition duration-300 ease-in-out'>
+                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-200 text-base transition duration-200 ease-in-out'>
                            {typeDisplay === process.env.REACT_APP_TYPE_TAB_HORIZONTAL ? <CiGrid41 className='w-full' /> : <CiGrid2H className='w-full' />}
                         </div>
                      </Tooltip>
@@ -163,7 +163,7 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         TransitionComponent={Zoom}
                         TransitionProps={{ timeout: 250 }}
                         disableInteractive>
-                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-200 text-base transition duration-300 ease-in-out'>
+                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-200 text-base transition duration-200 ease-in-out'>
                            <GoPin className='w-full' />
                         </div>
                      </Tooltip>

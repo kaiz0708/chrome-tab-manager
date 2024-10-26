@@ -136,7 +136,7 @@ function ListTab({ window }) {
    return (
       <div ref={combinedRef}>
          {window.windowTab.tabs.length === 0 ? (
-            <div className='cursor-pointer border-dashed h-10 border-1 flex justify-center items-center p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
+            <div className='cursor-pointer border-dashed h-[37.2px] border-1 flex justify-center items-center p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
                {window.typeFeature === collectionType ? <span className='text-xs text-custom-color-title'>Drag tabs here.</span> : <span className='text-xs text-custom-color-title'>Empty.</span>}
             </div>
          ) : (

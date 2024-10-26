@@ -104,7 +104,6 @@ function MainPopup({ windowTabs, typeDisplay }) {
                   const { data, status, message } = responseAddItemCollection.data;
                   serviceChrome.sendMessage({ id: collectionId, tab: data, newPosition: 0 }, ActionTab.typeAddItemCollection);
                   dispatch(addCollectionItem({ id: collectionId, tab: data, newPosition: 0 }));
-                  dispatch(addNoti({ message, id: uuidv4(), status }));
                   if (item.display === tabType) {
                      serviceChrome.closeTab(item.tab.id, item.tab.windowId);
                   } else {
@@ -135,6 +134,8 @@ function MainPopup({ windowTabs, typeDisplay }) {
                });
             }
          }
+         const { data, status, message } = responseCreateCollection.data;
+         dispatch(addNoti({ id: uuidv4(), status, message }));
       },
       collect: (monitor) => ({
          isOverCollection: !!monitor.isOver(),
