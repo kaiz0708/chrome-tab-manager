@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { React, lazy, Suspense, useState } from "react";
 import { useEffect } from "react";
 import { axios } from "./common/axios";
-import { removeNoti, updateAuth, updateDisplay, updateOtp, updateUsename, updateStateDisplay } from "./store/features/popupSlices";
+import { removeNoti, updateAuth, updateDisplay, updateOtp, updateUsename, updateStateDisplay, updateStateCollection } from "./store/features/popupSlices";
 import { CircularProgress } from "@mui/material";
 import utils from "./common/utils";
 import { useSnackbar } from "notistack";
@@ -29,6 +29,14 @@ function App() {
          const token = await utils.getToken();
          const otp = await utils.getStateOtp();
          const user = await utils.getUsername();
+
+         const stateDisplayCollection = await utils.getDisplayStateCollection();
+         if (stateDisplayCollection === undefined) {
+            serviceChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_STATE_COLLECTION, false);
+            dispatch(updateStateCollection(false));
+         } else {
+            dispatch(updateStateCollection(stateDisplayCollection));
+         }
 
          const state = await utils.getDisplayState();
          if (state === undefined) {

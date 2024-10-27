@@ -40,4 +40,6 @@ export const ActionTab = Object.freeze({
    typeStateCloseCollection: process.env.REACT_APP_TYPE_STATE_COLLECTION_CLOSE,
 
    typeLogout: process.env.REACT_APP_TYPE_LOGOUT,
+
+   typeChangeStateCollection: process.env.REACT_APP_TYPE_NAME_STATE_COLLECTION,
 });

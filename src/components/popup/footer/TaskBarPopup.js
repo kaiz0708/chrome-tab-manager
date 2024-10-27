@@ -10,7 +10,7 @@ import { CiGrid2H } from "react-icons/ci";
 import { CiGrid41 } from "react-icons/ci";
 import { updatePinTab, updateStateDisplay } from "../../../store/features/popupSlices";
 import { GoPin } from "react-icons/go";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { updateStateCollection } from "../../../store/features/popupSlices";
 import { ActionTab } from "../../../enums/action";
 import { BsCollection } from "react-icons/bs";
@@ -20,6 +20,7 @@ import { AnimatePresence, motion } from "framer-motion";
 
 function TaskBarPopup({ filterGroupTab, groupTab }) {
    const dispatch = useDispatch();
+   const timeoutRef = useRef(null);
    const windowCurrent = useSelector((state) => state.current.value);
    const typeDisplay = useSelector((state) => state.current.displayState);
    const typeDisplayCollection = useSelector((state) => state.current.displayCollection);
@@ -34,6 +35,8 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
 
    const openCollection = (value, state) => {
       dispatch(updateStateCollection(!value));
+      servicesChrome.setStateLocal(ActionTab.typeChangeStateCollection, !value);
+      servicesChrome.sendMessage({ state: !value }, ActionTab.typeChangeStateCollection);
       setTitleDisplayCollection(state);
    };
 
@@ -78,7 +81,7 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         onBlur={() => setIsFocused(false)}
                         value={valueFilter}
                         className={`w-full outline-none border-none p-1 text-sm placeholder:text-sm`}
-                        placeholder='Type tabs by title or url'
+                        placeholder='Typing tabs by title or url'
                      />
                      <motion.span
                         className='absolute left-0 bottom-0 w-full h-[1.5px] bg-gray-300'

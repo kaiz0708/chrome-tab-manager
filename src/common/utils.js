@@ -56,4 +56,8 @@ export default {
    getDisplayState: async () => {
       return await serviceChrome.getValueLocal(process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE);
    },
+
+   getDisplayStateCollection: async () => {
+      return await serviceChrome.getValueLocal(process.env.REACT_APP_TYPE_NAME_STATE_COLLECTION);
+   },
 };

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState, lazy } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addNoti, updateWindowCurrent, updatePinTab, updateAuth } from "../../store/features/popupSlices";
+import { addNoti, updateWindowCurrent, updatePinTab, updateAuth, updateStateCollection } from "../../store/features/popupSlices";
 import { ActionTab } from "../../enums/action";
 import serviceChrome from "../services/ServiceChrome";
 import servicePopup from "./servicePopup";
@@ -36,6 +36,7 @@ function Popup() {
    const windowTabs = useSelector((state) => state.window.value);
    const [windowList, setWindowList] = useState([]);
    const typeDisplay = useSelector((state) => state.current.displayState);
+   const timeoutRef = useRef(null);
    const dispatch = useDispatch();
 
    useEffect(() => {
@@ -125,6 +126,11 @@ function Popup() {
                const { display } = msg.data;
                serviceChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE, display);
                dispatch(updateStateDisplay(display));
+               break;
+            case ActionTab.typeChangeStateCollection:
+               const { state } = msg.data;
+               serviceChrome.setStateLocal(ActionTab.typeChangeStateCollection, state);
+               dispatch(updateStateCollection(state));
                break;
          }
       };
