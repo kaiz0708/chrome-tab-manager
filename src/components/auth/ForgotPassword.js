@@ -36,7 +36,7 @@ const ForgotPassword = ({ isOtp }) => {
          }
          dispatch(addNoti({ message, id: uuidv4(), status }));
       } catch (error) {
-         dispatch(addNoti({ message: "email not found", id: uuidv4(), status: 400 }));
+         dispatch(addNoti({ message: "Email not found", id: uuidv4(), status: 400 }));
       }
    };
    const handleVerifyOtp = async (code) => {
@@ -53,7 +53,7 @@ const ForgotPassword = ({ isOtp }) => {
          }
          dispatch(addNoti({ message, id: uuidv4(), status }));
       } catch (error) {
-         dispatch(addNoti({ message: "Verify otp fail", id: uuidv4(), status: 400 }));
+         dispatch(addNoti({ message: "Verify OTP code fail", id: uuidv4(), status: 400 }));
       }
    };
 

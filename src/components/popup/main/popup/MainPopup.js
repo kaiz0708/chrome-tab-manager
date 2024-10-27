@@ -45,12 +45,13 @@ function MainPopup({ windowTabs, typeDisplay }) {
                const response = await servicePopup.deleteTabToCollection(item.tab, item.tab.collection);
                if (response === null) {
                   dispatch(updateAuth(false));
-                  dispatch(addNoti({ message: "session expire, please login again", id: uuidv4(), status: 401 }));
+                  dispatch(addNoti({ message: "Session expire, please login again", id: uuidv4(), status: 401 }));
                } else {
-                  const { data } = response.data;
+                  const { data, status, message } = response.data;
                   const idCollection = item.tab.collection;
                   serviceChrome.sendMessage({ idCollection: idCollection, tab: data }, ActionTab.typeDeleteItemCollection);
                   dispatch(deleteCollectionItem({ idCollection: idCollection, tab: data }));
+                  dispatch(addNoti({ id: uuidv4(), status, message }));
                   serviceChrome.openWindow([tab.url]);
                }
             } else {

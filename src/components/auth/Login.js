@@ -46,27 +46,31 @@ const Login = () => {
             interactive: true,
          },
          (redirect_url) => {
-            const urlParams = new URLSearchParams(new URL(redirect_url).hash.substring(1));
-            const token = urlParams.get("access_token");
+            if (redirect_url == null) {
+               dispatch(updateLoginGoogle(false));
+            } else {
+               const urlParams = new URLSearchParams(new URL(redirect_url).hash.substring(1));
+               const token = urlParams.get("access_token");
 
-            fetch(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${token}`)
-               .then((response) => response.json())
-               .then(async (userInfo) => {
-                  const response = await serviceAuth.loginGoogle(userInfo);
-                  const { data, status, message } = response.data;
-                  const { token, user } = data;
-                  if (status === 200) {
-                     serviceChrome.setStateLocal("token", token);
-                     serviceChrome.setStateLocal("user", user);
-                     dispatch(updateAuth(true));
-                     dispatch(updateUsename(user));
-                  } else {
-                     dispatch(updateAuth(false));
-                  }
-                  dispatch(addNoti({ message, id: uuidv4(), status }));
-                  dispatch(updateLoginGoogle(false));
-               })
-               .catch((error) => console.error("Error fetching user info:", error));
+               fetch(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${token}`)
+                  .then((response) => response.json())
+                  .then(async (userInfo) => {
+                     const response = await serviceAuth.loginGoogle(userInfo);
+                     const { data, status, message } = response.data;
+                     const { token, user } = data;
+                     if (status === 200) {
+                        serviceChrome.setStateLocal("token", token);
+                        serviceChrome.setStateLocal("user", user);
+                        dispatch(updateAuth(true));
+                        dispatch(updateUsename(user));
+                     } else {
+                        dispatch(updateAuth(false));
+                     }
+                     dispatch(addNoti({ message, id: uuidv4(), status }));
+                     dispatch(updateLoginGoogle(false));
+                  })
+                  .catch((error) => console.error("Error fetching user info:", error));
+            }
          }
       );
    };
