@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import serviceChrome from "../../services/ServiceChrome";
 import { updateAuth, addNoti, updateStateCollection } from "../../../store/features/popupSlices";
 import { CiUser } from "react-icons/ci";
-import antinotionLogo from "../../../img/logoAntinotion.png";
+import antinotionLogo from "../../../img/2.png";
 import { Menu, MenuItem, Box, Grid2, Tooltip, Zoom } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
 import { ActionTab } from "../../../enums/action";
