@@ -37,7 +37,7 @@ function Header() {
          <Grid2 columns={{ xs: 10, sm: 10, md: 10 }} container spacing={1}>
             <Grid2 size={{ xs: 9, sm: 9, md: 9 }}>
                <div className='flex justify-start items-center space-x-2'>
-                  <img src={antinotionLogo} className='w-[40px] h-[40px] object-cover rounded-full' />
+                  <img src={antinotionLogo} className='w-[40px] h-[40px] object-cover rounded-sm' />
                   <div className='text-xs font-normal leading-10 text-custom-color-title'>@antinotion</div>
                </div>
             </Grid2>
