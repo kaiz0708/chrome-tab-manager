@@ -97,7 +97,7 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                   </div>
                   <button
                      onClick={(e) => {
-                        groupTab(e.target.value);
+                        groupTab(valueFilter);
                      }}
                      className='h-full bg-gray-100 text-black rounded p-2 text-xs hover:bg-gray-200 transition duration-200'>
                      Filter

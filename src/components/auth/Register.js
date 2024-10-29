@@ -58,7 +58,7 @@ function Register() {
             dispatch(addNoti({ message, id: uuidv4(), status }));
          }
       } else {
-         dispatch(addNoti({ message: "Wrong confirm password", id: uuidv4(), status: 400 }));
+         dispatch(addNoti({ message: "Confirmation password is incorrect", id: uuidv4(), status: 400 }));
       }
    };
    return (

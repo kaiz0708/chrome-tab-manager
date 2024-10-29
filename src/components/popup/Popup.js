@@ -120,7 +120,7 @@ function Popup() {
             case ActionTab.typeLogout:
                serviceChrome.removeValueLocal(["token"]);
                dispatch(updateAuth(false));
-               dispatch(addNoti({ message: "Log out success", id: uuidv4(), status: 200 }));
+               dispatch(addNoti({ message: "Logged out successfully", id: uuidv4(), status: 200 }));
                break;
             case ActionTab.typeChangeState:
                const { display } = msg.data;
@@ -169,12 +169,12 @@ function Popup() {
 
    const groupTab = (value) => {
       if (value === "") {
-         dispatch(addNoti({ message: "Nothing title match", id: uuidv4(), status: 400 }));
+         dispatch(addNoti({ message: "No title matches", id: uuidv4(), status: 400 }));
       } else {
          let urls = [];
          const hasTabs = windowList.some((window) => window.tabs.length > 0);
          if (!hasTabs) {
-            dispatch(addNoti({ message: "Nothing title match", id: uuidv4(), status: 400 }));
+            dispatch(addNoti({ message: "No title matches", id: uuidv4(), status: 400 }));
          } else {
             windowList.forEach((window) => {
                window.tabs.forEach((tab) => {
@@ -182,7 +182,7 @@ function Popup() {
                });
             });
             serviceChrome.openWindowGroup(urls);
-            dispatch(addNoti({ message: "Group tab success", id: uuidv4(), status: 200 }));
+            dispatch(addNoti({ message: "Grouping tabs was successful", id: uuidv4(), status: 200 }));
          }
       }
    };

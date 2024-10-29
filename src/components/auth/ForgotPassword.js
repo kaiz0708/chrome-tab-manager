@@ -53,7 +53,7 @@ const ForgotPassword = ({ isOtp }) => {
          }
          dispatch(addNoti({ message, id: uuidv4(), status }));
       } catch (error) {
-         dispatch(addNoti({ message: "Verify OTP code fail", id: uuidv4(), status: 400 }));
+         dispatch(addNoti({ message: "Failed to verify OTP code", id: uuidv4(), status: 400 }));
       }
    };
 
@@ -66,7 +66,7 @@ const ForgotPassword = ({ isOtp }) => {
 
    const handleChangePassword = async (password, confirmPassword) => {
       if (password !== confirmPassword) {
-         dispatch(addNoti({ message: "Confirm password wrong ", id: uuidv4(), status: 400 }));
+         dispatch(addNoti({ message: "Confirmation password is incorrect", id: uuidv4(), status: 400 }));
       } else {
          try {
             const email = await serviceChrome.getValueLocal(process.env.REACT_APP_TYPE_NAME_EMAIL);

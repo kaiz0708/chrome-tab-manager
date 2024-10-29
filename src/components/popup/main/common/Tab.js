@@ -65,7 +65,15 @@ function Tab({ tab, index, typeDisplay, display }) {
             setShowCloseTab(false);
          }}
          ref={drag}>
-         <Tooltip TransitionComponent={Zoom} TransitionProps={{ timeout: 250 }} onClick={() => switchToTab(tab.id)} disableInteractive title={tab.title}>
+         <Tooltip
+            TransitionComponent={Zoom}
+            TransitionProps={{ timeout: 250 }}
+            onClick={() => {
+               switchToTab(tab.id);
+               setShowCloseTab(false);
+            }}
+            disableInteractive
+            title={tab.title}>
             <div
                onMouseEnter={() => {
                   setShowCloseTab(true);
