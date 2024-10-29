@@ -102,7 +102,6 @@ function Popup() {
                dispatch(pinTab(msg.data));
                break;
             case ActionTab.typeAddItemCollection:
-               console.log(msg.data);
                dispatch(addCollectionItem(msg.data));
                break;
             case ActionTab.typeDeleteItemCollection:

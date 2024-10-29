@@ -3,30 +3,20 @@
 
 const serviceChrome = {
    switchToWindow: (windowCurrent) => {
-      chrome.windows.update(windowCurrent, { focused: true }, () => {
-         console.log(`Switched to window with ID: ${windowCurrent}`);
-      });
+      chrome.windows.update(windowCurrent, { focused: true }, () => {});
    },
 
    switchToTab: (tabId) => {
-      chrome.tabs.update(tabId, { active: true }, () => {
-         console.log(`Switched to tab with ID: ${tabId}`);
-      });
+      chrome.tabs.update(tabId, { active: true }, () => {});
    },
 
    moveTab: (tabId, indexHover, windowIdHover) => {
       chrome.tabs.move(tabId, { windowId: windowIdHover, index: -1 }, (tab) => {
          if (chrome.runtime.lastError) {
-            console.error(`Lỗi khi di chuyển tab: ${chrome.runtime.lastError.message}`);
          } else {
-            console.log(`Tab ${tabId} đã được di chuyển đến cửa sổ ${windowIdHover}.`);
-
-            // Cập nhật vị trí của tab trong cửa sổ mục tiêu
             chrome.tabs.move(tabId, { index: indexHover }, (movedTab) => {
                if (chrome.runtime.lastError) {
-                  console.error(`Lỗi khi thay đổi vị trí của tab: ${chrome.runtime.lastError.message}`);
                } else {
-                  console.log(`Tab ${tabId} đã được di chuyển đến vị trí ${indexHover} trong cửa sổ ${windowIdHover}.`);
                }
             });
          }
@@ -42,9 +32,7 @@ const serviceChrome = {
          },
          (newTab) => {
             if (chrome.runtime.lastError) {
-               console.error("Error creating new tab:", chrome.runtime.lastError);
             } else {
-               console.log("New tab created successfully:", newTab);
             }
          }
       );
@@ -73,7 +61,6 @@ const serviceChrome = {
    },
 
    openWindowGroup: (urls) => {
-      console.log(urls);
       chrome.windows.create(
          {
             focused: true,
@@ -82,16 +69,12 @@ const serviceChrome = {
          (window) => {
             chrome.tabs.query({ windowId: window.id }, function (tabs) {
                let activeTab = tabs[0];
-               chrome.tabs.remove(activeTab.id, function () {
-                  console.log(`Tab đang hoạt động đã được xóa.`);
-               });
+               chrome.tabs.remove(activeTab.id, function () {});
             });
             let index = 0;
             urls.forEach((url, indx) => {
                chrome.tabs.move(url.id, { windowId: window.id, index: -1 }, (tab) => {
-                  chrome.tabs.move(url.id, { index: index }, (movedTab) => {
-                     console.log(movedTab);
-                  });
+                  chrome.tabs.move(url.id, { index: index }, (movedTab) => {});
                });
                index = index + 1;
             });
@@ -100,9 +83,7 @@ const serviceChrome = {
    },
 
    closeWindow: (windowCurrentId) => {
-      chrome.windows.remove(windowCurrentId, () => {
-         console.log("delete success");
-      });
+      chrome.windows.remove(windowCurrentId, () => {});
    },
 
    minimizeWindow: (windowCurrentId) => {
@@ -112,45 +93,33 @@ const serviceChrome = {
    createState: () => {
       chrome.storage.local.get(process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE, (result) => {
          if (result[process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE] === undefined) {
-            chrome.storage.local.set({ [process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE]: process.env.REACT_APP_TYPE_TAB_HORIZONTAL }, () => {
-               console.log("Đối tượng đã được lưu.");
-            });
+            chrome.storage.local.set({ [process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE]: process.env.REACT_APP_TYPE_TAB_HORIZONTAL }, () => {});
          }
       });
 
       chrome.storage.local.get(process.env.REACT_APP_TYPE_NAME_STATE_OTP_VARIABLE, (result) => {
          if (result[process.env.REACT_APP_TYPE_NAME_STATE_OTP_VARIABLE] === undefined) {
-            chrome.storage.local.set({ [process.env.REACT_APP_TYPE_NAME_STATE_OTP_VARIABLE]: false }, () => {
-               console.log("Đối tượng đã được lưu.");
-            });
+            chrome.storage.local.set({ [process.env.REACT_APP_TYPE_NAME_STATE_OTP_VARIABLE]: false }, () => {});
          }
       });
 
       chrome.storage.local.get(process.env.REACT_APP_TYPE_NAME_EMAIL, (result) => {
          if (result[process.env.REACT_APP_TYPE_NAME_EMAIL] === undefined) {
-            chrome.storage.local.set({ [process.env.REACT_APP_TYPE_NAME_EMAIL]: "" }, () => {
-               console.log("Đối tượng đã được lưu.");
-            });
+            chrome.storage.local.set({ [process.env.REACT_APP_TYPE_NAME_EMAIL]: "" }, () => {});
          }
       });
    },
 
    setStateLocal: (field, value) => {
-      chrome.storage.local.set({ [field]: value }, () => {
-         console.log("Đối tượng đã được lưu.");
-      });
+      chrome.storage.local.set({ [field]: value }, () => {});
    },
 
    setStateSync: (field, value) => {
-      chrome.storage.sync.set({ [field]: value }, function () {
-         console.log("Đối tượng đã được lưu.");
-      });
+      chrome.storage.sync.set({ [field]: value }, function () {});
    },
 
    sendMessage: (data, message) => {
-      chrome.runtime.sendMessage({ data, type: message }, (response) => {
-         console.log("Response from background:", response);
-      });
+      chrome.runtime.sendMessage({ data, type: message }, (response) => {});
    },
 
    getValueLocal: (key) => {
@@ -162,9 +131,7 @@ const serviceChrome = {
    },
 
    removeValueLocal: (keyList) => {
-      chrome.storage.local.remove(keyList, function () {
-         console.log("remove key success");
-      });
+      chrome.storage.local.remove(keyList, function () {});
    },
 };
 

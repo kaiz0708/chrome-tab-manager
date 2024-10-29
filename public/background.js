@@ -86,7 +86,6 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 
 chrome.webNavigation.onCompleted.addListener(function (details) {
    chrome.tabs.get(details.tabId, function (tab) {
-      console.log(tab.url);
       chrome.runtime.sendMessage({
          type: "NEVIGATE_URL",
          data: {

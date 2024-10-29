@@ -55,9 +55,6 @@ function ListTab({ window }) {
                      dispatch(updateAuth(false));
                      dispatch(addNoti({ message: "Session expire, please login again", id: uuidv4(), status: 401 }));
                   } else {
-                     console.log(item.index);
-                     console.log(hoverIndex);
-
                      const { data, status, message } = response.data;
                      serviceChrome.sendMessage({ idCollection: item.tab.collection, tab: item.tab }, ActionTab.typeDeleteItemCollection);
                      serviceChrome.sendMessage({ id: collectionId, tab: data, newPosition: hoverIndex }, ActionTab.typeAddItemCollection);

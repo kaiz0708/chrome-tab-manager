@@ -131,7 +131,6 @@ const ForgotPassword = ({ isOtp }) => {
                         value={otp}
                         onChange={(value) => {
                            setOtp(value);
-                           console.log(value);
                         }}
                         numInputs={6}
                         renderSeparator={<span className='mx-2 text-gray-400'>-</span>}

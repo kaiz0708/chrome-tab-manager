@@ -81,7 +81,7 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         onBlur={() => setIsFocused(false)}
                         value={valueFilter}
                         className={`w-full outline-none border-none p-1 text-sm placeholder:text-sm`}
-                        placeholder='Typing tabs by title or url'
+                        placeholder='You can type tabs by title or URL'
                      />
                      <motion.span
                         className='absolute left-0 bottom-0 w-full h-[1.5px] bg-gray-300'
