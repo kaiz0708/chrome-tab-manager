@@ -36,6 +36,11 @@ function Register() {
       return Object.values(formData).every((value) => value.length >= 8);
    };
 
+   function checkEmail(email) {
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,3}(?:\.[a-zA-Z]{2,3})?$/;
+      return emailRegex.test(email);
+   }
+
    const isNoWhitespaceAtEdges = (str) => {
       return !/\s/.test(str);
    };
@@ -45,27 +50,31 @@ function Register() {
    };
 
    const handleSubmit = async (formData) => {
-      if (confirmPassword === formData.password) {
-         const response = await serviceAuth.register(formData);
-         if (response === null) {
-            dispatch(addNoti({ message: "User already exist", id: uuidv4(), status: 401 }));
-         } else {
-            const { status, message } = response.data;
-            const { data } = response.data;
-            const { token, user } = data;
-            if (status === 200) {
-               serviceChrome.setStateLocal("token", token);
-               serviceChrome.setStateLocal("user", user);
-               dispatch(updateAuth(true));
-               dispatch(updateRegister(false));
-               dispatch(updateUsename(user));
+      if (checkEmail(formData.email)) {
+         if (confirmPassword === formData.password) {
+            const response = await serviceAuth.register(formData);
+            if (response === null) {
+               dispatch(addNoti({ message: "User already exist", id: uuidv4(), status: 401 }));
             } else {
-               dispatch(updateAuth(false));
+               const { status, message } = response.data;
+               const { data } = response.data;
+               const { token, user } = data;
+               if (status === 200) {
+                  serviceChrome.setStateLocal("token", token);
+                  serviceChrome.setStateLocal("user", user);
+                  dispatch(updateAuth(true));
+                  dispatch(updateRegister(false));
+                  dispatch(updateUsename(user));
+               } else {
+                  dispatch(updateAuth(false));
+               }
+               dispatch(addNoti({ message, id: uuidv4(), status }));
             }
-            dispatch(addNoti({ message, id: uuidv4(), status }));
+         } else {
+            dispatch(addNoti({ message: "Confirmation password is incorrect", id: uuidv4(), status: 400 }));
          }
       } else {
-         dispatch(addNoti({ message: "Confirmation password is incorrect", id: uuidv4(), status: 400 }));
+         dispatch(addNoti({ message: "Email is not in correct format", id: uuidv4(), status: 400 }));
       }
    };
    return (
