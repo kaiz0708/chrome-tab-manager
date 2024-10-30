@@ -1,7 +1,7 @@
 {
    "manifest_version": 3,
    "name": "Antinotion Tab Manager",
-   "version": "1.0.0",
+   "version": "1.0.1",
    "description": "Organize tabs easily by dragging them into collections for different tasks. Quickly access saved groups for efficient browsing.",
    "permissions": ["windows", "tabs", "activeTab", "webNavigation", "storage", "identity"],
    "background": {
