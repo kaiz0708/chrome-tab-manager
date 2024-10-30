@@ -38,6 +38,7 @@ function ListTab({ window }) {
                if (response === null) {
                   dispatch(updateAuth(false));
                   dispatch(addNoti({ message: "Session expire, please login again", id: uuidv4(), status: 401 }));
+                  serviceChrome.removeValueLocal(["token"]);
                } else {
                   const { data, status, message } = response.data;
                   serviceChrome.sendMessage({ id: collectionId, tab: data, newPosition: hoverIndex }, ActionTab.typeAddItemCollection);
@@ -54,6 +55,7 @@ function ListTab({ window }) {
                   if (response === null) {
                      dispatch(updateAuth(false));
                      dispatch(addNoti({ message: "Session expire, please login again", id: uuidv4(), status: 401 }));
+                     serviceChrome.removeValueLocal(["token"]);
                   } else {
                      const { data, status, message } = response.data;
                      serviceChrome.sendMessage({ idCollection: item.tab.collection, tab: item.tab }, ActionTab.typeDeleteItemCollection);
@@ -69,6 +71,7 @@ function ListTab({ window }) {
                if (response === null) {
                   dispatch(updateAuth(false));
                   dispatch(addNoti({ message: "Session expire, please login again", id: uuidv4(), status: 401 }));
+                  serviceChrome.removeValueLocal(["token"]);
                } else {
                   const { data, status, message } = response.data;
                   serviceChrome.openNewTabEmpty(window.windowTab.id, data.url, false);

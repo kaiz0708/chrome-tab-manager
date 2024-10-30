@@ -36,6 +36,7 @@ function MainCollections() {
       if (response === null) {
          dispatch(updateAuth(false));
          dispatch(addNoti({ message: "Session expire, please login again", id: uuidv4(), status: 401 }));
+         serviceChrome.removeValueLocal(["token"]);
       } else {
          const { data, status, message } = response.data;
          serviceChrome.sendMessage({ collection: data }, ActionTab.typeCreateCollection);

@@ -9,10 +9,13 @@ import { v4 as uuidv4 } from "uuid";
 import { addNoti, updateLoginGoogle } from "../../store/features/popupSlices";
 import { FcGoogle } from "react-icons/fc";
 import { AnimatePresence, motion } from "framer-motion";
+import { VscEyeClosed } from "react-icons/vsc";
+import { VscEye } from "react-icons/vsc";
 /* global chrome */
 const Login = () => {
    const [email, setEmail] = useState("");
    const [password, setPassword] = useState("");
+   const [statePassword, setStatePassword] = useState(false);
    const dispatch = useDispatch();
 
    const handleSubmit = async (email, password) => {
@@ -89,24 +92,32 @@ const Login = () => {
                   <input
                      type='email'
                      name='email'
-                     className='w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500'
+                     className='w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-green-500'
                      value={email}
                      onChange={(e) => setEmail(e.target.value)}
                      required
                      placeholder='Enter your email'
                   />
                </div>
-               <div className='mb-3'>
+               <div className='mb-3 relative'>
                   <label className='block text-gray-600 mb-1'>Password</label>
                   <input
-                     type='password'
+                     type={statePassword ? "text" : "password"}
                      name='password'
-                     className='w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500'
+                     className='w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-green-500'
                      value={password}
                      onChange={(e) => setPassword(e.target.value)}
                      required
                      placeholder='Enter your password'
                   />
+
+                  <div
+                     className='absolute top-8 right-2 cursor-pointer'
+                     onClick={(e) => {
+                        setStatePassword(!statePassword);
+                     }}>
+                     {statePassword ? <VscEye className='text-base' /> : <VscEyeClosed className='text-base' />}
+                  </div>
                </div>
 
                <button type='submit' className='w-full mt-4 bg-custom-color-title text-white py-2 rounded-md  transition duration-300'>

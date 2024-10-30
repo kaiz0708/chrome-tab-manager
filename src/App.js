@@ -3,10 +3,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { React, lazy, Suspense, useState } from "react";
 import { useEffect } from "react";
 import { axios } from "./common/axios";
-import { removeNoti, updateAuth, updateDisplay, updateOtp, updateUsename, updateStateDisplay, updateStateCollection } from "./store/features/popupSlices";
+import { removeNoti, updateAuth, updateDisplay, updateOtp, updateUsename, updateStateDisplay, updateStateCollection, addNoti } from "./store/features/popupSlices";
 import { CircularProgress } from "@mui/material";
 import utils from "./common/utils";
 import { useSnackbar } from "notistack";
+import { v4 as uuidv4 } from "uuid";
 import serviceChrome from "./components/services/ServiceChrome";
 const Popup = lazy(() => import("./components/popup/Popup"));
 const Login = lazy(() => import("./components/auth/Login"));
@@ -49,7 +50,7 @@ function App() {
          dispatch(updateOtp(otp));
          dispatch(updateUsename(user));
 
-         if (token) {
+         if (token !== undefined) {
             try {
                const response = await axios.get("/auth/expire", {
                   headers: {
@@ -63,6 +64,8 @@ function App() {
                }
             } catch (err) {
                dispatch(updateAuth(false));
+               serviceChrome.removeValueLocal(["token"]);
+               dispatch(addNoti({ message: "Session expire, please login again", id: uuidv4(), status: 401 }));
             }
          } else {
             dispatch(updateAuth(false));
