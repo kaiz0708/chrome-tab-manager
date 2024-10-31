@@ -21,7 +21,7 @@ const Login = () => {
    const handleSubmit = async (email, password) => {
       const response = await serviceAuth.login(email, password);
       if (response === null) {
-         dispatch(addNoti({ message: "Username or password is incorrect", id: uuidv4(), status: 401 }));
+         dispatch(addNoti({ message: "Email or password is incorrect", id: uuidv4(), status: 401 }));
       } else {
          const { status, message } = response.data;
          const { data } = response.data;
