@@ -19,24 +19,17 @@ const Login = () => {
    const dispatch = useDispatch();
 
    const handleSubmit = async (email, password) => {
-      if (password.length <= 6) {
-      }
-      try {
-         const response = await serviceAuth.login(email, password);
+      const response = await serviceAuth.login(email, password);
+      if (response === null) {
+         dispatch(addNoti({ message: "Username or password is incorrect", id: uuidv4(), status: 401 }));
+      } else {
          const { status, message } = response.data;
          const { data } = response.data;
          const { token, user } = data;
-         if (status === 200) {
-            serviceChrome.setStateLocal("token", token);
-            serviceChrome.setStateLocal("user", user);
-            dispatch(updateUsename(user));
-            dispatch(updateAuth(true));
-         } else {
-            dispatch(updateAuth(false));
-         }
-         dispatch(addNoti({ message, id: uuidv4(), status }));
-      } catch (error) {
-         const { status, message } = error.response.data;
+         serviceChrome.setStateLocal("token", token);
+         serviceChrome.setStateLocal("user", user);
+         dispatch(updateUsename(user));
+         dispatch(updateAuth(true));
          dispatch(addNoti({ message, id: uuidv4(), status }));
       }
    };

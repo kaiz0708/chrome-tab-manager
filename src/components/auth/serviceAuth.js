@@ -7,7 +7,7 @@ export default {
          const response = await axios.post("/auth/login", { email, password });
          return response;
       } catch (error) {
-         return;
+         return null;
       }
    },
 
