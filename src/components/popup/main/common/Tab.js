@@ -70,7 +70,6 @@ function Tab({ tab, index, typeDisplay, display }) {
             TransitionProps={{ timeout: 250 }}
             onClick={() => {
                switchToTab(tab.id);
-               setShowCloseTab(false);
             }}
             disableInteractive
             title={tab.title}>

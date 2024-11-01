@@ -77,9 +77,13 @@ function App() {
       });
    }, []);
 
+   const truncateMessage = (message) => {
+      return message.length > process.env.REACT_APP_MAX_SNACKBAR_LENGTH ? `${message.substring(0, process.env.REACT_APP_MAX_SNACKBAR_LENGTH)}...` : message;
+   };
+
    useEffect(() => {
       notifications.forEach((noti) => {
-         enqueueSnackbar(noti.message, {
+         enqueueSnackbar(truncateMessage(noti.message), {
             variant: noti.status == 200 ? "success" : "error",
             autoHideDuration: 2000,
          });
