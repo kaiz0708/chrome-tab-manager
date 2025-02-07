@@ -44,7 +44,6 @@ function ListTab({ window }) {
                   serviceChrome.sendMessage({ id: collectionId, tab: data, newPosition: hoverIndex }, ActionTab.typeAddItemCollection);
                   dispatch(addCollectionItem({ id: collectionId, tab: data, newPosition: hoverIndex }));
                   dispatch(addNoti({ message, id: uuidv4(), status }));
-                  serviceChrome.closeTab(tabId, item.tab.windowId);
                }
             }
          } else {
