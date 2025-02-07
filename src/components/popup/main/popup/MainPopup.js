@@ -107,9 +107,7 @@ function MainPopup({ windowTabs, typeDisplay }) {
                   const { data, status, message } = responseAddItemCollection.data;
                   serviceChrome.sendMessage({ id: collectionId, tab: data, newPosition: 0 }, ActionTab.typeAddItemCollection);
                   dispatch(addCollectionItem({ id: collectionId, tab: data, newPosition: 0 }));
-                  if (item.display === tabType) {
-                     serviceChrome.closeTab(item.tab.id, item.tab.windowId);
-                  } else {
+                  if (item.display !== tabType) {
                      const collectionId = item.tab.collection;
                      const response = await servicePopup.deleteTabToCollection(item.tab, collectionId);
                      if (response === null) {
@@ -132,7 +130,6 @@ function MainPopup({ windowTabs, typeDisplay }) {
                      const { data, status, message } = responseAddItemCollection.data;
                      serviceChrome.sendMessage({ id: collectionId, tab: data, newPosition: index }, ActionTab.typeAddItemCollection);
                      dispatch(addCollectionItem({ id: collectionId, tab: data, newPosition: index }));
-                     serviceChrome.closeTab(tab.id, tab.windowId);
                   }
                });
             }
