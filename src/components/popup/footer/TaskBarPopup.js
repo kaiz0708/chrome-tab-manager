@@ -10,7 +10,7 @@ import { CiGrid2H } from "react-icons/ci";
 import { CiGrid41 } from "react-icons/ci";
 import { updatePinTab, updateStateDisplay } from "../../../store/features/popupSlices";
 import { GoPin } from "react-icons/go";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { updateStateCollection } from "../../../store/features/popupSlices";
 import { ActionTab } from "../../../enums/action";
 import { BsCollection } from "react-icons/bs";
@@ -20,6 +20,7 @@ import { AnimatePresence, motion } from "framer-motion";
 
 function TaskBarPopup({ filterGroupTab, groupTab }) {
    const dispatch = useDispatch();
+   const timeoutRef = useRef(null);
    const windowCurrent = useSelector((state) => state.current.value);
    const typeDisplay = useSelector((state) => state.current.displayState);
    const typeDisplayCollection = useSelector((state) => state.current.displayCollection);
@@ -34,6 +35,8 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
 
    const openCollection = (value, state) => {
       dispatch(updateStateCollection(!value));
+      servicesChrome.setStateLocal(ActionTab.typeChangeStateCollection, !value);
+      servicesChrome.sendMessage({ state: !value }, ActionTab.typeChangeStateCollection);
       setTitleDisplayCollection(state);
    };
 
@@ -77,8 +80,8 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         onFocus={() => setIsFocused(true)}
                         onBlur={() => setIsFocused(false)}
                         value={valueFilter}
-                        className={`w-full outline-none border-none p-1.5 text-sm placeholder:text-sm`}
-                        placeholder='Filtering follow title or url....'
+                        className={`w-full outline-none border-none p-1 text-sm placeholder:text-sm`}
+                        placeholder='You can type tabs by title or URL'
                      />
                      <motion.span
                         className='absolute left-0 bottom-0 w-full h-[1.5px] bg-gray-300'
@@ -94,9 +97,10 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                   </div>
                   <button
                      onClick={(e) => {
-                        groupTab(e.target.value);
+                        groupTab(valueFilter);
                      }}
-                     className='h-full bg-gray-100 text-black rounded p-2 text-xs hover:opacity-75 transition duration-300'>
+                     disabled={valueFilter === ""}
+                     className={`h-full ${valueFilter === "" ? "opacity-70" : "hover:bg-gray-200"} bg-gray-100 text-black rounded p-2 text-xs transition duration-200`}>
                      Filter
                   </button>
                </div>
@@ -112,9 +116,9 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         }}
                         title={titleDisplayCollection}
                         TransitionComponent={Zoom}
-                        TransitionProps={{ timeout: 200 }}
+                        TransitionProps={{ timeout: 250 }}
                         disableInteractive>
-                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
+                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-200 text-base transition duration-200 ease-in-out'>
                            <BsCollection className='w-full' />
                         </div>
                      </Tooltip>
@@ -128,9 +132,9 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         }}
                         title={"Minimize this window"}
                         TransitionComponent={Zoom}
-                        TransitionProps={{ timeout: 200 }}
+                        TransitionProps={{ timeout: 250 }}
                         disableInteractive>
-                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
+                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-200 text-base transition duration-200 ease-in-out'>
                            <CiSaveDown1 className='w-full' />
                         </div>
                      </Tooltip>
@@ -144,9 +148,9 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         }}
                         title={"Change block view"}
                         TransitionComponent={Zoom}
-                        TransitionProps={{ timeout: 200 }}
+                        TransitionProps={{ timeout: 250 }}
                         disableInteractive>
-                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
+                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-200 text-base transition duration-200 ease-in-out'>
                            {typeDisplay === process.env.REACT_APP_TYPE_TAB_HORIZONTAL ? <CiGrid41 className='w-full' /> : <CiGrid2H className='w-full' />}
                         </div>
                      </Tooltip>
@@ -161,9 +165,9 @@ function TaskBarPopup({ filterGroupTab, groupTab }) {
                         }}
                         title={pinState ? "Unpin tab current" : "Pin tab current"}
                         TransitionComponent={Zoom}
-                        TransitionProps={{ timeout: 200 }}
+                        TransitionProps={{ timeout: 250 }}
                         disableInteractive>
-                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-100 text-base transition duration-300 ease-in-out'>
+                        <div className='cursor-pointer flex items-center h-full border-1 border-opacity-5 p-2 rounded hover:bg-gray-200 text-base transition duration-200 ease-in-out'>
                            <GoPin className='w-full' />
                         </div>
                      </Tooltip>

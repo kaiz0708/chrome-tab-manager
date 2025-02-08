@@ -25,64 +25,62 @@ const ForgotPassword = ({ isOtp }) => {
    const [otp, setOtp] = useState("");
    const dispatch = useDispatch();
    const handleSubmitResetPassword = async (email) => {
-      try {
-         const response = await serviceAuth.forgotPassword(email);
+      const response = await serviceAuth.forgotPassword(email);
+      if (response === null) {
+         dispatch(addNoti({ message: "Email not found", id: uuidv4(), status: 400 }));
+      } else {
          const { status, message } = response.data;
-         if (status == 200) {
-            setForgotPassword(false);
-            setIsVerifyOtp(true);
-            serviceChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_STATE_OTP_VARIABLE, true);
-            serviceChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_EMAIL, email);
-         }
+         setForgotPassword(false);
+         setIsVerifyOtp(true);
+         serviceChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_STATE_OTP_VARIABLE, true);
+         serviceChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_EMAIL, email);
          dispatch(addNoti({ message, id: uuidv4(), status }));
-      } catch (error) {
-         dispatch(addNoti({ message: "email not found", id: uuidv4(), status: 400 }));
       }
    };
    const handleVerifyOtp = async (code) => {
       const email = await serviceChrome.getValueLocal(process.env.REACT_APP_TYPE_NAME_EMAIL);
-      try {
-         const response = await serviceAuth.verifyOtp(code.toString(), email);
+      const response = await serviceAuth.verifyOtp(code.toString(), email);
+      if (response === null) {
+         dispatch(addNoti({ message: "Failed to verify OTP code", id: uuidv4(), status: 400 }));
+      } else {
          const { status, message } = response.data;
-         if (status == 200) {
-            setForgotPassword(false);
-            setIsVerifyOtp(false);
-            dispatch(updateOtp(false));
-            dispatch(updateForgotPassword(true));
-            setIsChangePassword(true);
-         }
+         setForgotPassword(false);
+         setIsVerifyOtp(false);
+         dispatch(updateOtp(false));
+         dispatch(updateForgotPassword(true));
+         setIsChangePassword(true);
          dispatch(addNoti({ message, id: uuidv4(), status }));
-      } catch (error) {
-         dispatch(addNoti({ message: "verify token fail", id: uuidv4(), status: 400 }));
       }
    };
 
    const checkPassword = (password, confirmPassword) => {
-      if (password.length < 8 || confirmPassword.length < 8) {
+      if (password.length < 8 || confirmPassword.length < 8 || isNoWhitespaceAtEdges(password) === false || isNoWhitespaceAtEdges(confirmPassword) === false) {
          return true;
       }
       return false;
    };
 
+   const isNoWhitespaceAtEdges = (str) => {
+      return !/\s/.test(str);
+   };
+
    const handleChangePassword = async (password, confirmPassword) => {
       if (password !== confirmPassword) {
-         dispatch(addNoti({ message: "Confirm password wrong ", id: uuidv4(), status: 400 }));
+         dispatch(addNoti({ message: "Confirmation password is incorrect", id: uuidv4(), status: 400 }));
       } else {
-         try {
-            const email = await serviceChrome.getValueLocal(process.env.REACT_APP_TYPE_NAME_EMAIL);
-            const response = await serviceAuth.changePassword(email, password);
+         const email = await serviceChrome.getValueLocal(process.env.REACT_APP_TYPE_NAME_EMAIL);
+         const response = await serviceAuth.changePassword(email, password);
+         if (response === null) {
+            dispatch(addNoti({ message: "Failed to change password", id: uuidv4(), status: 401 }));
+         } else {
             const { status, message } = response.data;
-            if (status == 200) {
-               setForgotPassword(false);
-               setIsVerifyOtp(false);
-               dispatch(updateOtp(false));
-               dispatch(updateForgotPassword(false));
-               serviceChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_STATE_OTP_VARIABLE, false);
-               setIsChangePassword(false);
-            }
+            setForgotPassword(false);
+            setIsVerifyOtp(false);
+            dispatch(updateOtp(false));
+            dispatch(updateForgotPassword(false));
+            serviceChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_STATE_OTP_VARIABLE, false);
+            setIsChangePassword(false);
             dispatch(addNoti({ message, id: uuidv4(), status }));
-         } catch (error) {
-            console.log(error);
          }
       }
    };
@@ -98,7 +96,7 @@ const ForgotPassword = ({ isOtp }) => {
                         e.preventDefault();
                         handleSubmitResetPassword(email);
                      }}>
-                     <input onChange={(e) => setEmail(e.target.value)} type='email' name='email' placeholder='Enter your email' className='w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none' required />
+                     <input onChange={(e) => setEmail(e.target.value)} type='email' name='email' placeholder='Enter your email' className='w-full p-3 mb-4 border border-gray-300 rounded-md focus:outline-none focus:border-green-500' required />
                      <button type='submit' className='w-full bg-custom-color-title text-white p-3 rounded-lg font-semibold transition duration-300'>
                         Reset password
                      </button>
@@ -131,7 +129,6 @@ const ForgotPassword = ({ isOtp }) => {
                         value={otp}
                         onChange={(value) => {
                            setOtp(value);
-                           console.log(value);
                         }}
                         numInputs={6}
                         renderSeparator={<span className='mx-2 text-gray-400'>-</span>}
@@ -183,7 +180,7 @@ const ForgotPassword = ({ isOtp }) => {
                            <input
                               type={display.password ? "text" : "password"}
                               name='password'
-                              className={`w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none ${password.length < 8 ? "focus:border-red-500" : "focus:border-green-500"}`}
+                              className={`w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none ${password.length < 8 || isNoWhitespaceAtEdges(password) === false ? "focus:border-red-500" : "focus:border-green-500"}`}
                               value={password}
                               onChange={(e) => setPassword(e.target.value)}
                               required
@@ -199,9 +196,9 @@ const ForgotPassword = ({ isOtp }) => {
                               }}>
                               {display.password ? <VscEye className='text-base' /> : <VscEyeClosed className='text-base' />}
                            </div>
-                           {password !== "" && password.length < 8 ? (
+                           {(password !== "" && password.length < 8) || isNoWhitespaceAtEdges(password) === false ? (
                               <motion.div className='text-xs mt-1.5 text-gray-400' initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
-                                 Enter at least 8 characters
+                                 Enter at least 8 characters without any spaces
                               </motion.div>
                            ) : null}
                         </div>
@@ -212,7 +209,7 @@ const ForgotPassword = ({ isOtp }) => {
                            <input
                               type={display.confirmPassword ? "text" : "password"}
                               name='confirmPassword'
-                              className={`w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none ${confirmPassword.length < 8 ? "focus:border-red-500" : "focus:border-green-500"}`}
+                              className={`w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none ${confirmPassword.length < 8 || isNoWhitespaceAtEdges(confirmPassword) === false ? "focus:border-red-500" : "focus:border-green-500"}`}
                               value={confirmPassword}
                               onChange={(e) => setConfirmPassword(e.target.value)}
                               required
@@ -228,9 +225,9 @@ const ForgotPassword = ({ isOtp }) => {
                               }}>
                               {display.confirmPassword ? <VscEye className='text-base' /> : <VscEyeClosed className='text-base' />}
                            </div>
-                           {confirmPassword !== "" && confirmPassword.length < 8 ? (
+                           {(confirmPassword !== "" && confirmPassword.length < 8) || isNoWhitespaceAtEdges(confirmPassword) === false ? (
                               <motion.div className='text-xs mt-1.5 text-gray-400' initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
-                                 Enter at least 8 characters
+                                 Enter at least 8 characters without any spaces
                               </motion.div>
                            ) : null}
                         </div>
@@ -239,7 +236,9 @@ const ForgotPassword = ({ isOtp }) => {
                      <button
                         disabled={checkPassword(password, confirmPassword)}
                         type='submit'
-                        className={`w-full mt-4 px-4 py-2 ${password.length >= 8 && confirmPassword.length >= 8 ? "bg-custom-color-title" : "opacity-50 cursor-not-allowed"} bg-custom-color-title text-white rounded-lg transition'`}>
+                        className={`w-full mt-4 px-4 py-2 ${
+                           password.length >= 8 && confirmPassword.length >= 8 && isNoWhitespaceAtEdges(password) === true && isNoWhitespaceAtEdges(confirmPassword) === true ? "bg-custom-color-title" : "opacity-50 cursor-not-allowed"
+                        } bg-custom-color-title text-white rounded-lg transition'`}>
                         Confirm
                      </button>
                   </form>

@@ -73,10 +73,15 @@ module.exports = {
                   padding: "0.25rem",
                },
             },
+            blink: {
+               "0%, 100%": { backgroundColor: "rgba(255, 220, 225, 0.5)" },
+               "50%": { backgroundColor: "rgba(255, 255, 255, 0.5)" },
+            },
          },
          animation: {
             hoverEffect: "hoverEffect 0.1s ease-in-out forwards",
             hoverEffectBlock: "hoverEffectBlock 0.1s ease-in-out forwards",
+            blink: "blink 1s linear infinite",
          },
       },
    },

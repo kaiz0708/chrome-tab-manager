@@ -3,10 +3,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { React, lazy, Suspense, useState } from "react";
 import { useEffect } from "react";
 import { axios } from "./common/axios";
-import { removeNoti, updateAuth, updateDisplay, updateOtp, updateUsename, updateStateDisplay } from "./store/features/popupSlices";
+import { removeNoti, updateAuth, updateDisplay, updateOtp, updateUsename, updateStateDisplay, updateStateCollection, addNoti } from "./store/features/popupSlices";
 import { CircularProgress } from "@mui/material";
 import utils from "./common/utils";
 import { useSnackbar } from "notistack";
+import { v4 as uuidv4 } from "uuid";
 import serviceChrome from "./components/services/ServiceChrome";
 const Popup = lazy(() => import("./components/popup/Popup"));
 const Login = lazy(() => import("./components/auth/Login"));
@@ -30,6 +31,14 @@ function App() {
          const otp = await utils.getStateOtp();
          const user = await utils.getUsername();
 
+         const stateDisplayCollection = await utils.getDisplayStateCollection();
+         if (stateDisplayCollection === undefined) {
+            serviceChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_STATE_COLLECTION, false);
+            dispatch(updateStateCollection(false));
+         } else {
+            dispatch(updateStateCollection(stateDisplayCollection));
+         }
+
          const state = await utils.getDisplayState();
          if (state === undefined) {
             serviceChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE, process.env.REACT_APP_TYPE_TAB_HORIZONTAL);
@@ -41,7 +50,7 @@ function App() {
          dispatch(updateOtp(otp));
          dispatch(updateUsename(user));
 
-         if (token) {
+         if (token !== undefined) {
             try {
                const response = await axios.get("/auth/expire", {
                   headers: {
@@ -55,6 +64,8 @@ function App() {
                }
             } catch (err) {
                dispatch(updateAuth(false));
+               serviceChrome.removeValueLocal(["token"]);
+               dispatch(addNoti({ message: "Session expire, please login again", id: uuidv4(), status: 401 }));
             }
          } else {
             dispatch(updateAuth(false));
@@ -66,11 +77,15 @@ function App() {
       });
    }, []);
 
+   const truncateMessage = (message) => {
+      return message.length > process.env.REACT_APP_MAX_SNACKBAR_LENGTH ? `${message.substring(0, process.env.REACT_APP_MAX_SNACKBAR_LENGTH)}...` : message;
+   };
+
    useEffect(() => {
       notifications.forEach((noti) => {
-         enqueueSnackbar(noti.message, {
+         enqueueSnackbar(truncateMessage(noti.message), {
             variant: noti.status == 200 ? "success" : "error",
-            autoHideDuration: 1500,
+            autoHideDuration: 2000,
          });
          dispatch(removeNoti(noti.id));
       });

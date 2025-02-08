@@ -2,9 +2,10 @@
 
 import React, { useEffect, useRef, useState, lazy } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addNoti, updateWindowCurrent, updatePinTab } from "../../store/features/popupSlices";
+import { addNoti, updateWindowCurrent, updatePinTab, updateAuth, updateStateCollection } from "../../store/features/popupSlices";
 import { ActionTab } from "../../enums/action";
 import serviceChrome from "../services/ServiceChrome";
+import servicePopup from "./servicePopup";
 import {
    deleteTab,
    setValueCollection,
@@ -35,6 +36,7 @@ function Popup() {
    const windowTabs = useSelector((state) => state.window.value);
    const [windowList, setWindowList] = useState([]);
    const typeDisplay = useSelector((state) => state.current.displayState);
+   const timeoutRef = useRef(null);
    const dispatch = useDispatch();
 
    useEffect(() => {
@@ -59,6 +61,14 @@ function Popup() {
          let pinnedStatus = currentTab.pinned;
          dispatch(updatePinTab(pinnedStatus));
       });
+
+      const getListCollection = async () => {
+         const response = await servicePopup.listCollection();
+         const { data } = response.data;
+         dispatch(setValueCollection(data));
+      };
+
+      getListCollection().then();
    }, []);
 
    useEffect(() => {
@@ -92,7 +102,6 @@ function Popup() {
                dispatch(pinTab(msg.data));
                break;
             case ActionTab.typeAddItemCollection:
-               console.log(msg.data);
                dispatch(addCollectionItem(msg.data));
                break;
             case ActionTab.typeDeleteItemCollection:
@@ -107,10 +116,20 @@ function Popup() {
             case ActionTab.typeUpdateCollection:
                dispatch(updateCollection(msg.data));
                break;
+            case ActionTab.typeLogout:
+               serviceChrome.removeValueLocal(["token"]);
+               dispatch(updateAuth(false));
+               dispatch(addNoti({ message: "Logged out successfully", id: uuidv4(), status: 200 }));
+               break;
             case ActionTab.typeChangeState:
                const { display } = msg.data;
                serviceChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE, display);
                dispatch(updateStateDisplay(display));
+               break;
+            case ActionTab.typeChangeStateCollection:
+               const { state } = msg.data;
+               serviceChrome.setStateLocal(ActionTab.typeChangeStateCollection, state);
+               dispatch(updateStateCollection(state));
                break;
          }
       };
@@ -149,12 +168,12 @@ function Popup() {
 
    const groupTab = (value) => {
       if (value === "") {
-         dispatch(addNoti({ message: "Nothing title match", id: uuidv4(), status: 400 }));
+         dispatch(addNoti({ message: "No title matches", id: uuidv4(), status: 400 }));
       } else {
          let urls = [];
          const hasTabs = windowList.some((window) => window.tabs.length > 0);
          if (!hasTabs) {
-            dispatch(addNoti({ message: "Nothing title match", id: uuidv4(), status: 400 }));
+            dispatch(addNoti({ message: "No title matches", id: uuidv4(), status: 400 }));
          } else {
             windowList.forEach((window) => {
                window.tabs.forEach((tab) => {
@@ -162,7 +181,7 @@ function Popup() {
                });
             });
             serviceChrome.openWindowGroup(urls);
-            dispatch(addNoti({ message: "Group tab success", id: uuidv4(), status: 200 }));
+            dispatch(addNoti({ message: "Grouping tabs was successful", id: uuidv4(), status: 200 }));
          }
       }
    };

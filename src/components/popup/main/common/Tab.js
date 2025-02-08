@@ -18,10 +18,9 @@ function Tab({ tab, index, typeDisplay, display }) {
    const [showCloseTab, setShowCloseTab] = useState(false);
    const [activeTab, setActiveTab] = useState(true);
    const dispatch = useDispatch();
-
    const [{ isDragging }, drag] = useDrag({
-      type: "ITEM",
-      item: { index, tab, display },
+      type: "SUB_ITEM",
+      item: { index, tab, display, type: "tab" },
       collect: (monitor) => ({
          isDragging: !!monitor.isDragging(),
       }),
@@ -57,8 +56,23 @@ function Tab({ tab, index, typeDisplay, display }) {
    };
 
    return (
-      <div ref={drag}>
-         <Tooltip TransitionComponent={Zoom} TransitionProps={{ timeout: 200 }} onClick={() => switchToTab(tab.id)} disableInteractive title={tab.title}>
+      <div
+         draggable
+         onDragStart={() => {
+            setShowCloseTab(false);
+         }}
+         onDragEnd={() => {
+            setShowCloseTab(false);
+         }}
+         ref={drag}>
+         <Tooltip
+            TransitionComponent={Zoom}
+            TransitionProps={{ timeout: 250 }}
+            onClick={() => {
+               switchToTab(tab.id);
+            }}
+            disableInteractive
+            title={tab.title}>
             <div
                onMouseEnter={() => {
                   setShowCloseTab(true);
@@ -68,9 +82,9 @@ function Tab({ tab, index, typeDisplay, display }) {
                   setShowCloseTab(false);
                   checkActveTab(tab.active, false);
                }}
-               className={` relative ${typeDisplay === process.env.REACT_APP_TYPE_TAB_HORIZONTAL ? "p-1.5 aspect-square" : "p-1.5 h-10"} w-full ${
-                  tab.pinned ? "bg-custom-color-tooltip" : ""
-               } flex justify-center items-center hover:bg-gray-100 transition-all duration-300 ease-in-out border-1 border-opacity-5 z-10 space-x-1 cursor-pointer border-solid rounded`}>
+               className={` relative ${typeDisplay === process.env.REACT_APP_TYPE_TAB_HORIZONTAL ? "p-1.5 aspect-square" : "p-1.5 h-10"} w-full ${tab.pinned ? "animate-blink" : ""} flex ${
+                  isDragging ? "scale-110" : ""
+               } justify-center items-center hover:bg-gray-100 transition-all duration-300 ease-in-out border-1 border-opacity-5 z-10 space-x-1 cursor-pointer border-solid rounded`}>
                <div className='h-5 w-5'>
                   {tab.favIconUrl === "" || tab.favIconUrl === undefined || tab.favIconUrl === null ? <IoEarthOutline className='w-full h-full' /> : <img className='rounded-sm object-contain w-full h-full' src={tab.favIconUrl} />}
                </div>

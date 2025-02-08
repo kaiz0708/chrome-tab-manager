@@ -3,13 +3,21 @@ import { axios } from "../../common/axios";
 
 export default {
    login: async (email, password) => {
-      const response = await axios.post("/auth/login", { email, password });
-      return response;
+      try {
+         const response = await axios.post("/auth/login", { email, password });
+         return response;
+      } catch (error) {
+         return null;
+      }
    },
 
    register: async (formData) => {
-      const response = await axios.post("/auth/register", { ...formData });
-      return response;
+      try {
+         const response = await axios.post("/auth/register", { ...formData });
+         return response;
+      } catch (error) {
+         return null;
+      }
    },
 
    loginGoogle: async (userInfo) => {
@@ -18,16 +26,24 @@ export default {
          username: name,
          email,
       };
-      const response = await axios.post("/auth/google/login", { ...dataRequest });
-      return response;
+      try {
+         const response = await axios.post("/auth/google/login", { ...dataRequest });
+         return response;
+      } catch (error) {
+         return null;
+      }
    },
 
    forgotPassword: async (email) => {
       const dataRequest = {
          email,
       };
-      const response = await axios.post("/auth/forgot-password", { ...dataRequest });
-      return response;
+      try {
+         const response = await axios.post("/auth/forgot-password", { ...dataRequest });
+         return response;
+      } catch (error) {
+         return null;
+      }
    },
 
    verifyOtp: async (code, email) => {
@@ -35,8 +51,12 @@ export default {
          email,
          code,
       };
-      const response = await axios.post("/auth/verify-otp", { ...dataRequest });
-      return response;
+      try {
+         const response = await axios.post("/auth/verify-otp", { ...dataRequest });
+         return response;
+      } catch (error) {
+         return null;
+      }
    },
 
    changePassword: async (email, password) => {
@@ -44,7 +64,11 @@ export default {
          email,
          password,
       };
-      const response = await axios.post("/auth/change-password", { ...dataRequest });
-      return response;
+      try {
+         const response = await axios.post("/auth/change-password", { ...dataRequest });
+         return response;
+      } catch (error) {
+         return null;
+      }
    },
 };

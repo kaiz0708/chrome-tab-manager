@@ -157,7 +157,6 @@ const windowSlice = createSlice({
 
       createCollection: (state, action) => {
          const { collection } = action.payload;
-         console.log(collection);
          state.collection.push(collection);
       },
 

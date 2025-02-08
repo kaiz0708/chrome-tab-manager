@@ -10,8 +10,10 @@ import Masonry from "react-masonry-css";
 import { Box } from "@mui/material";
 import { HiOutlinePlus } from "react-icons/hi2";
 import servicePopup from "../../servicePopup";
-import { deleteCollectionItem } from "../../../../store/features/windowSlices";
+import { deleteCollectionItem, deleteCollection, createCollection, addCollectionItem } from "../../../../store/features/windowSlices";
+import { updateAuth, addNoti } from "../../../../store/features/popupSlices";
 import { Grid2 } from "@mui/material";
+import { v4 as uuidv4 } from "uuid";
 
 const MainCollections = lazy(() => import("../collection/MainCollections"));
 /* global chrome */
@@ -25,23 +27,49 @@ function MainPopup({ windowTabs, typeDisplay }) {
    const dispatch = useDispatch();
    const tabType = process.env.REACT_APP_TYPE_TAB;
    const collectionType = process.env.REACT_APP_TYPE_COLLECTION;
+   const windowList = useSelector((state) => state.window.collection);
 
    const [{ isOver }, drop] = useDrop({
-      accept: "ITEM",
+      accept: ["ITEM", "SUB_ITEM"],
       drop: async (item, monitor) => {
-         const { tab, index } = item;
          if (monitor.didDrop()) {
             return;
          }
-         if (item.display === tabType) {
+         const { display } = item;
+         if (display === tabType) {
+            const { tab, index } = item;
             serviceChrome.openWindowGroup([tab]);
          } else {
-            const response = await servicePopup.deleteTabToCollection(item.tab, item.tab.collection);
-            const { data } = response.data;
-            const idCollection = item.tab.collection;
-            serviceChrome.sendMessage({ idCollection: idCollection, tab: data }, ActionTab.typeDeleteCollection);
-            dispatch(deleteCollectionItem({ idCollection: idCollection, tab: data }));
-            serviceChrome.openWindow(tab.url);
+            if (display === collectionType) {
+               const { tab, index } = item;
+               const response = await servicePopup.deleteTabToCollection(item.tab, item.tab.collection);
+               if (response === null) {
+                  dispatch(updateAuth(false));
+                  dispatch(addNoti({ message: "Session expire, please login again", id: uuidv4(), status: 401 }));
+                  serviceChrome.removeValueLocal(["token"]);
+               } else {
+                  const { data, status, message } = response.data;
+                  const idCollection = item.tab.collection;
+                  serviceChrome.sendMessage({ idCollection: idCollection, tab: data }, ActionTab.typeDeleteItemCollection);
+                  dispatch(deleteCollectionItem({ idCollection: idCollection, tab: data }));
+                  dispatch(addNoti({ id: uuidv4(), status, message }));
+                  serviceChrome.openWindow([tab.url]);
+               }
+            } else {
+               const { id, url } = item;
+               const response = await servicePopup.deleteCollection(id);
+               if (response === null) {
+                  dispatch(updateAuth(false));
+                  dispatch(addNoti({ message: "Session expire, please login again", id: uuidv4(), status: 401 }));
+                  serviceChrome.removeValueLocal(["token"]);
+               } else {
+                  const { data, status, message } = response.data;
+                  serviceChrome.sendMessage({ collection: data }, ActionTab.typeDeleteCollection);
+                  dispatch(deleteCollection({ collection: data }));
+                  dispatch(addNoti({ id: uuidv4(), status, message }));
+                  serviceChrome.openWindow(url);
+               }
+            }
          }
       },
       collect: (monitor) => ({
@@ -54,8 +82,73 @@ function MainPopup({ windowTabs, typeDisplay }) {
       drop(el);
    };
 
+   const [{ isOverCollection }, dropCollection] = useDrop({
+      accept: ["SUB_ITEM", "ITEM_COLLECTION"],
+      drop: async (item, monitor) => {
+         if (monitor.didDrop()) {
+            return;
+         }
+         const title = process.env.REACT_APP_TYPE_DEFAULT_NAME_COLLECTION + "_" + windowList.length;
+         const responseCreateCollection = await servicePopup.createCollection(title);
+         if (responseCreateCollection === null) {
+            dispatch(updateAuth(false));
+            dispatch(addNoti({ message: "Session expire, please login again", id: uuidv4(), status: 401 }));
+         } else {
+            const { data, status, message } = responseCreateCollection.data;
+            serviceChrome.sendMessage({ collection: data }, ActionTab.typeCreateCollection);
+            dispatch(createCollection({ collection: data }));
+            const collectionId = data.id;
+            if (item.type === "tab") {
+               const responseAddItemCollection = await servicePopup.addTabToCollection(item.tab, collectionId, 0);
+               if (responseAddItemCollection === null) {
+                  dispatch(updateAuth(false));
+                  dispatch(addNoti({ message: "Session expire, please login again", id: uuidv4(), status: 401 }));
+               } else {
+                  const { data, status, message } = responseAddItemCollection.data;
+                  serviceChrome.sendMessage({ id: collectionId, tab: data, newPosition: 0 }, ActionTab.typeAddItemCollection);
+                  dispatch(addCollectionItem({ id: collectionId, tab: data, newPosition: 0 }));
+                  if (item.display !== tabType) {
+                     const collectionId = item.tab.collection;
+                     const response = await servicePopup.deleteTabToCollection(item.tab, collectionId);
+                     if (response === null) {
+                        dispatch(updateAuth(false));
+                        dispatch(addNoti({ message: "Session expire, please login again", id: uuidv4(), status: 401 }));
+                     } else {
+                        const { data, status, message } = response.data;
+                        serviceChrome.sendMessage({ idCollection: collectionId, tab: data }, ActionTab.typeDeleteItemCollection);
+                        dispatch(deleteCollectionItem({ idCollection: collectionId, tab: data }));
+                     }
+                  }
+               }
+            } else {
+               item.window.windowTab.tabs.forEach(async (tab, index) => {
+                  const responseAddItemCollection = await servicePopup.addTabToCollection(tab, collectionId, index);
+                  if (responseAddItemCollection === null) {
+                     dispatch(updateAuth(false));
+                     dispatch(addNoti({ message: "Session expire, please login again", id: uuidv4(), status: 401 }));
+                  } else {
+                     const { data, status, message } = responseAddItemCollection.data;
+                     serviceChrome.sendMessage({ id: collectionId, tab: data, newPosition: index }, ActionTab.typeAddItemCollection);
+                     dispatch(addCollectionItem({ id: collectionId, tab: data, newPosition: index }));
+                  }
+               });
+            }
+         }
+         const { data, status, message } = responseCreateCollection.data;
+         dispatch(addNoti({ id: uuidv4(), status, message }));
+      },
+      collect: (monitor) => ({
+         isOverCollection: !!monitor.isOver(),
+      }),
+   });
+
+   const combinedRefCollection = (el) => {
+      dropRef.current = el;
+      dropCollection(el);
+   };
+
    const openNewWindowEmpty = () => {
-      serviceChrome.openWindow("chrome://newtab");
+      serviceChrome.openWindow(["chrome://newtab"]);
    };
 
    return (
@@ -78,10 +171,10 @@ function MainPopup({ windowTabs, typeDisplay }) {
                            }}
                            title={"Open new window"}
                            TransitionComponent={Zoom}
-                           TransitionProps={{ timeout: 200 }}
+                           TransitionProps={{ timeout: 250 }}
                            disableInteractive>
                            <div
-                              className=' transition duration-200 ease-in bg-white hover:shadow-custom-hover cursor-pointer rounded shadow-custom flex justify-center items-center'
+                              className=' transition duration-200 ease-in bg-white hover:bg-custom-color-title hover:text-white cursor-pointer rounded shadow-custom flex justify-center items-center'
                               style={{
                                  width: "30px",
                                  height: "30px",
@@ -115,7 +208,7 @@ function MainPopup({ windowTabs, typeDisplay }) {
             </Masonry>
          </div>
 
-         <div className={`relative bg-gray-100 border-1 p-2 text-black overflow-y-auto scrollbar-thumb-rounded ${stateCollection ? "h-[50%]" : "overflow hidden"}`}>
+         <div ref={combinedRefCollection} className={`relative bg-gray-100 border-1 p-2 text-black overflow-y-auto scrollbar-thumb-rounded ${stateCollection ? "h-[50%]" : "overflow hidden"}`}>
             {stateCollection ? (
                <Suspense>
                   <AnimatePresence>

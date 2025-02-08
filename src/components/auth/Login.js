@@ -9,31 +9,27 @@ import { v4 as uuidv4 } from "uuid";
 import { addNoti, updateLoginGoogle } from "../../store/features/popupSlices";
 import { FcGoogle } from "react-icons/fc";
 import { AnimatePresence, motion } from "framer-motion";
+import { VscEyeClosed } from "react-icons/vsc";
+import { VscEye } from "react-icons/vsc";
 /* global chrome */
 const Login = () => {
    const [email, setEmail] = useState("");
    const [password, setPassword] = useState("");
+   const [statePassword, setStatePassword] = useState(false);
    const dispatch = useDispatch();
 
    const handleSubmit = async (email, password) => {
-      if (password.length <= 6) {
-      }
-      try {
-         const response = await serviceAuth.login(email, password);
+      const response = await serviceAuth.login(email, password);
+      if (response === null) {
+         dispatch(addNoti({ message: "Email or password is incorrect", id: uuidv4(), status: 401 }));
+      } else {
          const { status, message } = response.data;
          const { data } = response.data;
          const { token, user } = data;
-         if (status === 200) {
-            serviceChrome.setStateLocal("token", token);
-            serviceChrome.setStateLocal("user", user);
-            dispatch(updateUsename(user));
-            dispatch(updateAuth(true));
-         } else {
-            dispatch(updateAuth(false));
-         }
-         dispatch(addNoti({ message, id: uuidv4(), status }));
-      } catch (error) {
-         const { status, message } = error.response.data;
+         serviceChrome.setStateLocal("token", token);
+         serviceChrome.setStateLocal("user", user);
+         dispatch(updateUsename(user));
+         dispatch(updateAuth(true));
          dispatch(addNoti({ message, id: uuidv4(), status }));
       }
    };
@@ -46,27 +42,31 @@ const Login = () => {
             interactive: true,
          },
          (redirect_url) => {
-            const urlParams = new URLSearchParams(new URL(redirect_url).hash.substring(1));
-            const token = urlParams.get("access_token");
+            if (redirect_url == null) {
+               dispatch(updateLoginGoogle(false));
+            } else {
+               const urlParams = new URLSearchParams(new URL(redirect_url).hash.substring(1));
+               const token = urlParams.get("access_token");
 
-            fetch(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${token}`)
-               .then((response) => response.json())
-               .then(async (userInfo) => {
-                  const response = await serviceAuth.loginGoogle(userInfo);
-                  const { data, status, message } = response.data;
-                  const { token, user } = data;
-                  if (status === 200) {
-                     serviceChrome.setStateLocal("token", token);
-                     serviceChrome.setStateLocal("user", user);
-                     dispatch(updateAuth(true));
-                     dispatch(updateUsename(user));
-                  } else {
-                     dispatch(updateAuth(false));
-                  }
-                  dispatch(addNoti({ message, id: uuidv4(), status }));
-                  dispatch(updateLoginGoogle(false));
-               })
-               .catch((error) => console.error("Error fetching user info:", error));
+               fetch(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${token}`)
+                  .then((response) => response.json())
+                  .then(async (userInfo) => {
+                     const response = await serviceAuth.loginGoogle(userInfo);
+                     const { data, status, message } = response.data;
+                     const { token, user } = data;
+                     if (status === 200) {
+                        serviceChrome.setStateLocal("token", token);
+                        serviceChrome.setStateLocal("user", user);
+                        dispatch(updateAuth(true));
+                        dispatch(updateUsename(user));
+                     } else {
+                        dispatch(updateAuth(false));
+                     }
+                     dispatch(addNoti({ message, id: uuidv4(), status }));
+                     dispatch(updateLoginGoogle(false));
+                  })
+                  .catch((error) => console.error("Error fetching user info:", error));
+            }
          }
       );
    };
@@ -85,24 +85,32 @@ const Login = () => {
                   <input
                      type='email'
                      name='email'
-                     className='w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500'
+                     className='w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-green-500'
                      value={email}
                      onChange={(e) => setEmail(e.target.value)}
                      required
                      placeholder='Enter your email'
                   />
                </div>
-               <div className='mb-3'>
+               <div className='mb-3 relative'>
                   <label className='block text-gray-600 mb-1'>Password</label>
                   <input
-                     type='password'
+                     type={statePassword ? "text" : "password"}
                      name='password'
-                     className='w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500'
+                     className='w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-green-500'
                      value={password}
                      onChange={(e) => setPassword(e.target.value)}
                      required
                      placeholder='Enter your password'
                   />
+
+                  <div
+                     className='absolute top-8 right-2 cursor-pointer'
+                     onClick={(e) => {
+                        setStatePassword(!statePassword);
+                     }}>
+                     {statePassword ? <VscEye className='text-base' /> : <VscEyeClosed className='text-base' />}
+                  </div>
                </div>
 
                <button type='submit' className='w-full mt-4 bg-custom-color-title text-white py-2 rounded-md  transition duration-300'>

@@ -33,32 +33,48 @@ function Register() {
    };
 
    const checkValueLength = (formData) => {
-      return Object.values(formData).every((value) => value.length > 8);
+      return Object.values(formData).every((value) => value.length >= 8);
+   };
+
+   function checkEmail(email) {
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,3}(?:\.[a-zA-Z]{2,3})?$/;
+      return emailRegex.test(email);
+   }
+
+   const isNoWhitespaceAtEdges = (str) => {
+      return !/\s/.test(str);
+   };
+
+   const checkValueSpace = (formData) => {
+      return Object.values(formData).every((value) => isNoWhitespaceAtEdges(value));
    };
 
    const handleSubmit = async (formData) => {
-      if (confirmPassword === formData.password) {
-         try {
+      if (checkEmail(formData.email)) {
+         if (confirmPassword === formData.password) {
             const response = await serviceAuth.register(formData);
-            const { status, message } = response.data;
-            const { data } = response.data;
-            const { token, user } = data;
-            if (status === 200) {
-               serviceChrome.setStateLocal("token", token);
-               serviceChrome.setStateLocal("user", user);
-               dispatch(updateAuth(true));
-               dispatch(updateRegister(false));
-               dispatch(updateUsename(user));
+            if (response === null) {
+               dispatch(addNoti({ message: "User already exist", id: uuidv4(), status: 401 }));
             } else {
-               dispatch(updateAuth(false));
+               const { status, message } = response.data;
+               const { data } = response.data;
+               const { token, user } = data;
+               if (status === 200) {
+                  serviceChrome.setStateLocal("token", token);
+                  serviceChrome.setStateLocal("user", user);
+                  dispatch(updateAuth(true));
+                  dispatch(updateRegister(false));
+                  dispatch(updateUsename(user));
+               } else {
+                  dispatch(updateAuth(false));
+               }
+               dispatch(addNoti({ message, id: uuidv4(), status }));
             }
-            dispatch(addNoti({ message, id: uuidv4(), status }));
-         } catch (error) {
-            const { status, message } = error.response.data;
-            dispatch(addNoti({ message, id: uuidv4(), status }));
+         } else {
+            dispatch(addNoti({ message: "Confirmation password is incorrect", id: uuidv4(), status: 400 }));
          }
       } else {
-         dispatch(addNoti({ message: "Wrong confirm password", id: uuidv4(), status: 400 }));
+         dispatch(addNoti({ message: "Email is not in correct format", id: uuidv4(), status: 400 }));
       }
    };
    return (
@@ -76,22 +92,33 @@ function Register() {
                   <input
                      type='text'
                      name='username'
-                     className={`w-full p-2.5 border border-gray-300 rounded-md focus:outline-none ${formData.username.length < 8 ? "focus:border-red-500" : "focus:border-green-500"}`}
+                     className={`w-full p-2.5 border border-gray-300 rounded-md focus:outline-none ${formData.username.length < 8 || isNoWhitespaceAtEdges(formData.username) === false ? "focus:border-red-500" : "focus:border-green-500"}`}
                      value={formData.username}
                      onChange={handleChange}
                      placeholder='Enter your username'
                   />
-                  {formData.username !== "" && formData.username.length < 8 ? (
+                  {(formData.username !== "" && formData.username.length < 8) || isNoWhitespaceAtEdges(formData.username) === false ? (
                      <motion.div className='text-xs mt-1.5 text-gray-400' initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
-                        Enter at least 8 characters
+                        Enter at least 8 characters without any spaces
                      </motion.div>
                   ) : null}
                </div>
 
                <div className='mb-2'>
                   <label className='block text-gray-600 mb-2'>Email</label>
-                  <input type='email' name='email' className='w-full p-2.5 border border-gray-300 rounded-md focus:outline-none focus:border-green-500' value={formData.email} onChange={handleChange} placeholder='Enter your email' />
-                  <span></span>
+                  <input
+                     type='email'
+                     name='email'
+                     className={`w-full p-2.5 border border-gray-300 rounded-md focus:outline-none ${formData.email.length < 8 || isNoWhitespaceAtEdges(formData.email) === false ? "focus:border-red-500" : "focus:border-green-500"}`}
+                     value={formData.email}
+                     onChange={handleChange}
+                     placeholder='Enter your email'
+                  />
+                  {(formData.email !== "" && formData.email.length < 8) || isNoWhitespaceAtEdges(formData.email) === false ? (
+                     <motion.div className='text-xs mt-1.5 text-gray-400' initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
+                        Enter at least 8 characters without any spaces
+                     </motion.div>
+                  ) : null}
                </div>
 
                <div className='mb-2'>
@@ -100,7 +127,7 @@ function Register() {
                      <input
                         type={display.password ? "text" : "password"}
                         name='password'
-                        className={`w-full p-2.5 border border-gray-300 rounded-md focus:outline-none ${formData.password.length < 8 ? "focus:border-red-500" : "focus:border-green-500"}`}
+                        className={`w-full p-2.5 border border-gray-300 rounded-md focus:outline-none ${formData.password.length < 8 || isNoWhitespaceAtEdges(formData.password) === false ? "focus:border-red-500" : "focus:border-green-500"}`}
                         value={formData.password}
                         onChange={handleChange}
                         required
@@ -116,9 +143,9 @@ function Register() {
                         }}>
                         {display.password ? <VscEye className='text-base' /> : <VscEyeClosed className='text-base' />}
                      </div>
-                     {formData.password !== "" && formData.password.length < 8 ? (
+                     {(formData.password !== "" && formData.password.length < 8) || isNoWhitespaceAtEdges(formData.password) === false ? (
                         <motion.div className='text-xs mt-1.5 text-gray-400' initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
-                           Enter at least 8 characters
+                           Enter at least 8 characters without any spaces
                         </motion.div>
                      ) : null}
                   </div>
@@ -130,7 +157,7 @@ function Register() {
                      <input
                         type={display.confirmPassword ? "text" : "password"}
                         name='confirm password'
-                        className={`w-full p-2.5 border border-gray-300 rounded-md focus:outline-none ${confirmPassword.length < 8 ? "focus:border-red-500" : "focus:border-green-500"}`}
+                        className={`w-full p-2.5 border border-gray-300 rounded-md focus:outline-none ${confirmPassword.length < 8 || isNoWhitespaceAtEdges(confirmPassword) === false ? "focus:border-red-500" : "focus:border-green-500"}`}
                         value={confirmPassword}
                         onChange={(e) => {
                            setConfirmPassword(e.target.value);
@@ -148,16 +175,18 @@ function Register() {
                         }}>
                         {display.confirmPassword ? <VscEye className='text-base' /> : <VscEyeClosed className='text-base' />}
                      </div>
-                     {confirmPassword !== "" && confirmPassword.length < 8 ? (
+                     {(confirmPassword !== "" && confirmPassword.length < 8) || isNoWhitespaceAtEdges(confirmPassword) === false ? (
                         <motion.div className='text-xs mt-1.5 text-gray-400' initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
-                           Enter at least 8 characters
+                           Enter at least 8 characters without any spaces
                         </motion.div>
                      ) : null}
                   </div>
                </div>
                <button
-                  disabled={!checkValueLength(formData)}
-                  className={`w-full mt-2 bg-custom-color-title ${checkValueLength(formData) ? "bg-custom-color-title" : "opacity-50 cursor-not-allowed"} text-white py-2 rounded-md  transition duration-300`}>
+                  disabled={!checkValueLength(formData) || !checkValueSpace(formData) || !isNoWhitespaceAtEdges(confirmPassword) || confirmPassword === "" || confirmPassword.length < 8}
+                  className={`w-full mt-2 bg-custom-color-title ${
+                     checkValueLength(formData) && checkValueSpace(formData) === true && isNoWhitespaceAtEdges(confirmPassword) && confirmPassword.length >= 8 ? "bg-custom-color-title" : "opacity-50 cursor-not-allowed"
+                  } text-white py-2 rounded-md  transition duration-300`}>
                   Register
                </button>
             </form>
