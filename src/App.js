@@ -1,127 +1,146 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { AiOutlineCloseCircle } from "react-icons/ai";
-import { AiOutlineDelete } from "react-icons/ai";
-import { IoIosClose } from "react-icons/io";
+/** @format */
+import { useSelector, useDispatch } from "react-redux";
+import { React, lazy, Suspense, useState } from "react";
+import { useEffect } from "react";
+import { axios } from "./common/axios";
+import { removeNoti, updateAuth, updateDisplay, updateOtp, updateUsename, updateStateDisplay, updateStateCollection, addNoti } from "./store/features/popupSlices";
+import { CircularProgress } from "@mui/material";
+import utils from "./common/utils";
+import { useSnackbar } from "notistack";
+import { v4 as uuidv4 } from "uuid";
+import serviceChrome from "./components/services/ServiceChrome";
+const Popup = lazy(() => import("./components/popup/Popup"));
+const Login = lazy(() => import("./components/auth/Login"));
+const Register = lazy(() => import("./components/auth/Register"));
+const ForgotPassword = lazy(() => import("./components/auth/ForgotPassword"));
 /* global chrome */
 function App() {
-  const [windowTabs, setWindowTabs] = useState([]);
-  const [tabs, setTabs] = useState([]);
-  const [showTooltip, setShowTooltip] = useState(false);
-  const [tabHoverId, setTabHoverId] =  useState()
-  const [windowCurrent, setWindowCurrent] = useState([])
-  const [showCloseTab, setShowCloseTab] = useState(false)
-  const hoverTimeoutRef = useRef(null);
+   const isAuth = useSelector((state) => state.current.auth);
+   const isRegister = useSelector((state) => state.current.register);
+   const isDisplay = useSelector((state) => state.current.display);
+   const notifications = useSelector((state) => state.current.notification);
+   const isforgotPassword = useSelector((state) => state.current.forgotPassword);
+   const loginGoogle = useSelector((state) => state.current.loginGoogle);
+   const isOtp = useSelector((state) => state.current.otp);
+   const dispatch = useDispatch();
+   const { enqueueSnackbar } = useSnackbar();
 
-  useEffect(() => {
-    chrome.windows.getAll({populate: true}, function(windows) {
-      setWindowTabs(windows)
-      setWindowCurrent([])
-    });
-  }, []);
+   useEffect(() => {
+      const checkLoginStatus = async () => {
+         const token = await utils.getToken();
+         const otp = await utils.getStateOtp();
+         const user = await utils.getUsername();
 
-  const closeTab = (tabId) => {
-    chrome.tabs.remove(tabId, () => {
-      setTabs(tabs.filter(tab => tab.id !== tabId));
-    });
-  };
+         const stateDisplayCollection = await utils.getDisplayStateCollection();
+         if (stateDisplayCollection === undefined) {
+            serviceChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_STATE_COLLECTION, false);
+            dispatch(updateStateCollection(false));
+         } else {
+            dispatch(updateStateCollection(stateDisplayCollection));
+         }
 
-  const addNewEmptyTab = () => {
-    chrome.tabs.create({}, (newTab) => {
-      setTabs([...tabs, newTab]);
-    });
-  };
+         const state = await utils.getDisplayState();
+         if (state === undefined) {
+            serviceChrome.setStateLocal(process.env.REACT_APP_TYPE_NAME_VIEW_VARIABLE, process.env.REACT_APP_TYPE_TAB_HORIZONTAL);
+            dispatch(updateStateDisplay(process.env.REACT_APP_TYPE_TAB_HORIZONTAL));
+         } else {
+            dispatch(updateStateDisplay(state));
+         }
 
-  const switchToTab = (tabId) => {
-    chrome.tabs.update(tabId, { active: true }, () => {
-      chrome.windows.update(tabs.find(tab => tab.id === tabId).windowId, { focused: true });
-    });
-  };
+         dispatch(updateOtp(otp));
+         dispatch(updateUsename(user));
 
-  const statusListWindowTab = (windowId, status) => {
-    if (status === 'Open') {
-      setWindowCurrent(prevWindowCurrent => [...prevWindowCurrent, windowId]);
-    } else {
-      setWindowCurrent(prevWindowCurrent => prevWindowCurrent.filter(winId => winId !== windowId));
-    }
-  }
-
-  const checkWindowOpenOrClose = (winId) => {
-    return windowCurrent.includes(winId)
-  }
-
-  const delayTimeDisplayDescription = () => {
-    clearTimeout(hoverTimeoutRef.current);
-    hoverTimeoutRef.current = setTimeout(() => {
-      setShowTooltip(true)
-    }, 800);
-  }
-
-  const handleMouseLeave = () => {
-    clearTimeout(hoverTimeoutRef.current);
-    setShowCloseTab(false)
-    setShowTooltip(false)
-  };
-
-
-
-  return (
-    <div className="w-full p-2 font-sans text-xs font-normal text-custom-black">
-      <h1 className="text-2xl font-bold mb-4 text-gray-800">Chrome Tab Manager</h1>
-      <div>
-
-      </div>
-      {windowTabs.map(windowTab => (
-        <div className='p-2 shadow-custom rounded-md'>
-          <h3>window : {windowTab.id} <span onClick={() => statusListWindowTab(windowTab.id, "close")} >Đóng</span>  <span onClick={() => statusListWindowTab(windowTab.id, "Open")} >Mở</span> </h3>
-          <h3>amount tab : {windowTab.tabs.length}</h3>
-            {checkWindowOpenOrClose(windowTab.id) == true ? 
-                  <div className="space-y-2 transition-all duration-200 ease-in-out">
-                  {windowTab.tabs.map(tab => (
-                      <div className='relative'>
-                        <div
-                        onClick={() => switchToTab(tab.id)} 
-                        onMouseEnter={() => {
-                          setShowCloseTab(true)
-                          setTabHoverId(tab.id)
-                          delayTimeDisplayDescription()
-                        }}
-                        onMouseLeave={() => {
-                          handleMouseLeave()
-                        }}
-                        className="hover:bg-custom-color-tooltip hover:border-1 transition-all z-10 duration-200 ease-in-out flex h-10 items-center border-g cursor-pointer shadow-custom hover:shadow-md hover:p-2 justify-between p-1 border-solid rounded">
-                        <div className='w-5' >
-                          <img className="w-100%" src={tab.favIconUrl} />
-                        </div>
-                        <p className="truncate flex-1 mr-2">{tab.title}</p>
-                        <span>{tab.active ? <b>Active</b> : <b></b>}</span>
-                        {showCloseTab && tabHoverId == tab.id ? <IoIosClose onClick={() => closeTab(tab.id)} className=" hover:bg-custom-pink cursor-pointer text-white bg-gray-200 tex rounded-full text-base transition duration-300 ease-in-out" />
-                          : <div></div>}
-                      </div>
-                      
-                      <div>
-                        {showTooltip && tabHoverId == tab.id ? 
-                          <div className="absolute w-full z-20 px-2 text-xs py-2 font-normal text-black bg-custom-hover-gray transition-all duration-100 ease-in-out rounded-lg shadow-sm tooltip dark:bg-gray-700"
-                          style={{top: 'calc(100% + 8px)', left: '0', transform: 'none'}}>
-                          {tab.title}
-                          </div> : 
-                          <div className="tooltip-arrow" data-popper-arrow></div>}
-                      </div>
-                    </div>
-                  ))}
-                <button 
-                      onClick={() => addNewEmptyTab()}
-                      className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-sm"
-                    >
-                      Thêm tab
-                    </button>
-              </div>: <div></div>
-
+         if (token !== undefined) {
+            try {
+               const response = await axios.get("/auth/expire", {
+                  headers: {
+                     Authorization: "Bearer " + token,
+                  },
+               });
+               if (response.data.status === 200 && response.data.message === "OK") {
+                  dispatch(updateAuth(true));
+               } else if (response.data.status === 401 && response.data.message === "Unauthorized") {
+                  dispatch(updateAuth(false));
+               }
+            } catch (err) {
+               dispatch(updateAuth(false));
+               serviceChrome.removeValueLocal(["token"]);
+               dispatch(addNoti({ message: "Session expire, please login again", id: uuidv4(), status: 401 }));
             }
-            
-        </div>
-      ))}
-    </div>
-  );
+         } else {
+            dispatch(updateAuth(false));
+         }
+      };
+
+      checkLoginStatus().then(() => {
+         dispatch(updateDisplay(true));
+      });
+   }, []);
+
+   const truncateMessage = (message) => {
+      return message.length > process.env.REACT_APP_MAX_SNACKBAR_LENGTH ? `${message.substring(0, process.env.REACT_APP_MAX_SNACKBAR_LENGTH)}...` : message;
+   };
+
+   useEffect(() => {
+      notifications.forEach((noti) => {
+         enqueueSnackbar(truncateMessage(noti.message), {
+            variant: noti.status == 200 ? "success" : "error",
+            autoHideDuration: 2000,
+         });
+         dispatch(removeNoti(noti.id));
+      });
+   }, [notifications, dispatch]);
+
+   function LoadingOverlay() {
+      return (
+         <div
+            style={{
+               position: "fixed",
+               top: 0,
+               left: 0,
+               width: "100vw",
+               height: "100vh",
+               backgroundColor: "rgba(0, 0, 0, 0.2)",
+               display: "flex",
+               justifyContent: "center",
+               alignItems: "center",
+               zIndex: 9999,
+            }}>
+            <CircularProgress aria-label='Checking login status...' aria-live='polite' style={{ color: "#fff" }} />
+         </div>
+      );
+   }
+
+   return (
+      <div className='relative'>
+         {loginGoogle ? <LoadingOverlay /> : null}
+         {!isDisplay ? (
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+               <CircularProgress aria-label='Checking login status...' aria-live='polite' />
+            </div>
+         ) : isAuth ? (
+            <Suspense>
+               <Popup />
+            </Suspense>
+         ) : (
+            <div className='bg-gray-50 flex items-center justify-center h-screen'>
+               {isforgotPassword || isOtp ? (
+                  <Suspense>
+                     <ForgotPassword isOtp={isOtp} />
+                  </Suspense>
+               ) : isRegister ? (
+                  <Suspense>
+                     <Register />
+                  </Suspense>
+               ) : (
+                  <Suspense>
+                     <Login />
+                  </Suspense>
+               )}
+            </div>
+         )}
+      </div>
+   );
 }
 
 export default App;
