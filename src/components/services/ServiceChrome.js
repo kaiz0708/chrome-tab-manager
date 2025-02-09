@@ -56,7 +56,7 @@ const serviceChrome = {
       chrome.windows.create({
          url: tabUrl,
          type: "normal",
-         focused: false,
+         focused: true,
       });
    },
 
